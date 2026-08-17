@@ -8,6 +8,7 @@ export function HongyuLogo({ className }: HongyuLogoProps) {
   return (
     <span className={className ?? 'logo-mark'}>
       <svg viewBox="0 0 94.4 32.5" xmlns="http://www.w3.org/2000/svg" aria-label="HONGYU MEDICAL">
+        <style>{`.st0{fill:#212D5D}.st1{font-family:var(--font-montserrat),'Montserrat',sans-serif;font-weight:900}.st2{font-size:19.5815px}.st3{font-family:var(--font-montserrat),'Montserrat',sans-serif;font-weight:700}.st4{font-size:10px}`}</style>
         <text transform="matrix(1 0 0 1 -0.009 32.2519)" className="st0 st1 st2">
           HONGYU
         </text>

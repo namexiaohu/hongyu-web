@@ -73,7 +73,6 @@ for (const page of pages) {
   fs.mkdirSync(dir, { recursive: true });
   const source = `import type { Metadata } from 'next';
 
-import { SiteFrame } from '@/components/layout/site-frame';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
 export const metadata: Metadata = {
@@ -84,11 +83,7 @@ export const metadata: Metadata = {
 const html = ${JSON.stringify(main)};
 
 export default function Page() {
-  return (
-    <SiteFrame overlay={false}>
-      <div dangerouslySetInnerHTML={{ __html: html }} />
-    </SiteFrame>
-  );
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }
 `;
   fs.writeFileSync(path.join(dir, 'page.tsx'), source);

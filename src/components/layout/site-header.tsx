@@ -36,15 +36,17 @@ export function SiteHeader({ overlay }: SiteHeaderProps) {
       <div className="container topnav-inner">
         <HongyuLogoLink />
         <nav>
-          {headerNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'active' : undefined}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {headerNav.map((item) => {
+            const active =
+              item.href === '/education/training'
+                ? pathname.startsWith('/education')
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link key={item.href} href={item.href} className={active ? 'active' : undefined}>
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
         <Link href="/partnership" className="nav-cta">
           商务合作
