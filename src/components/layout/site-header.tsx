@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { HongyuLogoLink } from '@/components/layout/hongyu-logo';
+import { LanguageSwitcher } from '@/components/layout/language-switcher';
 import { headerNav } from '@/lib/nav';
 
 type SiteHeaderProps = {
@@ -31,6 +32,8 @@ export function SiteHeader({ overlay }: SiteHeaderProps) {
     .filter(Boolean)
     .join(' ');
 
+  const transparentOverlay = overlay && !scrolled;
+
   return (
     <header className={className} id="topnav">
       <div className="container topnav-inner">
@@ -48,9 +51,12 @@ export function SiteHeader({ overlay }: SiteHeaderProps) {
             );
           })}
         </nav>
-        <Link href="/partnership" className="nav-cta">
-          商务合作
-        </Link>
+        <div className="topnav-actions">
+          <LanguageSwitcher transparent={transparentOverlay} />
+          <Link href="/partnership" className="nav-cta">
+            商务合作
+          </Link>
+        </div>
       </div>
     </header>
   );

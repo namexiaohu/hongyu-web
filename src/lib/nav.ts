@@ -23,9 +23,9 @@ export const footerNav = [
     title: '解决方案',
     links: [
       { href: '/solutions/v-clamp', label: 'V-CLAMP' },
-      { href: '/solutions', label: '运动医学' },
-      { href: '/solutions', label: '心脏起搏器' },
-      { href: '/solutions', label: '在研产品' },
+      { href: '/solutions?line=sports', label: '运动医学' },
+      { href: '/solutions?line=cardio', label: '心脏起搏器' },
+      { href: '/solutions?line=pipeline', label: '在研产品' },
     ],
   },
   {
@@ -38,9 +38,9 @@ export const footerNav = [
   {
     title: '前沿资讯',
     links: [
-      { href: '/insights', label: '病例回顾' },
-      { href: '/insights', label: '行业论文' },
-      { href: '/insights', label: '术者经验' },
+      { href: '/insights?category=case', label: '病例回顾' },
+      { href: '/insights?category=paper', label: '行业论文' },
+      { href: '/insights?category=experience', label: '术者经验' },
     ],
   },
   {
