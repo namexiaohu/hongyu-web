@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { Breadcrumb } from '@/components/shared/breadcrumb';
-import type { BreadcrumbItem, FilterTab, ListHero } from '@/lib/content/types';
+import type { BreadcrumbItem, FilterTab, ListHero } from '@/lib/storefront-types';
 
 type FilterListPageProps = {
   breadcrumbs: BreadcrumbItem[];

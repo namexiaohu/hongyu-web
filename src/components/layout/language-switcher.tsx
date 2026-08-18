@@ -2,36 +2,46 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { LOCALE_COOKIE_NAME, localeStorageKey } from '@/lib/i18n';
 import {
-  defaultLocale,
-  getLocaleOption,
-  localeStorageKey,
-  locales,
-  type LocaleCode,
-} from '@/lib/i18n/locales';
+  getStorefrontLanguage,
+  languageHtmlLang,
+  languageSwitchLabel,
+  pickStorefrontLocale,
+  type StorefrontLanguage,
+} from '@/lib/storefront-languages';
 
 type LanguageSwitcherProps = {
+  languages: StorefrontLanguage[];
+  initialLocale: string;
   /** 首页 overlay 顶栏未滚动时为 true，用于样式适配 */
   transparent?: boolean;
 };
 
-function readStoredLocale(): LocaleCode {
-  if (typeof window === 'undefined') return defaultLocale;
+function readStoredLocale(languages: StorefrontLanguage[], fallback: string) {
+  if (typeof window === 'undefined') return fallback;
   const stored = window.localStorage.getItem(localeStorageKey);
-  if (stored === 'zh' || stored === 'en' || stored === 'es') return stored;
-  return defaultLocale;
+  return pickStorefrontLocale(stored, languages);
 }
 
-export function LanguageSwitcher({ transparent = false }: LanguageSwitcherProps) {
-  const [locale, setLocale] = useState<LocaleCode>(defaultLocale);
+export function LanguageSwitcher({
+  languages,
+  initialLocale,
+  transparent = false,
+}: LanguageSwitcherProps) {
+  const [locale, setLocale] = useState(initialLocale);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const current = getStorefrontLanguage(locale, languages);
 
   useEffect(() => {
-    const stored = readStoredLocale();
-    setLocale(stored);
-    document.documentElement.lang = getLocaleOption(stored).htmlLang;
-  }, []);
+    const nextLocale = readStoredLocale(languages, initialLocale);
+    const language = getStorefrontLanguage(nextLocale, languages);
+    setLocale(nextLocale);
+    document.documentElement.lang = languageHtmlLang(language);
+    document.documentElement.dir = language.direction;
+    document.cookie = `${LOCALE_COOKIE_NAME}=${encodeURIComponent(nextLocale)}; path=/; max-age=31536000; SameSite=Lax`;
+  }, [initialLocale, languages]);
 
   useEffect(() => {
     if (!open) return;
@@ -53,14 +63,16 @@ export function LanguageSwitcher({ transparent = false }: LanguageSwitcherProps)
     };
   }, [open]);
 
-  const current = getLocaleOption(locale);
-
-  const selectLocale = (code: LocaleCode) => {
-    setLocale(code);
+  const selectLocale = (code: string) => {
+    const language = getStorefrontLanguage(code, languages);
+    setLocale(language.code);
     setOpen(false);
-    window.localStorage.setItem(localeStorageKey, code);
-    document.documentElement.lang = getLocaleOption(code).htmlLang;
-    window.dispatchEvent(new CustomEvent('hongyu:locale-change', { detail: { locale: code } }));
+    window.localStorage.setItem(localeStorageKey, language.code);
+    document.cookie = `${LOCALE_COOKIE_NAME}=${encodeURIComponent(language.code)}; path=/; max-age=31536000; SameSite=Lax`;
+    document.documentElement.lang = languageHtmlLang(language);
+    document.documentElement.dir = language.direction;
+    window.dispatchEvent(new CustomEvent('hongyu:locale-change', { detail: { locale: language.code } }));
+    window.location.reload();
   };
 
   return (
@@ -89,7 +101,7 @@ export function LanguageSwitcher({ transparent = false }: LanguageSwitcherProps)
           <circle cx="12" cy="12" r="10" />
           <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
         </svg>
-        <span className="lang-switcher-current">{current.label}</span>
+        <span className="lang-switcher-current">{languageSwitchLabel(current)}</span>
         <svg
           className="lang-switcher-chevron"
           width="12"
@@ -106,14 +118,14 @@ export function LanguageSwitcher({ transparent = false }: LanguageSwitcherProps)
 
       {open ? (
         <ul className="lang-switcher-menu" role="listbox" aria-label="选择语言">
-          {locales.map((item) => (
+          {languages.map((item) => (
             <li key={item.code} role="option" aria-selected={item.code === locale}>
               <button
                 type="button"
                 className={`lang-switcher-option${item.code === locale ? ' is-active' : ''}`}
                 onClick={() => selectLocale(item.code)}
               >
-                <span className="lang-switcher-option-code">{item.label}</span>
+                <span className="lang-switcher-option-code">{languageSwitchLabel(item)}</span>
                 <span className="lang-switcher-option-name">{item.nativeName}</span>
               </button>
             </li>

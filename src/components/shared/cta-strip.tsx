@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import type { CtaBlock } from '@/lib/content/types';
+import type { CtaBlock } from '@/lib/storefront-types';
 
 type CtaStripProps = CtaBlock & {
   odId?: string;

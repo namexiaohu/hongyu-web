@@ -6,23 +6,22 @@ import { type ReactNode } from 'react';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { StaticInteractions } from '@/components/layout/static-interactions';
+import type { StorefrontLanguage } from '@/lib/storefront-languages';
 
 type SiteFrameProps = {
   children: ReactNode;
+  languages: StorefrontLanguage[];
+  locale: string;
 };
 
 const PAGE_CLASS: Record<string, string> = {
   '/': 'page-home',
-  '/about': 'page-about',
-  '/patents': 'page-patents',
-  '/history': 'page-history',
   '/solutions': 'page-solutions-list',
   '/solutions/v-clamp': 'page-solutions',
   '/surgeons': 'page-surgeons',
   '/centers': 'page-centers',
   '/insights': 'page-article-list',
   '/insights/v-clamp-splenectomy': 'page-article',
-  '/education/training': 'page-training',
   '/education/summit': 'page-summit',
   '/education/recordings': 'page-recordings',
   '/contact': 'page-contact',
@@ -32,10 +31,10 @@ const PAGE_CLASS: Record<string, string> = {
 };
 
 function pageClassFromPath(pathname: string) {
-  return PAGE_CLASS[pathname] ?? 'page-home';
+  return PAGE_CLASS[pathname] ?? '';
 }
 
-export function SiteFrame({ children }: SiteFrameProps) {
+export function SiteFrame({ children, languages, locale }: SiteFrameProps) {
   const pathname = usePathname();
   const overlay = pathname === '/';
   const pageClass = pageClassFromPath(pathname);
@@ -43,8 +42,8 @@ export function SiteFrame({ children }: SiteFrameProps) {
 
   return (
     <div className={shellClass}>
-      <SiteHeader overlay={overlay} />
-      <main id="content" className={pageClass}>
+      <SiteHeader overlay={overlay} languages={languages} locale={locale} />
+      <main id="content" className={pageClass || undefined}>
         {children}
       </main>
       <SiteFooter />

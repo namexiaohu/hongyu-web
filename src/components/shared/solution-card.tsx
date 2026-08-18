@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import type { SolutionCard } from '@/lib/content/solutions-data';
+import type { SolutionCard } from '@/lib/solutions';
 
 export function SolutionCardItem({ card }: { card: SolutionCard }) {
   return (

@@ -7,12 +7,15 @@ import { useEffect, useState } from 'react';
 import { HongyuLogoLink } from '@/components/layout/hongyu-logo';
 import { LanguageSwitcher } from '@/components/layout/language-switcher';
 import { headerNav } from '@/lib/nav';
+import type { StorefrontLanguage } from '@/lib/storefront-languages';
 
 type SiteHeaderProps = {
   overlay: boolean;
+  languages: StorefrontLanguage[];
+  locale: string;
 };
 
-export function SiteHeader({ overlay }: SiteHeaderProps) {
+export function SiteHeader({ overlay, languages, locale }: SiteHeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(!overlay);
 
@@ -41,8 +44,8 @@ export function SiteHeader({ overlay }: SiteHeaderProps) {
         <nav>
           {headerNav.map((item) => {
             const active =
-              item.href === '/education/training'
-                ? pathname.startsWith('/education')
+              item.href === '/training'
+                ? pathname === '/training' || pathname.startsWith('/education')
                 : pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link key={item.href} href={item.href} className={active ? 'active' : undefined}>
@@ -52,7 +55,7 @@ export function SiteHeader({ overlay }: SiteHeaderProps) {
           })}
         </nav>
         <div className="topnav-actions">
-          <LanguageSwitcher transparent={transparentOverlay} />
+          <LanguageSwitcher languages={languages} initialLocale={locale} transparent={transparentOverlay} />
           <Link href="/partnership" className="nav-cta">
             商务合作
           </Link>

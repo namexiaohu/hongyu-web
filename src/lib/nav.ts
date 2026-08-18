@@ -6,7 +6,7 @@ export type NavLink = {
 export const headerNav: NavLink[] = [
   { href: '/solutions', label: '解决方案' },
   { href: '/insights', label: '前沿资讯' },
-  { href: '/education/training', label: '持续教育' },
+  { href: '/training', label: '持续教育' },
   { href: '/contact', label: '联系我们' },
 ];
 
@@ -47,7 +47,7 @@ export const footerNav = [
     title: '持续教育',
     links: [
       { href: '/education/recordings', label: '录播课程' },
-      { href: '/education/training', label: '培训计划' },
+      { href: '/training', label: '培训计划' },
       { href: '/education/summit', label: '行业峰会' },
     ],
   },

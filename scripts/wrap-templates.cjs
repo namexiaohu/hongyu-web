@@ -28,7 +28,7 @@ function wrapBrandPage(config) {
 
   html = html.replace(/^[\s\S]*?<section class="page-hero"[\s\S]*?<\/section>\n?/m, '');
   html = html.replace(/^[\s\S]*?<section class="tr-hero"[\s\S]*?<\/section>\n?/m, '');
-  html = html.replace(/\n\s*<!-- STATS -->[\s\S]*?<\/div>\n\n?/m, '\n');
+  html = html.replace(/\n\s*<!-- STATS -->[\s\S]*?<\/div>\n\s*<\/div>\n\n?/m, '\n');
 
   const escapedBody = html
     .replace(/\\/g, '\\\\')

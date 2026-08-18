@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import type { BreadcrumbItem } from '@/lib/content/types';
+import type { BreadcrumbItem } from '@/lib/storefront-types';
 
 type BreadcrumbProps = {
   items: BreadcrumbItem[];

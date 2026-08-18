@@ -1,4 +1,4 @@
-import type { StatItem } from '@/lib/content/types';
+import type { StatItem } from '@/lib/storefront-types';
 
 type StatsBarProps = {
   stats: StatItem[];

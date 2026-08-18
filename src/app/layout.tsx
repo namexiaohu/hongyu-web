@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono, Montserrat } from 'next/font/google';
 
 import { SiteFrame } from '@/components/layout/site-frame';
+import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_DESCRIPTION, DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
 import './globals.css';
@@ -32,11 +33,13 @@ export const metadata: Metadata = {
   description: DEFAULT_SEO_DESCRIPTION,
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { locale, languages, htmlLang, direction } = await getStorefrontLocaleContext();
+
   return (
-    <html lang="zh-CN" className={`${inter.variable} ${jetbrains.variable} ${montserrat.variable}`}>
+    <html lang={htmlLang} dir={direction} className={`${inter.variable} ${jetbrains.variable} ${montserrat.variable}`}>
       <body>
-        <SiteFrame>{children}</SiteFrame>
+        <SiteFrame languages={languages} locale={locale}>{children}</SiteFrame>
       </body>
     </html>
   );

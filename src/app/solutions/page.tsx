@@ -9,7 +9,7 @@ import {
   solutionsCta,
   solutionsFilters,
   solutionsHero,
-} from '@/lib/content/solutions-data';
+} from '@/lib/solutions';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
 export const metadata: Metadata = {

@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import type { CtaBlock, FilterTab, ListHero } from '@/lib/content/types';
+import type { CtaBlock, FilterTab, ListHero } from '@/lib/storefront-types';
 
 export const solutionsHero: ListHero = {
   eyebrow: 'Solutions · 解决方案',
