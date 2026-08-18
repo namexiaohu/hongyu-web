@@ -33,5 +33,5 @@ function renderSection(section: BrandSection, index: number) {
 }
 
 export function BrandNarrativeRenderer({ sections }: BrandNarrativeRendererProps) {
-  return <>{sections.map(renderSection)}</>;
+  return <div className="narrative-sections">{sections.map(renderSection)}</div>;
 }

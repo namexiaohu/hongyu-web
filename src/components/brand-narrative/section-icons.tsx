@@ -157,9 +157,3 @@ export function CtaArrowIcon() {
     </svg>
   );
 }
-
-function sectionStyle(background?: 'default' | 'soft') {
-  return background === 'soft' ? { background: 'var(--border-soft)' } : undefined;
-}
-
-export { sectionStyle };

@@ -1,6 +1,6 @@
 import type { HeaderGridSection } from '@/lib/storefront-types';
 
-import { sectionStyle, ValueCardIconSvg } from '@/components/brand-narrative/section-icons';
+import { ValueCardIconSvg } from '@/components/brand-narrative/section-icons';
 
 type HeaderGridSectionViewProps = {
   section: HeaderGridSection;
@@ -8,7 +8,7 @@ type HeaderGridSectionViewProps = {
 
 export function HeaderGridSectionView({ section }: HeaderGridSectionViewProps) {
   return (
-    <section className="section" data-od-id={section.id} style={sectionStyle(section.background)}>
+    <section className="section" data-od-id={section.id}>
       <div className="container">
         <div className="section-header">
           <p className="eyebrow">{section.eyebrow}</p>

@@ -1,14 +1,12 @@
 import type { PatentGridSection } from '@/lib/storefront-types';
 
-import { sectionStyle } from '@/components/brand-narrative/section-icons';
-
 type PatentGridSectionViewProps = {
   section: PatentGridSection;
 };
 
 export function PatentGridSectionView({ section }: PatentGridSectionViewProps) {
   return (
-    <section className="section" data-od-id={section.id} style={sectionStyle(section.background)}>
+    <section className="section" data-od-id={section.id}>
       <div className="container">
         <div className="section-header">
           <p className="eyebrow">{section.eyebrow}</p>

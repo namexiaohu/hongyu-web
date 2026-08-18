@@ -1,7 +1,5 @@
 import type { SplitContentSection } from '@/lib/storefront-types';
 
-import { sectionStyle } from '@/components/brand-narrative/section-icons';
-
 type SplitContentSectionViewProps = {
   section: SplitContentSection;
 };
@@ -15,7 +13,7 @@ export function SplitContentSectionView({ section }: SplitContentSectionViewProp
   const imageRight = section.imagePosition === 'right';
 
   return (
-    <section className="section" data-od-id={section.id} style={sectionStyle(section.background)}>
+    <section className="section" data-od-id={section.id}>
       <div className="container">
         <div className={`content-split ${splitClass}${imageRight ? ' is-image-right' : ''}`}>
           {section.image ? (
