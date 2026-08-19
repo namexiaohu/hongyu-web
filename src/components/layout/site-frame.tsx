@@ -21,7 +21,6 @@ const PAGE_CLASS: Record<string, string> = {
   '/surgeons': 'page-surgeons',
   '/centers': 'page-centers',
   '/insights': 'page-article-list',
-  '/insights/v-clamp-splenectomy': 'page-article',
   '/education/summit': 'page-summit',
   '/education/recordings': 'page-recordings',
   '/contact': 'page-contact',
@@ -31,6 +30,9 @@ const PAGE_CLASS: Record<string, string> = {
 };
 
 function pageClassFromPath(pathname: string) {
+  if (pathname.startsWith('/insights/') && pathname !== '/insights') {
+    return 'page-article';
+  }
   return PAGE_CLASS[pathname] ?? '';
 }
 

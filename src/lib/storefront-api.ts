@@ -47,3 +47,20 @@ export async function getStorefrontBrandNarrativeBySlug(
     return null;
   }
 }
+
+export {
+  getStorefrontInsightBySlug,
+  getStorefrontInsightsBoardCounts,
+  getStorefrontInsightsList,
+  getStorefrontRandomInsights,
+} from '@/lib/storefront-insights-api';
+
+export type {
+  StorefrontInsightAuthor,
+  StorefrontInsightBoardCount,
+  StorefrontInsightDetail,
+  StorefrontInsightListItem,
+  StorefrontInsightRelatedItem,
+  StorefrontInsightsBoardCountsResponse,
+  StorefrontInsightsListResponse,
+} from '@/lib/storefront-insights-api';

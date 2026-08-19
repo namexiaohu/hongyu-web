@@ -114,7 +114,10 @@ export type TimelineSection = {
   id?: string;
   background?: 'default' | 'soft';
   eyebrow: string;
+  title: string;
   lead?: string;
+  items: Array<{
+    year: string;
     title: string;
     body: string;
     tags?: string[];
