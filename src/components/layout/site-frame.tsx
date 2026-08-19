@@ -35,22 +35,28 @@ function pageClassFromPath(pathname: string) {
   if (pathname.startsWith('/solutions/') && pathname !== '/solutions') {
     return 'page-solutions';
   }
+  if (pathname === '/summit' || pathname.startsWith('/summit/')) return 'page-summit';
   return PAGE_CLASS[pathname] ?? '';
 }
 
 export function SiteFrame({ children, languages, locale }: SiteFrameProps) {
   const pathname = usePathname();
   const overlay = pathname === '/';
+  const dark = pathname === '/summit' || pathname.startsWith('/summit/');
   const pageClass = pageClassFromPath(pathname);
-  const shellClass = overlay ? 'site-shell site-shell-overlay' : 'site-shell';
+  const shellClass = [
+    'site-shell',
+    overlay ? 'site-shell-overlay' : '',
+    dark ? 'site-shell-dark' : '',
+  ].filter(Boolean).join(' ');
 
   return (
     <div className={shellClass}>
-      <SiteHeader overlay={overlay} languages={languages} locale={locale} />
+      <SiteHeader overlay={overlay} dark={dark} languages={languages} locale={locale} />
       <main id="content" className={pageClass || undefined}>
         {children}
       </main>
-      <SiteFooter />
+      <SiteFooter dark={dark} />
       <StaticInteractions />
     </div>
   );

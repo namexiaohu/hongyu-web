@@ -5,14 +5,14 @@ import { SocialLinks } from '@/components/shared/social-links';
 import { footerNav } from '@/lib/nav';
 import { socialLinks } from '@/lib/social-links';
 
-export function SiteFooter() {
+export function SiteFooter({ dark = false }: { dark?: boolean }) {
   return (
-    <footer className="pagefoot">
+    <footer className={dark ? 'pagefoot pagefoot-dark' : 'pagefoot'}>
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="fb-name">
-              <HongyuLogo />
+              <HongyuLogo light={dark} />
             </div>
             <p>引领宠物医疗器械创新，以工程技术守护动物生命健康。</p>
             <SocialLinks links={socialLinks} variant="footer" />

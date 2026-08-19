@@ -11,11 +11,12 @@ import type { StorefrontLanguage } from '@/lib/storefront-languages';
 
 type SiteHeaderProps = {
   overlay: boolean;
+  dark?: boolean;
   languages: StorefrontLanguage[];
   locale: string;
 };
 
-export function SiteHeader({ overlay, languages, locale }: SiteHeaderProps) {
+export function SiteHeader({ overlay, dark = false, languages, locale }: SiteHeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(!overlay);
 
@@ -31,7 +32,7 @@ export function SiteHeader({ overlay, languages, locale }: SiteHeaderProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, [overlay]);
 
-  const className = ['topnav', overlay ? 'overlay' : 'solid', scrolled ? 'scrolled' : '']
+  const className = ['topnav', dark ? 'dark' : overlay ? 'overlay' : 'solid', scrolled ? 'scrolled' : '']
     .filter(Boolean)
     .join(' ');
 
@@ -40,7 +41,7 @@ export function SiteHeader({ overlay, languages, locale }: SiteHeaderProps) {
   return (
     <header className={className} id="topnav">
       <div className="container topnav-inner">
-        <HongyuLogoLink />
+        <HongyuLogoLink light={dark} />
         <nav>
           {headerNav.map((item) => {
             const active =
@@ -55,7 +56,7 @@ export function SiteHeader({ overlay, languages, locale }: SiteHeaderProps) {
           })}
         </nav>
         <div className="topnav-actions">
-          <LanguageSwitcher languages={languages} initialLocale={locale} transparent={transparentOverlay} />
+          <LanguageSwitcher languages={languages} initialLocale={locale} transparent={transparentOverlay || dark} />
           <Link href="/partnership" className="nav-cta">
             商务合作
           </Link>
