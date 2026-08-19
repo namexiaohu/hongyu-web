@@ -16,12 +16,12 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ category?: string; page?: string }>;
+  searchParams: Promise<{ board?: string; category?: string; page?: string }>;
 };
 
 export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
-  const category = params.category?.trim() || null;
+  const category = (params.board ?? params.category)?.trim() || null;
   const page = Math.max(1, Number.parseInt(params.page ?? '1', 10) || 1);
   const { locale } = await getStorefrontLocaleContext();
 

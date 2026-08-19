@@ -63,7 +63,7 @@ export type StorefrontSolutionCategoryTab = {
 export function solutionsListHref(input?: { category?: string | null; page?: number }) {
   const params = new URLSearchParams();
   if (input?.category?.trim() && input.category !== 'all') {
-    params.set('category', input.category.trim());
+    params.set('board', input.category.trim());
   }
   if (input?.page && input.page > 1) params.set('page', String(input.page));
   const query = params.toString();
@@ -91,7 +91,7 @@ export async function getStorefrontSolutionsList(input?: {
   locale?: string;
 }): Promise<StorefrontSolutionListResponse> {
   const params = new URLSearchParams();
-  if (input?.category?.trim()) params.set('category', input.category.trim());
+  if (input?.category?.trim()) params.set('board', input.category.trim());
   if (input?.page) params.set('page', String(input.page));
   if (input?.pageSize) params.set('pageSize', String(input.pageSize));
   const query = params.toString();
