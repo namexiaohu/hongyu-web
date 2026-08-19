@@ -1711,6 +1711,13 @@
     .page-centers .center-card .cc-location{ display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin-bottom: var(--space-3); }
     .page-centers .center-card .cc-location svg{ width: 14px; height: 14px; stroke: var(--meta); }
     .page-centers .center-card .cc-desc{ font-size: 13px; color: var(--fg-2); line-height: 1.5; margin-bottom: var(--space-3); }
+    .page-centers .center-card .cc-header{ display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-2); }
+    .page-centers .center-card .cc-logo{ width: 32px; height: 32px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; background: #fff; display: flex; align-items: center; justify-content: center; }
+    .page-centers .center-card .cc-logo img{ width: 100%; height: 100%; object-fit: contain; }
+    .page-centers .center-card .cc-detail{ margin: var(--space-3) 0; display: flex; flex-direction: column; gap: 4px; }
+    .page-centers .center-card .cc-detail-row{ display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .page-centers .center-card .cc-detail-row svg{ width: 12px; height: 12px; stroke: var(--meta); flex-shrink: 0; margin-top: 1px; }
+    .page-centers .center-card .cc-detail-row a{ color: var(--muted); text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
     .page-centers .center-card .cc-tags{ display: flex; flex-wrap: wrap; gap: 4px; }
     .page-centers .center-card .cc-tag{ font-size: 10px; font-family: var(--font-mono); letter-spacing: 0.04em; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); }
     .page-centers .center-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
