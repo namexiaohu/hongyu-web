@@ -20,7 +20,7 @@ const PAGE_CLASS: Record<string, string> = {
   '/surgeons': 'page-surgeons',
   '/centers': 'page-centers',
   '/insights': 'page-article-list',
-  '/education/summit': 'page-summit',
+  '/summit': 'page-summit',
   '/education/recordings': 'page-recordings',
   '/contact': 'page-contact',
   '/partnership': 'page-partnership',
@@ -45,10 +45,7 @@ export function SiteFrame({ children, languages, locale }: SiteFrameProps) {
   const dark =
     pathname === '/summit' ||
     pathname.startsWith('/summit/') ||
-    pathname === '/education/summit' ||
-    pathname.startsWith('/education/summit/') ||
-    pathname === '/media' ||
-    pathname.endsWith('/media');
+    pathname === '/media';
   const pageClass = pageClassFromPath(pathname);
   const shellClass = [
     'site-shell',
