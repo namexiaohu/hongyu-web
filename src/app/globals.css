@@ -1191,7 +1191,7 @@
     .page-solutions-list .page-hero h1{ position: relative; z-index: 2; font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: var(--space-4); }
     .page-solutions-list .page-hero .lead{ position: relative; z-index: 2; color: rgba(255,255,255,0.7); font-size: 16px; line-height: 1.7; max-width: 56ch; }
 
-    /* Filter tabs */
+    /* Filter tabs — spaced below hero (no list-page stats bar) */
     .page-solutions-list .filter-tabs{ display: flex; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-10); padding-bottom: var(--space-8); border-bottom: 1px solid var(--border); }
     .page-solutions-list .filter-tab{ padding: 8px 18px; border: 1px solid var(--border); border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; color: var(--muted); background: var(--surface); cursor: pointer; transition: all var(--motion-fast) var(--ease-standard); }
     .page-solutions-list .filter-tab:hover{ border-color: var(--accent); color: var(--accent); }
@@ -1227,13 +1227,6 @@
       .page-solutions-list .sol-card{ grid-template-columns: 1fr; }
       .page-solutions-list .sol-card-img{ height: 200px; }
     }
-
-    /* Stats bar */
-    .page-solutions-list .stats-bar{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-8); display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); margin-bottom: var(--space-16); box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
-    @media (max-width: 960px) { .page-solutions-list .stats-bar{ grid-template-columns: repeat(2, 1fr); } }
-    .page-solutions-list .stat-num{ font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1; letter-spacing: -0.03em; color: var(--accent); }
-    .page-solutions-list .stat-num .stat-suffix{ font-size: 0.5em; opacity: 0.6; margin-left: 2px; }
-    .page-solutions-list .stat-label{ font-size: 13px; color: var(--muted); margin-top: 6px; }
 
     /* Pagination */
     .page-solutions-list .pagination{ display: flex; align-items: center; justify-content: center; gap: var(--space-2); margin-top: var(--space-12); }
@@ -1410,8 +1403,9 @@
     /* Related products */
     .page-solutions .related-card{ border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: all var(--motion-base) var(--ease-standard); }
     .page-solutions .related-card:hover{ border-color: var(--accent-12); box-shadow: 0 4px 20px rgba(30,58,95,0.06); transform: translateY(-2px); }
-    .page-solutions .related-card-img{ height: 140px; background: var(--accent-soft); display: grid; place-items: center; }
+    .page-solutions .related-card-img{ height: 140px; background: var(--accent-soft); display: grid; place-items: center; overflow: hidden; }
     .page-solutions .related-card-img svg{ width: 40px; height: 40px; stroke: var(--accent); opacity: 0.5; }
+    .page-solutions .related-card-img img{ width: 100%; height: 100%; object-fit: cover; }
     .page-solutions .related-card-body{ padding: var(--space-5); }
     .page-solutions .related-card-body .rc-tag{ font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
     .page-solutions .related-card-body h3{ font-size: 15px; font-weight: 600; }
@@ -1424,6 +1418,18 @@
     .page-solutions .cta-strip .lead{ color: rgba(255,255,255,0.7); margin: 0 auto var(--space-8); }
     .page-solutions .btn-cta-white{ display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: #fff; color: var(--accent); border-radius: var(--radius-pill); font-size: 14px; font-weight: 600; transition: all var(--motion-fast) var(--ease-standard); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
     .page-solutions .btn-cta-white:hover{ background: #f8fafc; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+    .page-solutions .clinical-split.is-image-right{ direction: rtl; }
+    .page-solutions .clinical-split.is-image-right > *{ direction: ltr; }
+    .page-solutions .sol-materials{ border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); }
+    .page-solutions .sol-material-item{ display: flex; align-items: center; justify-content: space-between; padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border); }
+    .page-solutions .sol-material-item:last-child{ border-bottom: none; }
+    .page-solutions .sol-material-item:hover{ background: var(--border-soft); }
+    .page-solutions .sol-material-info{ display: flex; align-items: center; gap: 12px; }
+    .page-solutions .sol-material-icon{ width: 40px; height: 40px; background: var(--accent-soft); border-radius: var(--radius-md); display: grid; place-items: center; flex-shrink: 0; }
+    .page-solutions .sol-material-icon svg{ width: 20px; height: 20px; stroke: var(--accent); }
+    .page-solutions .sol-material-name{ font-size: 14px; font-weight: 500; }
+    .page-solutions .sol-material-download{ font-size: 13px; color: var(--accent); font-weight: 500; }
 
     /* Footer */
     

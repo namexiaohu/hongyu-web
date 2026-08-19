@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import type { BreadcrumbItem, FilterTab, ListHero } from '@/lib/storefront-types';
@@ -8,6 +8,7 @@ type FilterListPageProps = {
   hero: ListHero;
   filters?: FilterTab[];
   listingOdId?: string;
+  listingSectionStyle?: CSSProperties;
   children: ReactNode;
   footer?: ReactNode;
 };
@@ -17,6 +18,7 @@ export function FilterListPage({
   hero,
   filters,
   listingOdId = 'listing',
+  listingSectionStyle,
   children,
   footer,
 }: FilterListPageProps) {
@@ -32,7 +34,7 @@ export function FilterListPage({
           <p className="lead">{hero.lead}</p>
         </div>
       </section>
-      <section className="section" data-od-id={listingOdId} style={{ paddingTop: 0 }}>
+      <section className="section" data-od-id={listingOdId} style={{ paddingTop: 0, ...listingSectionStyle }}>
         <div className="container">
           {filters && filters.length > 0 ? (
             <div className="filter-tabs">

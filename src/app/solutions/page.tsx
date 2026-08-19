@@ -1,52 +1,61 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
-import { CtaStrip } from '@/components/shared/cta-strip';
-import { SolutionCardItem } from '@/components/shared/solution-card';
-import { FilterListPage } from '@/components/templates/filter-list-page';
-import {
-  solutionCards,
-  solutionsCta,
-  solutionsFilters,
-  solutionsHero,
-} from '@/lib/solutions';
+import { SolutionsListView } from '@/components/solution/solutions-list-view';
+import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
+import { solutionsHero } from '@/lib/solutions';
+import {
+  getStorefrontSolutionCategoryTabs,
+  getStorefrontSolutionsList,
+  type StorefrontSolutionListResponse,
+} from '@/lib/storefront-solutions-api';
 
 export const metadata: Metadata = {
-  title: '解决方案 · 竑宇医疗',
-  description: DEFAULT_SEO_TITLE,
+  title: 'Solutions · Hongyu Medical',
+  description: solutionsHero.lead || DEFAULT_SEO_TITLE,
 };
 
-export default function Page() {
+type PageProps = {
+  searchParams: Promise<{ category?: string; page?: string }>;
+};
+
+export default async function Page({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const category = params.category?.trim() || null;
+  const page = Math.max(1, Number.parseInt(params.page ?? '1', 10) || 1);
+  const { locale } = await getStorefrontLocaleContext();
+
+  const emptyList: StorefrontSolutionListResponse = {
+    locale,
+    category,
+    items: [],
+    total: 0,
+    page,
+    pageSize: 4,
+  };
+
+  let list = emptyList;
+  let tabs: Awaited<ReturnType<typeof getStorefrontSolutionCategoryTabs>>['tabs'] = [
+    { id: 'all', slug: null, label: 'All Products', count: 0 },
+  ];
+
+  try {
+    const [listPayload, tabPayload] = await Promise.all([
+      getStorefrontSolutionsList({ category, page, pageSize: 4, locale }),
+      getStorefrontSolutionCategoryTabs(locale),
+    ]);
+    list = listPayload;
+    tabs = tabPayload.tabs;
+  } catch {
+    // CMS unavailable — empty shell
+  }
+
   return (
-    <FilterListPage
-      breadcrumbs={[{ label: '首页', href: '/' }, { label: '解决方案' }]}
-      hero={solutionsHero}
-      filters={solutionsFilters}
-      footer={<CtaStrip {...solutionsCta} />}
-    >
-      {solutionCards.map((card) => (
-        <SolutionCardItem key={card.title} card={card} />
-      ))}
-      <div className="pagination">
-        <Link href="/solutions" className="pg-arrow">
-          <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-          上一页
-        </Link>
-        <span className="pg-active">1</span>
-        <Link href="/solutions">2</Link>
-        <Link href="/solutions">3</Link>
-        <span className="pg-dots">…</span>
-        <Link href="/solutions">8</Link>
-        <Link href="/solutions" className="pg-arrow">
-          下一页
-          <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </Link>
-      </div>
-    </FilterListPage>
+    <SolutionsListView
+      list={list}
+      tabs={tabs}
+      category={category}
+      page={page}
+    />
   );
 }

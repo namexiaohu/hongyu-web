@@ -17,7 +17,6 @@ type SiteFrameProps = {
 const PAGE_CLASS: Record<string, string> = {
   '/': 'page-home',
   '/solutions': 'page-solutions-list',
-  '/solutions/v-clamp': 'page-solutions',
   '/surgeons': 'page-surgeons',
   '/centers': 'page-centers',
   '/insights': 'page-article-list',
@@ -32,6 +31,9 @@ const PAGE_CLASS: Record<string, string> = {
 function pageClassFromPath(pathname: string) {
   if (pathname.startsWith('/insights/') && pathname !== '/insights') {
     return 'page-article';
+  }
+  if (pathname.startsWith('/solutions/') && pathname !== '/solutions') {
+    return 'page-solutions';
   }
   return PAGE_CLASS[pathname] ?? '';
 }
