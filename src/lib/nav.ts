@@ -48,7 +48,7 @@ export const footerNav = [
     links: [
       { href: '/education/recordings', label: '录播课程' },
       { href: '/training', label: '培训计划' },
-      { href: '/education/summit', label: '行业峰会' },
+      { href: '/summit', label: '行业峰会' },
     ],
   },
   {

@@ -42,7 +42,13 @@ function pageClassFromPath(pathname: string) {
 export function SiteFrame({ children, languages, locale }: SiteFrameProps) {
   const pathname = usePathname();
   const overlay = pathname === '/';
-  const dark = pathname === '/summit' || pathname.startsWith('/summit/');
+  const dark =
+    pathname === '/summit' ||
+    pathname.startsWith('/summit/') ||
+    pathname === '/education/summit' ||
+    pathname.startsWith('/education/summit/') ||
+    pathname === '/media' ||
+    pathname.endsWith('/media');
   const pageClass = pageClassFromPath(pathname);
   const shellClass = [
     'site-shell',
