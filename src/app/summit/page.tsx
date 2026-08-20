@@ -122,11 +122,11 @@ export default async function SummitListPage() {
       <section className="cta-section" data-od-id="cta">
         <div className="container">
           <div className="cta-inner">
-            <p className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 'var(--space-4)' }}>Partner · 会议合作</p>
-            <h2>成为会议合作伙伴</h2>
-            <p>竑宇医疗欢迎行业会议、学术机构的合作邀请，共同推动宠物医疗技术交流。</p>
+            <p className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 'var(--space-4)' }}>Partnership · 商务合作</p>
+            <h2>欢迎洽谈会议合作</h2>
+            <p>如需联合办会、赞助支持或品牌合作，欢迎与我们交流，共同促进行业沟通与交流。</p>
             <Link href="/partnership" className="btn-cta">
-              洽谈合作
+              商务合作咨询
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>

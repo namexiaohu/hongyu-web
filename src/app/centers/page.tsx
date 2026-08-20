@@ -115,12 +115,12 @@ export default async function Page() {
           <div className="container">
             <div className="cta-strip">
               <p className="eyebrow" style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 'var(--space-4)' }}>
-                Partner · 成为合作伙伴
+                Partnership · 商务合作
               </p>
-              <h2>加入全球合作网络</h2>
-              <p className="lead">如果您的医院或研究机构希望与竑宇医疗建立合作，欢迎联系我们。</p>
+              <h2>共建区域合作中心</h2>
+              <p className="lead">欢迎医院与研究机构洽谈合作中心共建，拓展区域服务与交流能力。</p>
               <Link href="/partnership" className="btn-cta-white">
-                申请合作
+                商务合作咨询
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>
             </div>

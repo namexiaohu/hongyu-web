@@ -1,11 +1,11 @@
 import type { CtaBlock } from '@/lib/storefront-types';
 
 export const insightsCta: CtaBlock = {
-  eyebrow: 'Partnership · 临床合作',
-  title: '探索临床研究合作与中心共建',
-  lead: '与竑宇医疗携手推进微创外科培训、真实世界数据与区域中心能力建设。',
+  eyebrow: 'Partnership · 商务合作',
+  title: '欢迎交流合作机会',
+  lead: '如需内容转载、联合发布或开展临床与市场合作，欢迎与我们进一步沟通。',
   href: '/partnership',
-  buttonLabel: '洽谈合作',
+  buttonLabel: '商务合作咨询',
 };
 
 export const insightsHero = {

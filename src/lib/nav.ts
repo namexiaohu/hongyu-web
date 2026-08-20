@@ -46,7 +46,7 @@ export const footerNav = [
   {
     title: '持续教育',
     links: [
-      { href: '/education/recordings', label: '录播课程' },
+      { href: '/course', label: '录播课程' },
       { href: '/training', label: '培训计划' },
       { href: '/summit', label: '行业峰会' },
     ],

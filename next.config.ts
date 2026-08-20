@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
         destination: '/training',
         permanent: true,
       },
+      {
+        source: '/education/recordings',
+        destination: '/course',
+        permanent: true,
+      },
     ];
   },
 };

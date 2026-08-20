@@ -7,9 +7,9 @@ export const solutionsHero: ListHero = {
 };
 
 export const solutionsCta: CtaBlock = {
-  eyebrow: 'Solutions · Partnership',
-  title: 'Need a tailored clinical solution?',
-  lead: 'Our technical team can support product selection, procedure planning, and application training for your hospital.',
+  eyebrow: 'Partnership · 商务合作',
+  title: '寻找合适的产品合作方式？',
+  lead: '欢迎就产品引进、临床落地与长期合作进行沟通，我们期待与您携手服务更多医院与机构。',
   href: '/partnership',
-  buttonLabel: 'Talk to our partnership team',
+  buttonLabel: '商务合作咨询',
 };

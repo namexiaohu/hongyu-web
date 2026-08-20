@@ -9,6 +9,7 @@ import { StaticInteractions } from '@/components/layout/static-interactions';
 import type { StorefrontCompanyBranding } from '@/lib/storefront-company';
 import type { StorefrontLanguage } from '@/lib/storefront-languages';
 import type { StorefrontSocialChannel } from '@/lib/storefront-social-media';
+import type { StorefrontNavColumn } from '@/lib/storefront-website-config-api';
 
 type SiteFrameProps = {
   children: ReactNode;
@@ -16,6 +17,7 @@ type SiteFrameProps = {
   locale: string;
   branding?: StorefrontCompanyBranding;
   socialChannels?: StorefrontSocialChannel[];
+  navColumns: StorefrontNavColumn[];
 };
 
 const PAGE_CLASS: Record<string, string> = {
@@ -25,7 +27,7 @@ const PAGE_CLASS: Record<string, string> = {
   '/centers': 'page-centers',
   '/insights': 'page-article-list',
   '/summit': 'page-summit',
-  '/education/recordings': 'page-recordings',
+  '/course': 'page-recordings',
   '/contact': 'page-contact',
   '/partnership': 'page-partnership',
   '/company': 'page-company',
@@ -43,7 +45,14 @@ function pageClassFromPath(pathname: string) {
   return PAGE_CLASS[pathname] ?? '';
 }
 
-export function SiteFrame({ children, languages, locale, branding, socialChannels = [] }: SiteFrameProps) {
+export function SiteFrame({
+  children,
+  languages,
+  locale,
+  branding,
+  socialChannels = [],
+  navColumns,
+}: SiteFrameProps) {
   const pathname = usePathname();
   const overlay = pathname === '/';
   const dark =
@@ -59,11 +68,17 @@ export function SiteFrame({ children, languages, locale, branding, socialChannel
 
   return (
     <div className={shellClass}>
-      <SiteHeader overlay={overlay} dark={dark} languages={languages} locale={locale} />
+      <SiteHeader
+        overlay={overlay}
+        dark={dark}
+        languages={languages}
+        locale={locale}
+        navColumns={navColumns}
+      />
       <main id="content" className={pageClass || undefined}>
         {children}
       </main>
-      <SiteFooter dark={dark} branding={branding} socialChannels={socialChannels} />
+      <SiteFooter dark={dark} branding={branding} socialChannels={socialChannels} navColumns={navColumns} />
       <StaticInteractions />
     </div>
   );

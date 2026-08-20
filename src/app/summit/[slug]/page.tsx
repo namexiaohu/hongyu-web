@@ -231,9 +231,9 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
             <div className="cta-inner">
               <p className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 'var(--space-4)' }}>Register · 参会报名</p>
               <h2>立即报名参会</h2>
-              <p>名额有限，认证术者优先。如需参会或了解更多信息，请通过联系页面与我们取得联系，会务团队将在 3 个工作日内回复。</p>
+              <p>名额有限，欢迎通过联系页面提交报名意向，会务团队将在 3 个工作日内与您确认。</p>
               <Link href="/contact" className="btn-cta">
-                联系我们
+                立即报名
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

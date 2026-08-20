@@ -88,12 +88,14 @@ export async function getStorefrontSolutionsList(input?: {
   category?: string | null;
   page?: number;
   pageSize?: number;
+  sort?: 'sortOrder' | 'createdAt';
   locale?: string;
 }): Promise<StorefrontSolutionListResponse> {
   const params = new URLSearchParams();
   if (input?.category?.trim()) params.set('board', input.category.trim());
   if (input?.page) params.set('page', String(input.page));
   if (input?.pageSize) params.set('pageSize', String(input.pageSize));
+  if (input?.sort) params.set('sort', input.sort);
   const query = params.toString();
   return serverFetch<StorefrontSolutionListResponse>(
     `/api/front/solutions${query ? `?${query}` : ''}`,

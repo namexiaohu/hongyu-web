@@ -87,12 +87,12 @@ export default async function Page() {
         <div className="container">
           <div className="cta-strip">
             <p className="eyebrow" style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 'var(--space-4)' }}>
-              Join · 加入认证体系
+              Partnership · 商务合作
             </p>
-            <h2>成为竑宇认证术者</h2>
-            <p className="lead">参加系统化培训与考核，获取 V-CLAMP 等产品操作认证资质。</p>
+            <h2>加入竑宇专业合作网络</h2>
+            <p className="lead">欢迎临床机构与术者与我们建立合作，共同推进专业交流与产品落地。</p>
             <Link href="/partnership" className="btn-cta-white">
-              申请认证培训
+              商务合作咨询
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </Link>
           </div>
