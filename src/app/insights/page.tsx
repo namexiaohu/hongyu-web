@@ -14,7 +14,7 @@ import {
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
 export const metadata: Metadata = {
-  title: '前沿资讯 · 竑宇医疗',
+  title: '前沿资讯',
   description: insightsHero.lead || DEFAULT_SEO_TITLE,
 };
 

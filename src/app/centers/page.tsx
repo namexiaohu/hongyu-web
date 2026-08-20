@@ -11,7 +11,7 @@ import {
 } from '@/lib/storefront-partner-centers-api';
 
 export const metadata: Metadata = {
-  title: '合作中心 · 竑宇医疗',
+  title: '合作中心',
   description: DEFAULT_SEO_TITLE,
 };
 

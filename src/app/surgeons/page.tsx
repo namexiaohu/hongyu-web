@@ -7,7 +7,7 @@ import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontSurgeonsList, type StorefrontSurgeonItem } from '@/lib/storefront-surgeons-api';
 
 export const metadata: Metadata = {
-  title: '认证术者 · 竑宇医疗',
+  title: '认证术者',
   description: DEFAULT_SEO_TITLE,
 };
 

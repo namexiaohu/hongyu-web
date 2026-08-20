@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
 export const metadata: Metadata = {
-  title: '海外社媒 · 竑宇医疗',
+  title: '海外社媒',
   description: DEFAULT_SEO_TITLE,
 };
 

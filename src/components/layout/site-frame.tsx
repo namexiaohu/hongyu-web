@@ -6,12 +6,14 @@ import { type ReactNode } from 'react';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { StaticInteractions } from '@/components/layout/static-interactions';
+import type { StorefrontCompanyBranding } from '@/lib/storefront-company';
 import type { StorefrontLanguage } from '@/lib/storefront-languages';
 
 type SiteFrameProps = {
   children: ReactNode;
   languages: StorefrontLanguage[];
   locale: string;
+  branding?: StorefrontCompanyBranding;
 };
 
 const PAGE_CLASS: Record<string, string> = {
@@ -39,7 +41,7 @@ function pageClassFromPath(pathname: string) {
   return PAGE_CLASS[pathname] ?? '';
 }
 
-export function SiteFrame({ children, languages, locale }: SiteFrameProps) {
+export function SiteFrame({ children, languages, locale, branding }: SiteFrameProps) {
   const pathname = usePathname();
   const overlay = pathname === '/';
   const dark =
@@ -59,7 +61,7 @@ export function SiteFrame({ children, languages, locale }: SiteFrameProps) {
       <main id="content" className={pageClass || undefined}>
         {children}
       </main>
-      <SiteFooter dark={dark} />
+      <SiteFooter dark={dark} branding={branding} />
       <StaticInteractions />
     </div>
   );

@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 
 import { HomeStatic } from '@/components/home/home-static';
-import { DEFAULT_SEO_DESCRIPTION, DEFAULT_SEO_TITLE } from '@/lib/site-config';
+import { DEFAULT_SEO_DESCRIPTION } from '@/lib/site-config';
 
 export const metadata: Metadata = {
-  title: DEFAULT_SEO_TITLE,
   description: DEFAULT_SEO_DESCRIPTION,
 };
 

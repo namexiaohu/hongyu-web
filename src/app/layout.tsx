@@ -3,7 +3,8 @@ import { Inter, JetBrains_Mono, Montserrat } from 'next/font/google';
 
 import { SiteFrame } from '@/components/layout/site-frame';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
-import { DEFAULT_SEO_DESCRIPTION, DEFAULT_SEO_TITLE } from '@/lib/site-config';
+import { DEFAULT_SEO_DESCRIPTION, DEFAULT_SEO_TITLE, SITE_BRAND } from '@/lib/site-config';
+import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 
 import './globals.css';
 
@@ -28,18 +29,39 @@ const montserrat = Montserrat({
   weight: ['700', '900'],
 });
 
-export const metadata: Metadata = {
-  title: DEFAULT_SEO_TITLE,
-  description: DEFAULT_SEO_DESCRIPTION,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale } = await getStorefrontLocaleContext();
+  const company = await getStorefrontCompanyProfile(locale);
+  const name = company.companyName.trim() || SITE_BRAND;
+
+  return {
+    title: {
+      default: company.companyName.trim() || DEFAULT_SEO_TITLE,
+      template: `%s · ${name}`,
+    },
+    description: company.positioning.trim() || DEFAULT_SEO_DESCRIPTION,
+  };
+}
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const { locale, languages, htmlLang, direction } = await getStorefrontLocaleContext();
+  const company = await getStorefrontCompanyProfile(locale);
 
   return (
     <html lang={htmlLang} dir={direction} className={`${inter.variable} ${jetbrains.variable} ${montserrat.variable}`}>
       <body>
-        <SiteFrame languages={languages} locale={locale}>{children}</SiteFrame>
+        <SiteFrame
+          languages={languages}
+          locale={locale}
+          branding={{
+            companyName: company.companyName,
+            positioning: company.positioning,
+            copyright: company.copyright,
+            icpNumber: company.icpNumber,
+          }}
+        >
+          {children}
+        </SiteFrame>
       </body>
     </html>
   );

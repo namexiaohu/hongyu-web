@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
 export const metadata: Metadata = {
-  title: '商务合作 · 竑宇医疗',
+  title: '商务合作',
   description: DEFAULT_SEO_TITLE,
 };
 

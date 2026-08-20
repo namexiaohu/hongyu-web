@@ -4,8 +4,14 @@ import { HongyuLogo } from '@/components/layout/hongyu-logo';
 import { SocialLinks } from '@/components/shared/social-links';
 import { footerNav } from '@/lib/nav';
 import { socialLinks } from '@/lib/social-links';
+import type { StorefrontCompanyBranding } from '@/lib/storefront-company';
 
-export function SiteFooter({ dark = false }: { dark?: boolean }) {
+type SiteFooterProps = {
+  dark?: boolean;
+  branding?: StorefrontCompanyBranding;
+};
+
+export function SiteFooter({ dark = false, branding }: SiteFooterProps) {
   return (
     <footer className={dark ? 'pagefoot pagefoot-dark' : 'pagefoot'}>
       <div className="container">
@@ -14,7 +20,7 @@ export function SiteFooter({ dark = false }: { dark?: boolean }) {
             <div className="fb-name">
               <HongyuLogo light={dark} />
             </div>
-            <p>引领宠物医疗器械创新，以工程技术守护动物生命健康。</p>
+            {branding?.positioning ? <p>{branding.positioning}</p> : null}
             <SocialLinks links={socialLinks} variant="footer" />
           </div>
           {footerNav.map((column) => (
@@ -31,8 +37,8 @@ export function SiteFooter({ dark = false }: { dark?: boolean }) {
           ))}
         </div>
         <div className="footer-bottom">
-          <span>© 2026 竑宇医疗 HONGYU Medical. All rights reserved.</span>
-          <span>沪 ICP 备 XXXXXXXX 号</span>
+          {branding?.copyright ? <span>{branding.copyright}</span> : <span />}
+          {branding?.icpNumber ? <span>{branding.icpNumber}</span> : null}
         </div>
       </div>
     </footer>

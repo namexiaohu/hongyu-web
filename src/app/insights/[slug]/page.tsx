@@ -16,11 +16,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const article = await getStorefrontInsightBySlug(slug, locale);
 
   if (!article) {
-    return { title: DEFAULT_SEO_TITLE };
+    return { title: 'Not Found' };
   }
 
   return {
-    title: article.seo.title?.trim() || `${article.title} · 竑宇医疗`,
+    title: article.seo.title?.trim() || article.title,
     description: article.seo.description?.trim() || article.summary || DEFAULT_SEO_TITLE,
   };
 }

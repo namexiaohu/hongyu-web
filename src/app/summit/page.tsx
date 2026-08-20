@@ -5,7 +5,7 @@ import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { type StorefrontSummitItem, getStorefrontSummitsList } from '@/lib/storefront-summits-api';
 
 export const metadata: Metadata = {
-  title: '行业峰会 · 竑宇医疗',
+  title: '行业峰会',
   description: DEFAULT_SEO_TITLE,
 };
 

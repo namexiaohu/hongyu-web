@@ -11,7 +11,7 @@ import {
 } from '@/lib/storefront-solutions-api';
 
 export const metadata: Metadata = {
-  title: 'Solutions · Hongyu Medical',
+  title: 'Solutions',
   description: solutionsHero.lead || DEFAULT_SEO_TITLE,
 };
 
