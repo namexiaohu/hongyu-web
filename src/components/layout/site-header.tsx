@@ -41,7 +41,7 @@ export function SiteHeader({ overlay, dark = false, languages, locale }: SiteHea
   return (
     <header className={className} id="topnav">
       <div className="container topnav-inner">
-        <HongyuLogoLink light={dark} />
+        <HongyuLogoLink light={dark || transparentOverlay} />
         <nav>
           {headerNav.map((item) => {
             const active =
