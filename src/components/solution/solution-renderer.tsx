@@ -1,9 +1,20 @@
+import Link from 'next/link';
+
 import { ValueCardIconSvg } from '@/components/brand-narrative/section-icons';
 import type { StorefrontSolutionSection } from '@/lib/storefront-solutions-api';
 import type { ValueCardIcon } from '@/lib/storefront-types';
 
 function asString(value: unknown, fallback = '') {
   return typeof value === 'string' ? value : fallback;
+}
+
+function productCoverFromCard(card: Record<string, unknown>) {
+  const cover = card.cover ?? card.coverImage;
+  if (typeof cover === 'string') return cover;
+  if (cover && typeof cover === 'object' && 'url' in cover) {
+    return asString((cover as { url?: unknown }).url);
+  }
+  return '';
 }
 
 function SplitSection({ section }: { section: StorefrontSolutionSection }) {
@@ -131,6 +142,53 @@ function SpecTableSection({ section }: { section: StorefrontSolutionSection }) {
   );
 }
 
+function ProductModelsSection({ section }: { section: StorefrontSolutionSection }) {
+  const products = Array.isArray(section.products)
+    ? (section.products as Array<Record<string, unknown>>)
+    : Array.isArray(section.items)
+      ? (section.items as Array<Record<string, unknown>>)
+      : [];
+  const cards = products.filter((card) => asString(card.slug));
+  if (!cards.length) return null;
+  const lead = asString(section.lead) || asString(section.body) || asString(section.description);
+
+  return (
+    <section className="section" data-od-id={asString(section.id, 'products')}>
+      <div className="container">
+        <div className="section-header">
+          {asString(section.eyebrow) ? <p className="eyebrow">{asString(section.eyebrow)}</p> : null}
+          {asString(section.title) ? <h2>{asString(section.title)}</h2> : null}
+          {lead ? <p className="lead">{lead}</p> : null}
+        </div>
+        <div className="grid-3">
+          {cards.map((card) => {
+            const slug = asString(card.slug);
+            const name = asString(card.name, slug);
+            const cover = productCoverFromCard(card);
+            const badge = asString(card.badgeText);
+            const extra = asString(card.extraText);
+            const desc = asString(card.shortDescription);
+            return (
+              <Link key={slug} href={`/products/${slug}`} className="product-item-card">
+                <div className="pic-img">
+                  {cover ? <img src={cover} alt={name} /> : null}
+                  {badge ? <span className="pic-badge">{badge}</span> : null}
+                </div>
+                <div className="pic-body">
+                  <div className="pic-name">{name}</div>
+                  {extra ? <div className="pic-spec">{extra}</div> : null}
+                  {desc ? <div className="pic-desc">{desc}</div> : null}
+                  <div className="pic-link">View details →</div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function SolutionRenderer({ sections }: { sections: StorefrontSolutionSection[] }) {
   return (
     <>
@@ -144,6 +202,9 @@ export function SolutionRenderer({ sections }: { sections: StorefrontSolutionSec
         }
         if (section.type === 'spec-table') {
           return <SpecTableSection key={key} section={section} />;
+        }
+        if (section.type === 'product-models' || section.type === 'relatedProducts') {
+          return <ProductModelsSection key={key} section={section} />;
         }
         return null;
       })}

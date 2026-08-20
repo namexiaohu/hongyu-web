@@ -23,9 +23,9 @@ export const footerNav = [
     title: '解决方案',
     links: [
       { href: '/solutions/v-clamp', label: 'V-CLAMP' },
-      { href: '/solutions?line=sports', label: '运动医学' },
-      { href: '/solutions?line=cardio', label: '心脏起搏器' },
-      { href: '/solutions?line=pipeline', label: '在研产品' },
+      { href: '/solutions/sports-medicine', label: '运动医学' },
+      { href: '/solutions/pacemaker', label: '心脏起搏器' },
+      { href: '/solutions/in-research', label: '在研产品' },
     ],
   },
   {
