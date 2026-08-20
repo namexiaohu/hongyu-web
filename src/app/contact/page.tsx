@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
+import { ContactInquiryForm } from '@/components/contact/contact-inquiry-form';
 import { telHref } from '@/lib/contact-display';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -108,53 +109,7 @@ export default async function Page() {
         <div className="contact-form-wrap">
           <h2>发送消息</h2>
           <p className="cf-sub">填写以下信息，我们将尽快与您联系。</p>
-          <form>
-            <div className="form-row">
-              <div className="form-group">
-                <label>姓名 <span className="required">*</span></label>
-                <input type="text" className="form-input" placeholder="您的姓名" required />
-              </div>
-              <div className="form-group">
-                <label>医院 / 机构</label>
-                <input type="text" className="form-input" placeholder="所在医院或机构名称" />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>邮箱 <span className="required">*</span></label>
-                <input type="email" className="form-input" placeholder="your@email.com" required />
-              </div>
-              <div className="form-group">
-                <label>电话</label>
-                <input type="tel" className="form-input" placeholder="联系电话" />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group full">
-                <label>咨询类型</label>
-                <select className="form-input">
-                  <option value="">请选择咨询类型</option>
-                  <option>产品咨询</option>
-                  <option>技术支持</option>
-                  <option>培训认证</option>
-                  <option>售后服务</option>
-                  <option>其他</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group full">
-                <label>留言内容 <span className="required">*</span></label>
-                <textarea className="form-input" placeholder="请描述您的需求或问题..." required />
-              </div>
-            </div>
-            <button type="submit" className="form-submit">
-              提交留言
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
-          </form>
+          <ContactInquiryForm />
         </div>
       </section>
     </>

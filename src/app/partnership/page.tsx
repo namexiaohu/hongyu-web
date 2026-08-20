@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { PartnershipInquiryForm } from '@/components/partnership/partnership-inquiry-form';
 import { escapeHtml, telHref } from '@/lib/contact-display';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
@@ -31,12 +32,38 @@ function partnershipContactsHtml(hotline: string, email: string) {
   return blocks.join('\n            ');
 }
 
+function partnershipFormInfoHtml(contacts: string) {
+  return `<p class="eyebrow">Inquiry · 合作询盘</p>
+            <h2>填写合作意向</h2>
+            <p>我们的商务团队将在 2 个工作日内审阅您的信息，并由专属客户经理与您联系。</p>
+            <ul class="fi-list">
+              <li>提供详细的公司背景与业务需求，有助于我们更快匹配合作方案</li>
+              <li>所有信息严格保密，仅用于商务沟通目的</li>
+              <li>如需紧急沟通，请直接拨打商务热线</li>
+            </ul>
+            ${contacts}`;
+}
+
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
   const company = await getStorefrontCompanyProfile(locale);
-  const markup = html.replace(
-    '__PARTNERSHIP_CONTACTS__',
-    partnershipContactsHtml(company.businessHotline.trim(), company.businessEmail.trim()),
+  const upperHtml = html.split('<!-- FORM SECTION -->')[0];
+  const contacts = partnershipContactsHtml(company.businessHotline.trim(), company.businessEmail.trim());
+
+  return (
+    <>
+      <div dangerouslySetInnerHTML={{ __html: upperHtml }} />
+      <section className="form-section" data-od-id="form">
+        <div className="container">
+          <div className="form-layout">
+            <div
+              className="form-info"
+              dangerouslySetInnerHTML={{ __html: partnershipFormInfoHtml(contacts) }}
+            />
+            <PartnershipInquiryForm />
+          </div>
+        </div>
+      </section>
+    </>
   );
-  return <div dangerouslySetInnerHTML={{ __html: markup }} />;
 }
