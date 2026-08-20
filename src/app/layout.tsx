@@ -5,6 +5,7 @@ import { SiteFrame } from '@/components/layout/site-frame';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_DESCRIPTION, DEFAULT_SEO_TITLE, SITE_BRAND } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
+import { getStorefrontSocialMedia } from '@/lib/storefront-social-media-api';
 
 import './globals.css';
 
@@ -46,6 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const { locale, languages, htmlLang, direction } = await getStorefrontLocaleContext();
   const company = await getStorefrontCompanyProfile(locale);
+  const socialMedia = await getStorefrontSocialMedia(locale);
 
   return (
     <html lang={htmlLang} dir={direction} className={`${inter.variable} ${jetbrains.variable} ${montserrat.variable}`}>
@@ -59,6 +61,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             copyright: company.copyright,
             icpNumber: company.icpNumber,
           }}
+          socialChannels={socialMedia.socialChannels}
         >
           {children}
         </SiteFrame>

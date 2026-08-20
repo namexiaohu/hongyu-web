@@ -1,17 +1,18 @@
 import Link from 'next/link';
 
 import { HongyuLogo } from '@/components/layout/hongyu-logo';
-import { SocialLinks } from '@/components/shared/social-links';
+import { FooterSocialLinks } from '@/components/shared/footer-social-links';
 import { footerNav } from '@/lib/nav';
-import { socialLinks } from '@/lib/social-links';
 import type { StorefrontCompanyBranding } from '@/lib/storefront-company';
+import type { StorefrontSocialChannel } from '@/lib/storefront-social-media';
 
 type SiteFooterProps = {
   dark?: boolean;
   branding?: StorefrontCompanyBranding;
+  socialChannels?: StorefrontSocialChannel[];
 };
 
-export function SiteFooter({ dark = false, branding }: SiteFooterProps) {
+export function SiteFooter({ dark = false, branding, socialChannels = [] }: SiteFooterProps) {
   return (
     <footer className={dark ? 'pagefoot pagefoot-dark' : 'pagefoot'}>
       <div className="container">
@@ -21,7 +22,7 @@ export function SiteFooter({ dark = false, branding }: SiteFooterProps) {
               <HongyuLogo light={dark} />
             </div>
             {branding?.positioning ? <p>{branding.positioning}</p> : null}
-            <SocialLinks links={socialLinks} variant="footer" />
+            <FooterSocialLinks channels={socialChannels} />
           </div>
           {footerNav.map((column) => (
             <div className="footer-col" key={column.title}>
