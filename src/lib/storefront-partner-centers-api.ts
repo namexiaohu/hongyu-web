@@ -28,6 +28,30 @@ export type StorefrontCenterItem = {
   cooperationInfo: PartnerCenterMetric[];
 };
 
+export type StorefrontCenterSurgeon = {
+  slug: string;
+  avatar: string;
+  name: string;
+  position: string;
+  gradeKey: 'platinum' | 'gold' | 'silver';
+  gradeTitle: string;
+  certificationYear: number | null;
+  surgeryCount: number | null;
+};
+
+export type StorefrontRelatedCenter = {
+  slug: string;
+  coverImage: string;
+  name: string;
+  location: string;
+};
+
+export type StorefrontCenterDetail = StorefrontCenterItem & {
+  regionLabel: string;
+  surgeons: StorefrontCenterSurgeon[];
+  relatedCenters: StorefrontRelatedCenter[];
+};
+
 export type StorefrontCenterGroup = {
   region: CenterRegion;
   regionLabel: string;
@@ -47,9 +71,9 @@ export async function getStorefrontPartnerCentersList(locale?: string): Promise<
 export async function getStorefrontPartnerCenterBySlug(
   slug: string,
   locale?: string,
-): Promise<StorefrontCenterItem | null> {
+): Promise<StorefrontCenterDetail | null> {
   try {
-    return await serverFetch<StorefrontCenterItem>(
+    return await serverFetch<StorefrontCenterDetail>(
       `/api/front/partner-centers/${encodeURIComponent(slug)}`,
       { locale },
     );

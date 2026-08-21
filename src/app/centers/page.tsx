@@ -19,7 +19,7 @@ const locationSvg = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path
 
 function CenterCard({ center }: { center: StorefrontCenterItem }) {
   return (
-    <div className="center-card">
+    <Link href={`/centers/${center.slug}`} className="center-card">
       <div className="cc-img">
         {center.coverImage
           ? <img src={center.coverImage} alt={center.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -60,7 +60,7 @@ function CenterCard({ center }: { center: StorefrontCenterItem }) {
             {center.website ? (
               <div className="cc-detail-row">
                 <svg viewBox="0 0 24 24" fill="none" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
-                <a href={center.website} target="_blank" rel="noreferrer">{center.website.replace(/^https?:\/\//, '')}</a>
+                <span>{center.website.replace(/^https?:\/\//, '')}</span>
               </div>
             ) : null}
           </div>
@@ -71,7 +71,7 @@ function CenterCard({ center }: { center: StorefrontCenterItem }) {
           </div>
         ) : null}
       </div>
-    </div>
+    </Link>
   );
 }
 
