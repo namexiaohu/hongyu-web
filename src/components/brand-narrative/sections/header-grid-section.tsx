@@ -19,10 +19,12 @@ export function HeaderGridSectionView({ section }: HeaderGridSectionViewProps) {
           {section.cards.map((card) => {
             if (card.cardStyle === 'value') {
               return (
-                <div className="value-card" key={`${card.title}-${card.icon}`}>
-                  <div className="vc-icon">
-                    <ValueCardIconSvg icon={card.icon} />
-                  </div>
+                <div className="value-card" key={`${card.title}-${card.icon ?? 'none'}`}>
+                  {card.icon ? (
+                    <div className="vc-icon">
+                      <ValueCardIconSvg icon={card.icon} />
+                    </div>
+                  ) : null}
                   <h3>{card.title}</h3>
                   <p>{card.body}</p>
                 </div>
@@ -30,10 +32,12 @@ export function HeaderGridSectionView({ section }: HeaderGridSectionViewProps) {
             }
             if (card.cardStyle === 'cert') {
               return (
-                <div className="cert-card" key={`${card.title}-${card.icon}`}>
-                  <div className="cc-icon">
-                    <ValueCardIconSvg icon={card.icon} />
-                  </div>
+                <div className="cert-card" key={`${card.title}-${card.icon ?? 'none'}`}>
+                  {card.icon ? (
+                    <div className="cc-icon">
+                      <ValueCardIconSvg icon={card.icon} />
+                    </div>
+                  ) : null}
                   <div>
                     <h3>{card.title}</h3>
                     <p>{card.body}</p>
@@ -58,7 +62,12 @@ export function HeaderGridSectionView({ section }: HeaderGridSectionViewProps) {
                   </div>
                 ) : null}
                 <div className="innovation-card-body">
-                  <div className="ic-year">{card.year}</div>
+                  {card.icon ? (
+                    <div className="ic-icon">
+                      <ValueCardIconSvg icon={card.icon} />
+                    </div>
+                  ) : null}
+                  {card.year ? <div className="ic-year">{card.year}</div> : null}
                   <h3>{card.title}</h3>
                   <p>{card.body}</p>
                 </div>

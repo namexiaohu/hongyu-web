@@ -1452,6 +1452,16 @@
 .innovation-card-img{ height: 180px; overflow: hidden; }
 .innovation-card-img img{ width: 100%; height: 100%; object-fit: cover; display: block; }
 .innovation-card-body{ padding: var(--space-6); }
+.innovation-card-body .ic-icon{
+  width: 36px;
+  height: 36px;
+  background: var(--accent-soft, rgba(30, 58, 95, 0.08));
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--space-4);
+}
+.innovation-card-body .ic-icon svg{ width: 18px; height: 18px; stroke: var(--accent); }
 .innovation-card-body .ic-year{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
 .innovation-card-body h3{ font-size: 16px; font-weight: 600; margin-bottom: var(--space-3); }
 .innovation-card-body p{ font-size: 14px; color: var(--muted); line-height: 1.6; }

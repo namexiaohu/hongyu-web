@@ -1,10 +1,9 @@
 import Link from 'next/link';
 
-import { ValueCardIconSvg } from '@/components/brand-narrative/section-icons';
+import { ValueCardIconSvg, isValueCardIcon } from '@/components/brand-narrative/section-icons';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import type { StorefrontSolutionSection } from '@/lib/storefront-solutions-api';
-import type { ValueCardIcon } from '@/lib/storefront-types';
 
 function asString(value: unknown, fallback = '') {
   return typeof value === 'string' ? value : fallback;
@@ -107,7 +106,8 @@ function FeatureGridSection({ section }: { section: StorefrontSolutionSection })
         </div>
         <div className={grid}>
           {cards.map((card) => {
-            const icon = asString(card.icon, 'layers') as ValueCardIcon;
+            const iconRaw = asString(card.icon);
+            const icon = isValueCardIcon(iconRaw) ? iconRaw : null;
             const image = asString(card.image);
             return (
               <div className="feature-card" key={asString(card.title)}>
@@ -117,9 +117,11 @@ function FeatureGridSection({ section }: { section: StorefrontSolutionSection })
                   </div>
                 ) : null}
                 <div className="feature-card-body">
-                  <div className="fc-icon">
-                    <ValueCardIconSvg icon={icon} />
-                  </div>
+                  {icon ? (
+                    <div className="fc-icon">
+                      <ValueCardIconSvg icon={icon} />
+                    </div>
+                  ) : null}
                   <h3>{asString(card.title)}</h3>
                   <p>{asString(card.body)}</p>
                 </div>

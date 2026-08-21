@@ -91,10 +91,18 @@ export type ValueCardIcon =
   | 'activity';
 
 export type HeaderGridCard =
-  | { cardStyle: 'value'; icon: ValueCardIcon; title: string; body: string }
-  | { cardStyle: 'cert'; icon: ValueCardIcon; title: string; body: string }
+  | { cardStyle: 'value'; icon: ValueCardIcon | null; title: string; body: string }
+  | { cardStyle: 'cert'; icon: ValueCardIcon | null; title: string; body: string }
   | { cardStyle: 'outlook'; year: string; title: string; body: string }
-  | { cardStyle: 'innovation'; year: string; title: string; body: string; image: string; imageAlt?: string };
+  | {
+      cardStyle: 'innovation';
+      year: string;
+      title: string;
+      body: string;
+      image: string;
+      imageAlt?: string;
+      icon?: ValueCardIcon | null;
+    };
 
 export type HeaderGridSection = {
   type: 'header-grid';

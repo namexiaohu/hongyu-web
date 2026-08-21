@@ -112,8 +112,14 @@ const icons: Record<ValueCardIcon, ReactNode> = {
   ),
 };
 
+export function isValueCardIcon(icon: string): icon is ValueCardIcon {
+  return Object.prototype.hasOwnProperty.call(icons, icon);
+}
+
 export function ValueCardIconSvg({ icon }: { icon: ValueCardIcon | string }) {
-  return <>{icons[icon as ValueCardIcon] ?? icons.layers}</>;
+  const node = icons[icon as ValueCardIcon];
+  if (!node) return null;
+  return <>{node}</>;
 }
 
 export function CertCheckIcon() {
