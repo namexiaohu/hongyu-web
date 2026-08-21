@@ -32,8 +32,12 @@ export type SplitHero = {
   eyebrow: string;
   title: string;
   lead: string;
+  /** Cover image URL (right side when showCoverOnBackground) */
   image: string;
   imageAlt: string;
+  backgroundImage?: string;
+  backgroundSolidCss?: string;
+  showCoverOnBackground?: boolean;
 };
 
 export type DirHero = {

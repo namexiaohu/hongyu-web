@@ -36,6 +36,9 @@ export type StorefrontSolutionDetail = {
     lead: string;
     image: string;
     imageAlt: string;
+    backgroundImage: string;
+    backgroundSolidCss: string;
+    showCoverOnBackground: boolean;
   };
   stats: Array<{ value: string; label: string; suffix?: string }> | null;
   materials: StorefrontSolutionMaterial[];

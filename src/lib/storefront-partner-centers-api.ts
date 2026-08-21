@@ -11,7 +11,10 @@ export type StorefrontCenterItem = {
   slug: string;
   coverImage: string;
   logo: string;
+  backgroundMode: 'solid' | 'preset' | 'upload' | '';
   backgroundImage: string;
+  backgroundSolidCss: string;
+  showCoverOnBackground: boolean;
   region: CenterRegion;
   email: string;
   website: string;

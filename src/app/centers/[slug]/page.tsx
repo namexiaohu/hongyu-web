@@ -63,6 +63,15 @@ export default async function PartnerCenterDetailPage({ params }: PageProps) {
     ? (center.website.startsWith('http') ? center.website : `https://${center.website}`)
     : '';
 
+  const hasImageBg = Boolean(center.backgroundImage);
+  const hasSolidBg = Boolean(center.backgroundSolidCss);
+  const showHeroCover = Boolean(center.showCoverOnBackground && center.coverImage);
+  const heroClassName = [
+    'center-hero',
+    hasSolidBg && !hasImageBg ? 'is-solid-bg' : '',
+    showHeroCover ? 'has-cover' : '',
+  ].filter(Boolean).join(' ');
+
   return (
     <>
       <Breadcrumb
@@ -73,21 +82,30 @@ export default async function PartnerCenterDetailPage({ params }: PageProps) {
         ]}
       />
 
-      <section className="center-hero" data-od-id="hero">
-        {center.backgroundImage ? (
+      <section className={heroClassName} data-od-id="hero">
+        {hasImageBg ? (
           <div className="center-hero-bg">
-            <img src={center.backgroundImage} alt={center.name} />
+            <img src={center.backgroundImage} alt="" />
           </div>
+        ) : hasSolidBg ? (
+          <div className="center-hero-bg center-hero-bg-solid" style={{ background: center.backgroundSolidCss }} />
         ) : null}
         <div className="center-hero-overlay" />
         <div className="center-hero-content container">
-          {center.badgeText ? <div className="ch-type">{center.badgeText}</div> : null}
-          <div className="ch-name">{center.name}</div>
-          {center.location ? (
-            <div
-              className="ch-location"
-              dangerouslySetInnerHTML={{ __html: `${locationPinSvg}${center.location}` }}
-            />
+          <div className="center-hero-main">
+            {center.badgeText ? <div className="ch-type">{center.badgeText}</div> : null}
+            <div className="ch-name">{center.name}</div>
+            {center.location ? (
+              <div
+                className="ch-location"
+                dangerouslySetInnerHTML={{ __html: `${locationPinSvg}${center.location}` }}
+              />
+            ) : null}
+          </div>
+          {showHeroCover ? (
+            <div className="center-hero-cover">
+              <img src={center.coverImage} alt={center.name} />
+            </div>
           ) : null}
         </div>
       </section>

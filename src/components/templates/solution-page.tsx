@@ -19,10 +19,30 @@ export function SolutionPage({
   materialsHref,
   children,
 }: SolutionPageProps) {
+  const hasImageBg = Boolean(hero.backgroundImage);
+  const hasSolidBg = Boolean(hero.backgroundSolidCss);
+  const showHeroCover = Boolean(hero.showCoverOnBackground && hero.image);
+  const heroClassName = [
+    'sol-hero',
+    hasSolidBg && !hasImageBg ? 'is-solid-bg' : '',
+    showHeroCover ? 'has-cover' : '',
+  ].filter(Boolean).join(' ');
+
   return (
     <>
       <Breadcrumb items={breadcrumbs} />
-      <section className="sol-hero" data-od-id="hero">
+      <section className={heroClassName} data-od-id="hero">
+        {hasImageBg ? (
+          <div className="sol-hero-bg">
+            <img src={hero.backgroundImage} alt="" />
+          </div>
+        ) : hasSolidBg ? (
+          <div
+            className="sol-hero-bg sol-hero-bg-solid"
+            style={{ background: hero.backgroundSolidCss }}
+          />
+        ) : null}
+        <div className="sol-hero-overlay" />
         <div className="container sol-hero-content">
           <div className="sol-hero-text">
             <div className="sol-eyebrow">{hero.eyebrow}</div>
@@ -37,8 +57,8 @@ export function SolutionPage({
               </a>
             ) : null}
           </div>
-          {hero.image ? (
-            <div className="sol-hero-img">
+          {showHeroCover ? (
+            <div className="sol-hero-cover">
               <img src={hero.image} alt={hero.imageAlt} />
             </div>
           ) : null}
