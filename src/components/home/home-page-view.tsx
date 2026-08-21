@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 import { HomeAboutCarousel } from '@/components/home/home-about-carousel';
 import { HomeBannerCarousel } from '@/components/home/home-banner-carousel';
@@ -69,11 +70,92 @@ function ParagraphBlocks({ text, className }: { text: string; className?: string
   );
 }
 
-function formatAuthorLine(author: StorefrontInsightListItem['author']) {
+function MetaIcon({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <svg
+      className="home-meta-ico"
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  );
+}
+
+function UserMetaIcon() {
+  return (
+    <MetaIcon>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M20 21a8 8 0 0 0-16 0" />
+    </MetaIcon>
+  );
+}
+
+function BriefcaseMetaIcon() {
+  return (
+    <MetaIcon>
+      <rect x="2" y="7" width="20" height="14" rx="2" />
+      <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+    </MetaIcon>
+  );
+}
+
+function TagMetaIcon() {
+  return (
+    <MetaIcon>
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+      <line x1="7" y1="7" x2="7.01" y2="7" />
+    </MetaIcon>
+  );
+}
+
+function InsightAuthorMeta({ author }: { author: StorefrontInsightListItem['author'] }) {
   const name = author?.name?.trim() || '';
   const title = author?.title?.trim() || '';
-  if (name && title) return `${name} · ${title}`;
-  return name || title;
+  if (!name && !title) return null;
+
+  return (
+    <p className="log-author">
+      {name ? (
+        <span className="home-meta-item">
+          <UserMetaIcon />
+          {name}
+        </span>
+      ) : null}
+      {name && title ? <span className="home-meta-sep" aria-hidden="true">·</span> : null}
+      {title ? (
+        <span className="home-meta-item">
+          <BriefcaseMetaIcon />
+          {title}
+        </span>
+      ) : null}
+    </p>
+  );
+}
+
+function EducationExtraMeta({ text }: { text: string }) {
+  const value = text.trim();
+  if (!value) return null;
+
+  return (
+    <p className="edu-extra">
+      <span className="home-meta-item">
+        <TagMetaIcon />
+        {value}
+      </span>
+    </p>
+  );
 }
 
 type HomePageViewProps = {
@@ -183,7 +265,6 @@ export function HomePageView({ config, solutions, insights }: HomePageViewProps)
           </div>
           <div className="log-list">
             {insights.map((item) => {
-              const authorLine = formatAuthorLine(item.author);
               const dateLabel = formatInsightDate(item.publishedAt || item.createdAt);
               return (
                 <Link
@@ -199,7 +280,7 @@ export function HomePageView({ config, solutions, insights }: HomePageViewProps)
                     <div className="log-body">
                       <h3>{item.title}</h3>
                       {item.summary ? <p className="log-desc">{item.summary}</p> : null}
-                      {authorLine ? <p className="log-author">{authorLine}</p> : null}
+                      <InsightAuthorMeta author={item.author} />
                     </div>
                   </div>
                   <span className="log-tag">{item.boardName || item.boardKey}</span>
@@ -230,7 +311,7 @@ export function HomePageView({ config, solutions, insights }: HomePageViewProps)
                     {item.badgeText ? <div className="ec-type">{item.badgeText}</div> : null}
                     <h3>{item.title}</h3>
                     {item.description ? <p>{item.description}</p> : null}
-                    {item.extraText ? <p className="edu-extra">{item.extraText}</p> : null}
+                    {item.extraText ? <EducationExtraMeta text={item.extraText} /> : null}
                   </div>
                 </>
               );
