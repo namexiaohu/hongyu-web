@@ -44,6 +44,12 @@ function pageClassFromPath(pathname: string) {
   if (pathname.startsWith('/products/') && pathname !== '/products') {
     return 'page-products';
   }
+  if (pathname.startsWith('/surgeons/') && pathname !== '/surgeons') {
+    return 'page-surgeons';
+  }
+  if (pathname.startsWith('/centers/') && pathname !== '/centers') {
+    return 'page-centers';
+  }
   if (pathname === '/summit' || pathname.startsWith('/summit/')) return 'page-summit';
   return PAGE_CLASS[pathname] ?? '';
 }

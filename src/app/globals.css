@@ -1991,6 +1991,9 @@
 
     /* Surgeon Cards */
     .page-surgeons .surgeon-card{
+      display: block;
+      color: inherit;
+      text-decoration: none;
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       overflow: hidden;
@@ -2012,6 +2015,68 @@
     .page-surgeons .sc-badge.gold{ background: #fef3c7; color: #92400e; }
     .page-surgeons .sc-badge.silver{ background: #f1f5f9; color: #475569; }
     .page-surgeons .sc-badge.platinum{ background: color-mix(in oklch, var(--accent) 12%, transparent); color: var(--accent); }
+
+    /* Surgeon detail */
+    .page-surgeons .profile-hero{ padding-block: var(--space-16); border-bottom: 1px solid var(--border); }
+    .page-surgeons .profile-hero-inner{ display: grid; grid-template-columns: 200px 1fr; gap: var(--space-10); align-items: start; }
+    .page-surgeons .profile-avatar{ width: 200px; height: 200px; border-radius: var(--radius-xl); overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+    .page-surgeons .profile-avatar img{ width: 100%; height: 100%; object-fit: cover; }
+    .page-surgeons .profile-info .pi-name{ font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .page-surgeons .profile-info .pi-title{ font-size: 16px; color: var(--muted); margin-bottom: var(--space-4); }
+    .page-surgeons .profile-info .pi-badge,
+    .page-surgeons .pi-badge{ display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; margin-bottom: var(--space-6); }
+    .page-surgeons .pi-badge.platinum{ background: color-mix(in oklch, #6b4c9a 10%, transparent); color: #6b4c9a; }
+    .page-surgeons .pi-badge.gold{ background: color-mix(in oklch, #b8860b 10%, transparent); color: #b8860b; }
+    .page-surgeons .pi-badge.silver{ background: color-mix(in oklch, #64748b 8%, transparent); color: #64748b; }
+    .page-surgeons .pi-badge-sm{ font-size: 11px; padding: 3px 10px; margin: 0; }
+    .page-surgeons .profile-info .pi-stats{ display: flex; flex-wrap: wrap; gap: var(--space-6); }
+    .page-surgeons .profile-info .pi-stat{ display: flex; flex-direction: column; }
+    .page-surgeons .profile-info .pi-stat .ps-num{ font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--accent); line-height: 1; }
+    .page-surgeons .profile-info .pi-stat .ps-label{ font-size: 12px; color: var(--meta); margin-top: 4px; font-family: var(--font-mono); }
+    .page-surgeons .surgeon-detail-body{ padding-top: var(--space-16); padding-bottom: var(--space-16); }
+    .page-surgeons .two-col{ display: grid; grid-template-columns: 1fr 320px; gap: var(--space-10); }
+    .page-surgeons .surgeon-section-title{ font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-6); }
+    .page-surgeons .rich-content p{ font-size: 15px; line-height: 1.8; color: var(--fg-2); margin-bottom: var(--space-4); }
+    .page-surgeons .rich-content h3{ font-size: 18px; font-weight: 600; margin-top: var(--space-8); margin-bottom: var(--space-4); color: var(--fg); }
+    .page-surgeons .rich-content ul{ margin: var(--space-4) 0 var(--space-6) var(--space-6); list-style: none; }
+    .page-surgeons .rich-content ul li{ font-size: 15px; color: var(--fg-2); line-height: 1.7; margin-bottom: var(--space-2); padding-left: var(--space-3); position: relative; }
+    .page-surgeons .rich-content ul li::before{ content: ''; position: absolute; left: 0; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .page-surgeons .rich-content ol{ margin: var(--space-4) 0 var(--space-6) var(--space-6); list-style: decimal; }
+    .page-surgeons .rich-content a{ color: var(--accent); text-decoration: underline; }
+    .page-surgeons .rich-content img{ border-radius: var(--radius-md); margin-block: var(--space-5); }
+    .page-surgeons .sidebar-card{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-6); margin-bottom: var(--space-6); }
+    .page-surgeons .sidebar-card:last-child{ margin-bottom: 0; }
+    .page-surgeons .sidebar-card-muted{ background: var(--border-soft); }
+    .page-surgeons .sidebar-card .sc-label{ font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--meta); margin-bottom: var(--space-3); }
+    .page-surgeons .sidebar-card .sc-value{ font-size: 14px; font-weight: 500; color: var(--fg); }
+    .page-surgeons .sidebar-card .sc-value a{ color: var(--accent); }
+    .page-surgeons .sidebar-card .sc-value a:hover{ text-decoration: underline; }
+    .page-surgeons .sidebar-card .sc-meta{ font-size: 12px; color: var(--meta); margin-top: 4px; }
+    .page-surgeons .sc-centers{ display: flex; flex-direction: column; gap: var(--space-4); }
+    .page-surgeons .sc-cert-rows{ display: flex; flex-direction: column; gap: 8px; }
+    .page-surgeons .sc-cert-row{ display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .page-surgeons .sc-cert-key{ font-size: 13px; color: var(--muted); }
+    .page-surgeons .sc-cert-value{ font-size: 13px; font-weight: 500; text-align: right; }
+    .page-surgeons .sc-specialty-tags{ display: flex; flex-wrap: wrap; gap: 6px; }
+    .page-surgeons .sc-specialty-tag{ font-size: 12px; padding: 4px 10px; background: var(--accent-soft); color: var(--accent); border-radius: var(--radius-pill); font-family: var(--font-mono); }
+    .page-surgeons .sc-contact-copy{ font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: var(--space-4); }
+    .page-surgeons .sc-contact-link{ font-size: 13px; color: var(--accent); font-weight: 500; }
+    .page-surgeons .related-surgeons-section{ background: var(--border-soft); }
+    .page-surgeons .related-surgeons-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+    .page-surgeons .related-surgeon{ display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); transition: all var(--motion-fast) var(--ease-standard); text-decoration: none; color: inherit; }
+    .page-surgeons .related-surgeon:hover{ border-color: var(--accent-12); box-shadow: 0 4px 16px rgba(30,58,95,0.06); }
+    .page-surgeons .related-surgeon .rs-avatar{ width: 48px; height: 48px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--border-soft); }
+    .page-surgeons .related-surgeon .rs-avatar img{ width: 100%; height: 100%; object-fit: cover; }
+    .page-surgeons .related-surgeon .rs-name{ font-size: 14px; font-weight: 600; }
+    .page-surgeons .related-surgeon .rs-title{ font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .page-surgeons .related-surgeon .rs-grade{ margin-top: 8px; margin-bottom: 0; }
+    @media (max-width: 960px) {
+      .page-surgeons .profile-hero-inner{ grid-template-columns: 1fr; text-align: center; }
+      .page-surgeons .profile-avatar{ width: 160px; height: 160px; margin: 0 auto; }
+      .page-surgeons .profile-info .pi-stats{ justify-content: center; }
+      .page-surgeons .two-col{ grid-template-columns: 1fr; }
+      .page-surgeons .related-surgeons-grid{ grid-template-columns: 1fr; }
+    }
 
     /* Results count */
     .page-surgeons .results-info{ font-size: 13px; color: var(--meta); margin-bottom: var(--space-6); font-family: var(--font-mono); }

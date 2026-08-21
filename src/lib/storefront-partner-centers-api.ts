@@ -2,20 +2,30 @@ import { serverFetch } from '@/lib/api-client';
 
 export type CenterRegion = 'asia-pacific' | 'europe' | 'north-america' | 'latin-america' | 'middle-east-africa' | 'oceania';
 
+export type PartnerCenterMetric = {
+  label: string;
+  value: string;
+};
+
 export type StorefrontCenterItem = {
   slug: string;
   coverImage: string;
   logo: string;
+  backgroundImage: string;
   region: CenterRegion;
+  email: string;
+  website: string;
   name: string;
   description: string;
+  detailDescription: string;
   location: string;
   badgeText: string;
   address: string;
   businessHours: string;
   contact: string;
-  website: string;
   tags: string[];
+  stats: PartnerCenterMetric[];
+  cooperationInfo: PartnerCenterMetric[];
 };
 
 export type StorefrontCenterGroup = {
@@ -32,4 +42,18 @@ export type StorefrontPartnerCentersResponse = {
 
 export async function getStorefrontPartnerCentersList(locale?: string): Promise<StorefrontPartnerCentersResponse> {
   return serverFetch<StorefrontPartnerCentersResponse>('/api/front/partner-centers', { locale });
+}
+
+export async function getStorefrontPartnerCenterBySlug(
+  slug: string,
+  locale?: string,
+): Promise<StorefrontCenterItem | null> {
+  try {
+    return await serverFetch<StorefrontCenterItem>(
+      `/api/front/partner-centers/${encodeURIComponent(slug)}`,
+      { locale },
+    );
+  } catch {
+    return null;
+  }
 }

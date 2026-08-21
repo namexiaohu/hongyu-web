@@ -23,7 +23,7 @@ const badgeSymbols: Record<string, string> = {
 
 function SurgeonCard({ surgeon }: { surgeon: StorefrontSurgeonItem }) {
   return (
-    <div className="surgeon-card">
+    <Link href={`/surgeons/${surgeon.slug}`} className="surgeon-card">
       <div className="sc-header">
         <div className="sc-avatar">
           {surgeon.avatar ? <img src={surgeon.avatar} alt={surgeon.name} /> : null}
@@ -56,7 +56,7 @@ function SurgeonCard({ surgeon }: { surgeon: StorefrontSurgeonItem }) {
           </div>
         ) : null}
       </div>
-    </div>
+    </Link>
   );
 }
 
