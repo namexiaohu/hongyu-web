@@ -44,6 +44,7 @@ export type StorefrontProductDetail = {
   shortDescription?: string | null;
   description: string;
   coverImage?: StorefrontProductImage | null;
+  videoUrl?: string | null;
   gallery: StorefrontProductImage[];
   stats?: StorefrontProductStat[];
   attachments: StorefrontProductAttachment[];

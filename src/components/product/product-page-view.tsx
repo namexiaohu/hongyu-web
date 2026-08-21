@@ -1,29 +1,49 @@
 import Link from 'next/link';
 
-import { ProductGallery } from '@/components/product/product-gallery';
+import { ProductGallery, type ProductGallerySlide } from '@/components/product/product-gallery';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import {
   productCoverUrl,
   type StorefrontProductDetail,
-  type StorefrontProductImage,
 } from '@/lib/storefront-products-api';
 
-function buildGallery(product: StorefrontProductDetail): StorefrontProductImage[] {
-  const fromGallery = (product.gallery ?? []).filter((item) => item.url?.trim());
-  if (fromGallery.length) return fromGallery;
-
-  const cover = product.coverImage;
-  if (cover?.url?.trim()) {
-    return [
-      {
-        id: cover.id || `${product.id}-cover`,
-        url: cover.url,
-        alt: cover.alt || product.name,
-      },
-    ];
+function buildGallerySlides(product: StorefrontProductDetail): ProductGallerySlide[] {
+  const slides: ProductGallerySlide[] = [];
+  const videoUrl = product.videoUrl?.trim();
+  if (videoUrl) {
+    slides.push({
+      id: `${product.id}-video`,
+      url: videoUrl,
+      alt: `${product.name} video`,
+      kind: 'video',
+    });
   }
 
-  return [];
+  const cover = product.coverImage;
+  const coverUrl = cover?.url?.trim() || '';
+  if (coverUrl) {
+    slides.push({
+      id: cover.id || `${product.id}-cover`,
+      url: coverUrl,
+      alt: cover?.alt || product.name,
+      kind: 'image',
+    });
+  }
+
+  const seen = new Set(slides.map((item) => item.url));
+  for (const [index, item] of (product.gallery ?? []).entries()) {
+    const url = item.url?.trim();
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    slides.push({
+      id: item.id || `${product.id}-gallery-${index}`,
+      url,
+      alt: item.alt || product.name,
+      kind: 'image',
+    });
+  }
+
+  return slides;
 }
 
 function attachmentMeta(mimeType: string) {
@@ -42,7 +62,7 @@ export function ProductPageView({ product }: ProductPageViewProps) {
   const stats = (product.stats ?? []).filter((row) => row.label?.trim() && row.value?.trim());
   const attachments = (product.attachments ?? []).filter((item) => item.url?.trim());
   const series = (product.seriesProducts ?? []).slice(0, 3);
-  const gallery = buildGallery(product);
+  const gallery = buildGallerySlides(product);
   const solution = product.solution;
 
   const breadcrumbs = solution
@@ -90,7 +110,7 @@ export function ProductPageView({ product }: ProductPageViewProps) {
               ) : null}
             </div>
           </div>
-          <ProductGallery images={gallery} alt={product.name} />
+          <ProductGallery slides={gallery} alt={product.name} />
         </div>
       </section>
 
