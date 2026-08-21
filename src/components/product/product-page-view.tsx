@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { ProductGallery, type ProductGallerySlide } from '@/components/product/product-gallery';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
+import { SplitBackgroundHero } from '@/components/shared/split-background-hero';
 import {
   productCoverUrl,
   type StorefrontProductDetail,
@@ -9,6 +10,7 @@ import {
 
 function buildGallerySlides(product: StorefrontProductDetail): ProductGallerySlide[] {
   const slides: ProductGallerySlide[] = [];
+
   const videoUrl = product.videoUrl?.trim();
   if (videoUrl) {
     slides.push({
@@ -63,6 +65,7 @@ export function ProductPageView({ product }: ProductPageViewProps) {
   const attachments = (product.attachments ?? []).filter((item) => item.url?.trim());
   const series = (product.seriesProducts ?? []).slice(0, 3);
   const gallery = buildGallerySlides(product);
+  const showHeroMedia = Boolean(product.showCoverOnBackground && gallery.length);
   const solution = product.solution;
 
   const breadcrumbs = solution
@@ -81,38 +84,41 @@ export function ProductPageView({ product }: ProductPageViewProps) {
     <>
       <Breadcrumb items={breadcrumbs} />
 
-      <section className="product-hero" data-od-id="hero">
-        <div className="container product-hero-content">
-          <div className="product-hero-text">
-            {product.badgeText?.trim() ? <div className="ph-badge">{product.badgeText}</div> : null}
-            <h1>{product.name}</h1>
-            {product.shortDescription?.trim() ? (
-              <p className="ph-subtitle">{product.shortDescription}</p>
-            ) : null}
-            {product.extraText?.trim() ? (
-              <div className="ph-key-specs">
-                <span className="ph-key-spec">{product.extraText}</span>
-              </div>
-            ) : null}
-            <div className="product-hero-actions">
-              {stats.length ? (
-                <a href="#specs" className="btn-hero-primary">
-                  View specifications
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </a>
-              ) : null}
-              {attachments.length ? (
-                <a href="#downloads" className={stats.length ? 'btn-hero-secondary' : 'btn-hero-primary'}>
-                  Get product materials
-                </a>
-              ) : null}
+      <SplitBackgroundHero
+        className="product-hero"
+        backgroundImage={product.backgroundImage}
+        backgroundSolidCss={product.backgroundSolidCss}
+        showCover={showHeroMedia}
+        coverSlot={showHeroMedia ? <ProductGallery slides={gallery} alt={product.name} /> : undefined}
+      >
+        <div className="product-hero-text">
+          {product.badgeText?.trim() ? <div className="ph-badge">{product.badgeText}</div> : null}
+          <h1>{product.name}</h1>
+          {product.shortDescription?.trim() ? (
+            <p className="ph-subtitle">{product.shortDescription}</p>
+          ) : null}
+          {product.extraText?.trim() ? (
+            <div className="ph-key-specs">
+              <span className="ph-key-spec">{product.extraText}</span>
             </div>
+          ) : null}
+          <div className="product-hero-actions">
+            {stats.length ? (
+              <a href="#specs" className="btn-hero-primary">
+                View specifications
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            ) : null}
+            {attachments.length ? (
+              <a href="#downloads" className={stats.length ? 'btn-hero-secondary' : 'btn-hero-primary'}>
+                Get product materials
+              </a>
+            ) : null}
           </div>
-          <ProductGallery slides={gallery} alt={product.name} />
         </div>
-      </section>
+      </SplitBackgroundHero>
 
       {product.description?.trim() ? (
         <section className="section" data-od-id="overview">

@@ -46,6 +46,9 @@ export type StorefrontProductDetail = {
   coverImage?: StorefrontProductImage | null;
   videoUrl?: string | null;
   gallery: StorefrontProductImage[];
+  backgroundImage?: string;
+  backgroundSolidCss?: string;
+  showCoverOnBackground?: boolean;
   stats?: StorefrontProductStat[];
   attachments: StorefrontProductAttachment[];
   seriesProducts?: StorefrontSeriesProduct[];
