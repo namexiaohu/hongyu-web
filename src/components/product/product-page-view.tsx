@@ -23,7 +23,7 @@ function buildGallerySlides(product: StorefrontProductDetail): ProductGallerySli
   const coverUrl = cover?.url?.trim() || '';
   if (coverUrl) {
     slides.push({
-      id: cover.id || `${product.id}-cover`,
+      id: cover?.id || `${product.id}-cover`,
       url: coverUrl,
       alt: cover?.alt || product.name,
       kind: 'image',

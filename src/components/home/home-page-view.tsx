@@ -1,45 +1,13 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { GlobalPartnerMap, type GlobalMapCenter } from '@/components/home/global-partner-map';
 import { HomeAboutCarousel } from '@/components/home/home-about-carousel';
 import { HomeBannerCarousel } from '@/components/home/home-banner-carousel';
 import { formatInsightDate, insightHref } from '@/lib/insights';
 import type { StorefrontHomepageConfig } from '@/lib/storefront-homepage-api';
 import type { StorefrontInsightListItem } from '@/lib/storefront-insights-api';
 import type { StorefrontSolutionListItem } from '@/lib/storefront-solutions-api';
-
-const GLOBAL_CARDS = [
-  {
-    region: '亚太地区',
-    title: '亚太合作中心',
-    body: '覆盖中国、日本、韩国、东南亚等地区，建立区域技术培训与临床支持体系。',
-  },
-  {
-    region: '欧洲',
-    title: '欧洲认证网络',
-    body: '与多国权威兽医学会合作，推动产品 CE 认证及区域临床指南制定。',
-  },
-  {
-    region: '北美',
-    title: '北美市场拓展',
-    body: 'FDA 注册进程推进中，与当地头部动物医疗集团建立战略合作关系。',
-  },
-  {
-    region: '认证体系',
-    title: '认证术者计划',
-    body: '系统化培训与考核体系，确保每一位术者掌握标准操作流程与最佳实践。',
-  },
-  {
-    region: '学术合作',
-    title: '合作中心医院',
-    body: '与全球 50+ 动物医院共建临床研究中心，持续产出循证医学证据。',
-  },
-  {
-    region: '产业生态',
-    title: '海外媒体矩阵',
-    body: '多语言内容传播体系，面向全球兽医从业者传递最新技术动态与临床案例。',
-  },
-] as const;
 
 function MultilineTitle({ text, as: Tag = 'h2' }: { text: string; as?: 'h1' | 'h2' }) {
   const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean);
@@ -162,9 +130,10 @@ type HomePageViewProps = {
   config: StorefrontHomepageConfig;
   solutions: StorefrontSolutionListItem[];
   insights: StorefrontInsightListItem[];
+  partnerCenters: GlobalMapCenter[];
 };
 
-export function HomePageView({ config, solutions, insights }: HomePageViewProps) {
+export function HomePageView({ config, solutions, insights, partnerCenters }: HomePageViewProps) {
   return (
     <>
       <HomeBannerCarousel
@@ -240,15 +209,7 @@ export function HomePageView({ config, solutions, insights }: HomePageViewProps)
             {config.globalTitle ? <h2>{config.globalTitle}</h2> : null}
             {config.globalDescription ? <p className="lead">{config.globalDescription}</p> : null}
           </div>
-          <div className="grid-3">
-            {GLOBAL_CARDS.map((card) => (
-              <div key={card.title} className="global-card">
-                <div className="gc-region">{card.region}</div>
-                <h3>{card.title}</h3>
-                <p>{card.body}</p>
-              </div>
-            ))}
-          </div>
+          <GlobalPartnerMap centers={partnerCenters} />
         </div>
       </section>
 

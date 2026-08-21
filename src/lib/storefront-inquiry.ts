@@ -1,3 +1,5 @@
+import { apiFetch } from '@/lib/api-client';
+
 export const CONTACT_INQUIRY_TYPE = '联系我们';
 export const PARTNERSHIP_INQUIRY_TYPE = '商务合作';
 
@@ -27,14 +29,14 @@ export type StorefrontInquiryPayload = {
 };
 
 export async function submitStorefrontInquiry(payload: StorefrontInquiryPayload) {
-  const response = await fetch('/api/inquiries', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const data = (await response.json().catch(() => null)) as { message?: string } | null;
-  if (!response.ok) {
-    throw new Error(data?.message || '提交失败，请稍后重试');
+  try {
+    await apiFetch('/api/front/inquiries', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '提交失败，请稍后重试';
+    // apiFetch 会附带 "(status) url"，表单侧只展示可读文案
+    throw new Error(message.replace(/\s*\(\d+\)\s+\S+$/, '') || '提交失败，请稍后重试');
   }
 }
