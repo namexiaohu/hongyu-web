@@ -39,6 +39,8 @@ export type StorefrontSolutionDetail = {
     backgroundImage: string;
     backgroundSolidCss: string;
     showCoverOnBackground: boolean;
+    videoUrl?: string;
+    gallery?: Array<{ url: string; alt?: string }>;
   };
   stats: Array<{ value: string; label: string; suffix?: string }> | null;
   materials: StorefrontSolutionMaterial[];

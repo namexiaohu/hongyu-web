@@ -1,3 +1,5 @@
+import { ProductGallery } from '@/components/product/product-gallery';
+import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import type { SplitContentSection } from '@/lib/storefront-types';
 
 type SplitContentSectionViewProps = {
@@ -12,13 +14,24 @@ export function SplitContentSectionView({ section }: SplitContentSectionViewProp
   const listClass = isRd ? 'rd-list' : 'team-list';
   const imageRight = section.imagePosition === 'right';
 
+  const slides = buildHeroMediaSlides({
+    id: section.id || 'split',
+    name: section.imageAlt || section.title,
+    videoUrl: section.videoUrl,
+    gallery: section.gallery?.length
+      ? section.gallery
+      : section.image
+        ? [{ url: section.image, alt: section.imageAlt }]
+        : [],
+  });
+
   return (
     <section className="section" data-od-id={section.id}>
       <div className="container">
         <div className={`content-split ${splitClass}${imageRight ? ' is-image-right' : ''}`}>
-          {section.image ? (
+          {slides.length ? (
             <div className={`content-split-img ${imageClass}`}>
-              <img src={section.image} alt={section.imageAlt} />
+              <ProductGallery slides={slides} alt={section.imageAlt || section.title} />
             </div>
           ) : null}
           <div className={`content-split-text ${textClass}`}>

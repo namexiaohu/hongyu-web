@@ -1357,6 +1357,85 @@
   object-fit: cover;
   display: block;
 }
+.content-split-img .product-hero-gallery,
+.clinical-img .product-hero-gallery{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.content-split-img .product-hero-img,
+.clinical-img .product-hero-img{
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: rgba(15, 23, 42, 0.04);
+}
+.content-split-img .product-hero-img img,
+.content-split-img .product-hero-img video,
+.clinical-img .product-hero-img img,
+.clinical-img .product-hero-img video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.content-split-img .product-hero-img--video video,
+.clinical-img .product-hero-img--video video{
+  object-fit: contain;
+  background: #000;
+}
+.content-split-img .product-hero-img--empty,
+.clinical-img .product-hero-img--empty{
+  display: grid;
+  place-items: center;
+}
+.content-split-img .product-hero-img--empty svg,
+.clinical-img .product-hero-img--empty svg{
+  width: 48px;
+  height: 48px;
+  stroke: rgba(15, 23, 42, 0.28);
+}
+.content-split-img .product-gallery-nav,
+.clinical-img .product-gallery-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  z-index: 2;
+}
+.content-split-img .product-gallery-nav--prev,
+.clinical-img .product-gallery-nav--prev{ left: 12px; }
+.content-split-img .product-gallery-nav--next,
+.clinical-img .product-gallery-nav--next{ right: 12px; }
+.content-split-img .product-gallery-dots,
+.clinical-img .product-gallery-dots{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 2;
+}
+.content-split-img .product-gallery-dot,
+.clinical-img .product-gallery-dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.28);
+}
+.content-split-img .product-gallery-dot.is-active,
+.clinical-img .product-gallery-dot.is-active{ background: var(--accent); }
+.content-split-img .product-gallery-dot.is-video,
+.clinical-img .product-gallery-dot.is-video{ width: 18px; border-radius: 999px; }
 .content-split.is-image-right .content-split-img{ order: 2; }
 .content-split.is-image-right .content-split-text{ order: 1; }
 .content-split-text p{ font-size: 15px; line-height: 1.7; color: var(--fg-2); margin-bottom: var(--space-4); }
@@ -1517,7 +1596,58 @@
   background: transparent;
   overflow: visible;
 }
-.split-bg-hero-cover.has-slot .product-hero-gallery{ width: 100%; }
+.split-bg-hero-cover.has-slot .product-hero-gallery{ width: 100%; position: relative; }
+.split-bg-hero-cover.has-slot .product-hero-img{
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: rgba(255,255,255,0.08);
+}
+.split-bg-hero-cover.has-slot .product-hero-img img,
+.split-bg-hero-cover.has-slot .product-hero-img video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.split-bg-hero-cover.has-slot .product-hero-img--video video{ object-fit: contain; background: #000; }
+.split-bg-hero-cover.has-slot .product-hero-img--empty{ display: grid; place-items: center; }
+.split-bg-hero-cover.has-slot .product-hero-img--empty svg{ width: 48px; height: 48px; stroke: rgba(255,255,255,0.45); }
+.split-bg-hero-cover.has-slot .product-gallery-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  z-index: 2;
+}
+.split-bg-hero-cover.has-slot .product-gallery-nav--prev{ left: 12px; }
+.split-bg-hero-cover.has-slot .product-gallery-nav--next{ right: 12px; }
+.split-bg-hero-cover.has-slot .product-gallery-nav:hover{ background: #fff; }
+.split-bg-hero-cover.has-slot .product-gallery-dots{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 2;
+}
+.split-bg-hero-cover.has-slot .product-gallery-dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.45);
+}
+.split-bg-hero-cover.has-slot .product-gallery-dot.is-active{ background: #fff; }
+.split-bg-hero-cover.has-slot .product-gallery-dot.is-video{ width: 18px; border-radius: 999px; }
 @media (max-width: 960px) {
   .split-bg-hero-content{
     flex-direction: column;
@@ -1968,6 +2098,7 @@
     @media (max-width: 960px) { .page-solutions .clinical-split{ grid-template-columns: 1fr; } }
     .page-solutions .clinical-img{ border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4/3; }
     .page-solutions .clinical-img img{ width: 100%; height: 100%; object-fit: cover; }
+    .page-solutions .clinical-img .product-hero-gallery{ height: 100%; }
     .page-solutions .clinical-text h2{ margin-bottom: var(--space-5); }
     .page-solutions .clinical-text p{ font-size: 15px; line-height: 1.7; color: var(--fg-2); margin-bottom: var(--space-4); }
     .page-solutions .clinical-list{ margin-top: var(--space-5); }

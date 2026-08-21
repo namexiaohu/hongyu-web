@@ -1,52 +1,13 @@
 import Link from 'next/link';
 
-import { ProductGallery, type ProductGallerySlide } from '@/components/product/product-gallery';
+import { ProductGallery } from '@/components/product/product-gallery';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { SplitBackgroundHero } from '@/components/shared/split-background-hero';
+import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import {
   productCoverUrl,
   type StorefrontProductDetail,
 } from '@/lib/storefront-products-api';
-
-function buildGallerySlides(product: StorefrontProductDetail): ProductGallerySlide[] {
-  const slides: ProductGallerySlide[] = [];
-
-  const videoUrl = product.videoUrl?.trim();
-  if (videoUrl) {
-    slides.push({
-      id: `${product.id}-video`,
-      url: videoUrl,
-      alt: `${product.name} video`,
-      kind: 'video',
-    });
-  }
-
-  const cover = product.coverImage;
-  const coverUrl = cover?.url?.trim() || '';
-  if (coverUrl) {
-    slides.push({
-      id: cover?.id || `${product.id}-cover`,
-      url: coverUrl,
-      alt: cover?.alt || product.name,
-      kind: 'image',
-    });
-  }
-
-  const seen = new Set(slides.map((item) => item.url));
-  for (const [index, item] of (product.gallery ?? []).entries()) {
-    const url = item.url?.trim();
-    if (!url || seen.has(url)) continue;
-    seen.add(url);
-    slides.push({
-      id: item.id || `${product.id}-gallery-${index}`,
-      url,
-      alt: item.alt || product.name,
-      kind: 'image',
-    });
-  }
-
-  return slides;
-}
 
 function attachmentMeta(mimeType: string) {
   const mime = mimeType.trim().toLowerCase();
@@ -64,7 +25,16 @@ export function ProductPageView({ product }: ProductPageViewProps) {
   const stats = (product.stats ?? []).filter((row) => row.label?.trim() && row.value?.trim());
   const attachments = (product.attachments ?? []).filter((item) => item.url?.trim());
   const series = (product.seriesProducts ?? []).slice(0, 3);
-  const gallery = buildGallerySlides(product);
+  const cover = product.coverImage;
+  const gallery = buildHeroMediaSlides({
+    id: product.id,
+    name: product.name,
+    videoUrl: product.videoUrl,
+    coverUrl: cover?.url,
+    coverAlt: cover?.alt || product.name,
+    coverId: cover?.id,
+    gallery: product.gallery,
+  });
   const showHeroMedia = Boolean(product.showCoverOnBackground && gallery.length);
   const solution = product.solution;
 
@@ -209,12 +179,13 @@ export function ProductPageView({ product }: ProductPageViewProps) {
             </div>
             <div className="grid-3">
               {series.map((item) => {
-                const cover = productCoverUrl(item.coverImage);
+                const coverSrc = productCoverUrl(item.coverImage);
                 return (
                   <Link key={item.id || item.slug} href={`/products/${item.slug}`} className="related-card">
                     <div className="related-card-img">
-                      {cover ? (
-                        <img src={cover} alt={item.name} />
+                      {coverSrc ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={coverSrc} alt={item.name} />
                       ) : (
                         <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.6" strokeLinecap="round">
                           <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />

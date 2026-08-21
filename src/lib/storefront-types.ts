@@ -38,6 +38,8 @@ export type SplitHero = {
   backgroundImage?: string;
   backgroundSolidCss?: string;
   showCoverOnBackground?: boolean;
+  videoUrl?: string;
+  gallery?: Array<{ url: string; alt?: string }>;
 };
 
 export type DirHero = {
@@ -66,6 +68,8 @@ export type SplitContentSection = {
   bullets?: string[];
   image: string;
   imageAlt: string;
+  videoUrl?: string;
+  gallery?: Array<{ url: string; alt?: string }>;
 };
 
 export type ValueCardIcon =

@@ -10,6 +10,8 @@ export type PartnerCenterMetric = {
 export type StorefrontCenterItem = {
   slug: string;
   coverImage: string;
+  gallery?: Array<{ url: string; alt?: string }>;
+  videoUrl?: string;
   logo: string;
   backgroundMode: 'solid' | 'preset' | 'upload' | '';
   backgroundImage: string;

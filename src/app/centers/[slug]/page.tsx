@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { SplitBackgroundHero } from '@/components/shared/split-background-hero';
+import { ProductGallery } from '@/components/product/product-gallery';
+import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontPartnerCenterBySlug } from '@/lib/storefront-partner-centers-api';
@@ -64,6 +66,16 @@ export default async function PartnerCenterDetailPage({ params }: PageProps) {
     ? (center.website.startsWith('http') ? center.website : `https://${center.website}`)
     : '';
 
+  const slides = buildHeroMediaSlides({
+    id: center.slug,
+    name: center.name,
+    videoUrl: center.videoUrl,
+    coverUrl: center.coverImage,
+    coverAlt: center.name,
+    gallery: center.gallery,
+  });
+  const showHeroMedia = Boolean(center.showCoverOnBackground && slides.length);
+
   return (
     <>
       <Breadcrumb
@@ -77,9 +89,8 @@ export default async function PartnerCenterDetailPage({ params }: PageProps) {
       <SplitBackgroundHero
         backgroundImage={center.backgroundImage}
         backgroundSolidCss={center.backgroundSolidCss}
-        coverImage={center.coverImage}
-        coverAlt={center.name}
-        showCover={center.showCoverOnBackground}
+        showCover={showHeroMedia}
+        coverSlot={showHeroMedia ? <ProductGallery slides={slides} alt={center.name} /> : undefined}
       >
         {center.badgeText ? <div className="ch-type">{center.badgeText}</div> : null}
         <div className="ch-name">{center.name}</div>

@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
 
+import { ProductGallery } from '@/components/product/product-gallery';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { SplitBackgroundHero } from '@/components/shared/split-background-hero';
 import { StatsBar } from '@/components/shared/stats-bar';
+import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import type { BreadcrumbItem, SplitHero, StatItem } from '@/lib/storefront-types';
 
 type SolutionPageProps = {
@@ -20,15 +22,24 @@ export function SolutionPage({
   materialsHref,
   children,
 }: SolutionPageProps) {
+  const slides = buildHeroMediaSlides({
+    id: hero.title || 'solution',
+    name: hero.imageAlt || hero.title,
+    videoUrl: hero.videoUrl,
+    coverUrl: hero.image,
+    coverAlt: hero.imageAlt,
+    gallery: hero.gallery,
+  });
+  const showHeroMedia = Boolean(hero.showCoverOnBackground && slides.length);
+
   return (
     <>
       <Breadcrumb items={breadcrumbs} />
       <SplitBackgroundHero
         backgroundImage={hero.backgroundImage}
         backgroundSolidCss={hero.backgroundSolidCss}
-        coverImage={hero.image}
-        coverAlt={hero.imageAlt}
-        showCover={hero.showCoverOnBackground}
+        showCover={showHeroMedia}
+        coverSlot={showHeroMedia ? <ProductGallery slides={slides} alt={hero.imageAlt || hero.title} /> : undefined}
       >
         <div className="sol-hero-text">
           <div className="sol-eyebrow">{hero.eyebrow}</div>

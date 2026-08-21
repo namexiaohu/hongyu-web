@@ -1,6 +1,8 @@
 import Link from 'next/link';
 
 import { ValueCardIconSvg } from '@/components/brand-narrative/section-icons';
+import { ProductGallery } from '@/components/product/product-gallery';
+import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import type { StorefrontSolutionSection } from '@/lib/storefront-solutions-api';
 import type { ValueCardIcon } from '@/lib/storefront-types';
 
@@ -17,22 +19,46 @@ function productCoverFromCard(card: Record<string, unknown>) {
   return '';
 }
 
-function SplitSection({ section }: { section: StorefrontSolutionSection }) {
+function splitSectionSlides(section: StorefrontSolutionSection) {
   const image = asString(section.image);
+  const imageAlt = asString(section.imageAlt);
+  const videoUrl = asString(section.videoUrl);
+  const galleryRaw = Array.isArray(section.gallery) ? section.gallery : [];
+  const gallery = galleryRaw
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null;
+      const row = item as { url?: unknown; alt?: unknown };
+      const url = asString(row.url);
+      if (!url) return null;
+      return { url, alt: asString(row.alt, imageAlt) };
+    })
+    .filter((item): item is { url: string; alt: string } => Boolean(item));
+
+  return buildHeroMediaSlides({
+    id: asString(section.id, 'split'),
+    name: imageAlt || asString(section.title),
+    videoUrl,
+    gallery: gallery.length ? gallery : image ? [{ url: image, alt: imageAlt }] : [],
+  });
+}
+
+function SplitSection({ section }: { section: StorefrontSolutionSection }) {
   const bullets = Array.isArray(section.bullets) ? section.bullets.filter((item): item is string => typeof item === 'string') : [];
   const imageRight = section.imagePosition === 'right';
   const isClinical = section.type === 'clinical-split';
+  const slides = splitSectionSlides(section);
+  const media = slides.length ? (
+    <div className="clinical-img">
+      <ProductGallery slides={slides} alt={asString(section.imageAlt) || asString(section.title)} />
+    </div>
+  ) : null;
 
   if (isClinical) {
     return (
       <section className="section" data-od-id={asString(section.id, 'clinical')}>
         <div className="container">
           <div className={`clinical-split${imageRight ? ' is-image-right' : ''}`}>
-            {image ? (
-              <div className="clinical-img">
-                <img src={image} alt={asString(section.imageAlt)} />
-              </div>
-            ) : null}
+            {media}
             <div className="clinical-text">
               <p className="eyebrow">{asString(section.eyebrow)}</p>
               <h2 dangerouslySetInnerHTML={{ __html: asString(section.title).replace(/\n/g, '<br/>') }} />
@@ -55,11 +81,7 @@ function SplitSection({ section }: { section: StorefrontSolutionSection }) {
     <section className="section" data-od-id={asString(section.id, 'overview')}>
       <div className="container">
         <div className={`clinical-split${imageRight ? ' is-image-right' : ''}`}>
-          {image ? (
-            <div className="clinical-img">
-              <img src={image} alt={asString(section.imageAlt)} />
-            </div>
-          ) : null}
+          {media}
           <div className="clinical-text">
             <p className="eyebrow">{asString(section.eyebrow)}</p>
             <h2 dangerouslySetInnerHTML={{ __html: asString(section.title).replace(/\n/g, '<br/>') }} />
