@@ -1,6 +1,11 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
+import { ProductGallery } from '@/components/product/product-gallery';
+import { StatsBar } from '@/components/shared/stats-bar';
+import { SummitSpeakersSection } from '@/components/summit/summit-speakers-section';
+import { SummitSponsorsSection } from '@/components/summit/summit-sponsors-section';
+import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import { type StorefrontSummitDetail, getStorefrontSummitDetail } from '@/lib/storefront-summits-api';
 import type { AgendaGroup, AgendaItem } from '@/lib/storefront-summits-api';
 
@@ -62,11 +67,30 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
   const isRegistering = summit.status === 'registering';
   const dateRange = formatDateRange(summit.startDate, summit.endDate);
   const dateRangeWithWeekday = formatDateRange(summit.startDate, summit.endDate, true);
+  const slides = buildHeroMediaSlides({
+    id: summit.slug,
+    name: summit.title,
+    videoUrl: summit.videoUrl,
+    coverUrl: summit.coverImage,
+    coverAlt: summit.title,
+    gallery: [],
+  });
+  const showHeroMedia = Boolean(summit.showCoverOnBackground && slides.length);
+  const hasImageBackground = Boolean(summit.backgroundImage);
+  const heroClassName = [
+    'event-hero',
+    hasImageBackground ? 'has-bg' : '',
+    showHeroMedia ? 'has-cover' : '',
+  ].filter(Boolean).join(' ');
 
   return (
     <>
-      {/* HERO */}
-      <section className="event-hero" data-od-id="hero">
+      <section className={heroClassName} data-od-id="hero">
+        {summit.backgroundImage ? (
+          <div className="event-hero-bg">
+            <img src={summit.backgroundImage} alt="" />
+          </div>
+        ) : null}
         <div className="breadcrumb container">
           <Link href="/">首页</Link><span>/</span>
           <Link href="/summit">行业峰会</Link><span>/</span>
@@ -115,47 +139,26 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
               <a href="#agenda" className="btn-ghost">查看议程</a>
             </div>
           </div>
-          {summit.coverImage && (
-            <div className="event-hero-img">
-              <img src={summit.coverImage} alt={summit.title} />
+          {showHeroMedia ? (
+            <div className="event-hero-img has-slot">
+              <ProductGallery slides={slides} alt={summit.title} />
             </div>
-          )}
+          ) : null}
         </div>
       </section>
 
-      {/* 核心议程 */}
+      {summit.stats.length > 0 ? (
+        <div className="container summit-stats-wrap">
+          <StatsBar stats={summit.stats} className="summit-stats-bar" />
+        </div>
+      ) : null}
+
       <AgendaSection agenda={summit.agenda} />
 
-      {/* 演讲嘉宾 */}
-      {summit.speakers.length > 0 && (
-        <section className="detail-section container" id="speakers" data-od-id="speakers">
-          <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>Speakers · 演讲嘉宾</p>
-          <h2>核心演讲嘉宾</h2>
-          <div className="speaker-grid">
-            {summit.speakers.map((s) => (
-              <div key={s.id} className="speaker-card">
-                <div className="sc-avatar">
-                  {s.avatar
-                    ? <img src={s.avatar} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : (
-                      <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" stroke="currentColor">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-                      </svg>
-                    )
-                  }
-                </div>
-                <div>
-                  <div className="sc-name">{s.name}</div>
-                  {s.bio && <div className="sc-role">{s.bio}</div>}
-                  {s.expertise && <span className="sc-tag">{s.expertise}</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      <SummitSpeakersSection speakers={summit.speakers} />
 
-      {/* 会议地点 */}
+      <SummitSponsorsSection sponsors={summit.sponsors} />
+
       {(summit.location || summit.address || summit.scale || summit.transportation || summit.venueImage) && (
         <section className="detail-section container" id="venue" data-od-id="venue">
           <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>Venue · 会议地点</p>
@@ -224,7 +227,6 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
         </section>
       )}
 
-      {/* 参会报名 CTA — 仅 registering 状态显示 */}
       {isRegistering && (
         <section className="cta-section" id="cta" data-od-id="cta">
           <div className="container">
@@ -242,7 +244,6 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
           </div>
         </section>
       )}
-
     </>
   );
 }

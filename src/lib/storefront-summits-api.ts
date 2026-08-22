@@ -18,12 +18,29 @@ export type AgendaGroup = {
   items: AgendaItem[];
 };
 
+export type SummitStat = {
+  label: string;
+  value: string;
+};
+
 export type SpeakerItem = {
   id: string;
   name: string;
   avatar: string;
   bio: string;
   expertise: string;
+  region: string;
+  badgeText: string;
+  description: string;
+};
+
+export type SponsorItem = {
+  id: string;
+  tier: 'diamond' | 'gold' | 'silver';
+  name: string;
+  logo: string;
+  badgeText: string;
+  intro: string;
 };
 
 export type StorefrontSummitItem = {
@@ -40,10 +57,16 @@ export type StorefrontSummitItem = {
 };
 
 export type StorefrontSummitDetail = StorefrontSummitItem & {
+  videoUrl: string;
+  backgroundImage: string;
+  backgroundSolidCss: string;
+  showCoverOnBackground: boolean;
+  stats: SummitStat[];
   venueImage: string;
   address: string;
   transportation: string;
   speakers: SpeakerItem[];
+  sponsors: SponsorItem[];
   agenda: AgendaGroup[];
 };
 
