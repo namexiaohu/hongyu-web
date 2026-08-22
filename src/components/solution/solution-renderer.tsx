@@ -184,7 +184,7 @@ function ProductModelsSection({ section }: { section: StorefrontSolutionSection 
           {asString(section.title) ? <h2>{asString(section.title)}</h2> : null}
           {lead ? <p className="lead">{lead}</p> : null}
         </div>
-        <div className="grid-3">
+        <div className="grid-4">
           {cards.map((card) => {
             const slug = asString(card.slug);
             const name = asString(card.name, slug);
@@ -193,7 +193,7 @@ function ProductModelsSection({ section }: { section: StorefrontSolutionSection 
             const extra = asString(card.extraText);
             const desc = asString(card.shortDescription);
             return (
-              <Link key={slug} href={`/products/${slug}`} className="product-item-card">
+              <Link key={slug} href={`/products/${slug}`} className="product-item-card pic-compact">
                 <div className="pic-img">
                   {cover ? <img src={cover} alt={name} /> : null}
                   {badge ? <span className="pic-badge">{badge}</span> : null}

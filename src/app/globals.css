@@ -2165,6 +2165,14 @@
     .page-solutions .product-item-card .pic-desc{ font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: var(--space-5); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
     .page-solutions .product-item-card .pic-link{ font-size: 13px; color: var(--accent); font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: gap var(--motion-fast); }
     .page-solutions .product-item-card:hover .pic-link{ gap: 10px; }
+    /* Compact product card for 4-column grid */
+    .page-solutions .product-item-card.pic-compact .pic-img{ height: 130px; }
+    .page-solutions .product-item-card.pic-compact .pic-badge{ font-size: 9px; padding: 3px 8px; top: 10px; left: 10px; }
+    .page-solutions .product-item-card.pic-compact .pic-body{ padding: var(--space-4); }
+    .page-solutions .product-item-card.pic-compact .pic-name{ font-size: 15px; margin-bottom: 2px; }
+    .page-solutions .product-item-card.pic-compact .pic-spec{ font-size: 11px; margin-bottom: var(--space-3); }
+    .page-solutions .product-item-card.pic-compact .pic-desc{ font-size: 12px; line-height: 1.5; margin-bottom: var(--space-4); -webkit-line-clamp: 2; line-clamp: 2; }
+    .page-solutions .product-item-card.pic-compact .pic-link{ font-size: 12px; }
 
     /* Footer */
     
