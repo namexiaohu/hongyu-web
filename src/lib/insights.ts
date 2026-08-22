@@ -15,8 +15,6 @@ export const insightsHero = {
   lead: '来自竑宇医疗研发中心、合作医院及行业会议的最新技术动态、临床研究成果与术者实践经验。',
 };
 
-export type InsightBoardKey = 'case' | 'paper' | 'experience';
-
 export function formatInsightDate(value: string | null | undefined) {
   if (!value) return '';
   const date = new Date(value);

@@ -22,7 +22,6 @@ type SiteFrameProps = {
 
 const PAGE_CLASS: Record<string, string> = {
   '/': 'page-home',
-  '/solutions': 'page-solutions-list',
   '/surgeons': 'page-surgeons',
   '/centers': 'page-centers',
   '/insights': 'page-article-list',

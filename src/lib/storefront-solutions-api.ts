@@ -59,23 +59,6 @@ export type StorefrontSolutionListResponse = {
   items: StorefrontSolutionListItem[];
 };
 
-export type StorefrontSolutionCategoryTab = {
-  id: string;
-  slug: string | null;
-  label: string;
-  count: number;
-};
-
-export function solutionsListHref(input?: { category?: string | null; page?: number }) {
-  const params = new URLSearchParams();
-  if (input?.category?.trim() && input.category !== 'all') {
-    params.set('board', input.category.trim());
-  }
-  if (input?.page && input.page > 1) params.set('page', String(input.page));
-  const query = params.toString();
-  return query ? `/solutions?${query}` : '/solutions';
-}
-
 export async function getStorefrontSolutionBySlug(
   slug: string,
   locale?: string,
@@ -106,12 +89,5 @@ export async function getStorefrontSolutionsList(input?: {
   return serverFetch<StorefrontSolutionListResponse>(
     `/api/front/solutions${query ? `?${query}` : ''}`,
     { locale: input?.locale },
-  );
-}
-
-export async function getStorefrontSolutionCategoryTabs(locale?: string) {
-  return serverFetch<{ locale: string; tabs: StorefrontSolutionCategoryTab[] }>(
-    '/api/front/solutions/category-tabs',
-    { locale },
   );
 }

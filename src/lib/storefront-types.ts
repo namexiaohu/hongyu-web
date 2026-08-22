@@ -9,23 +9,12 @@ export type StatItem = {
   label: string;
 };
 
-export type FilterTab = {
-  id: string;
-  label: string;
-};
-
 export type CtaBlock = {
   eyebrow: string;
   title: string;
   lead: string;
   href: string;
   buttonLabel: string;
-};
-
-export type ListHero = {
-  eyebrow: string;
-  title: string;
-  lead: string;
 };
 
 export type SplitHero = {
@@ -49,7 +38,6 @@ export type DirHero = {
   lead: string;
 };
 
-export const brandNarrativeSlugs = ['about', 'patents', 'history', 'training'] as const;
 export type BrandNarrativeSlug = string;
 
 export type BrandNarrativeBreadcrumb = BreadcrumbItem;

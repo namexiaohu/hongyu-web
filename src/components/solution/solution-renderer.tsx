@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { ValueCardIconSvg, isValueCardIcon } from '@/components/brand-narrative/section-icons';
 import { ProductGallery } from '@/components/product/product-gallery';
+import { formatMultilineTitle } from '@/lib/format-multiline-title';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import type { StorefrontSolutionSection } from '@/lib/storefront-solutions-api';
 
@@ -60,7 +61,7 @@ function SplitSection({ section }: { section: StorefrontSolutionSection }) {
             {media}
             <div className="clinical-text">
               <p className="eyebrow">{asString(section.eyebrow)}</p>
-              <h2 dangerouslySetInnerHTML={{ __html: asString(section.title).replace(/\n/g, '<br/>') }} />
+              <h2 dangerouslySetInnerHTML={{ __html: formatMultilineTitle(asString(section.title)) }} />
               <p>{asString(section.body)}</p>
               {bullets.length ? (
                 <ul className="clinical-list">

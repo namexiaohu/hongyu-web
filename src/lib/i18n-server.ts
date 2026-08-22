@@ -1,27 +1,18 @@
 import { cookies, headers } from 'next/headers';
 
 import {
-  DEFAULT_LOCALE,
   LOCALE_COOKIE_NAME,
   LOCALE_REQUEST_HEADER,
   getMarketDefaults,
-  type Locale,
   type SitePreferences,
 } from '@/lib/i18n';
-import { getStorefrontLanguages } from '@/lib/storefront-api';
+import { getStorefrontLanguages } from '@/lib/storefront-languages';
 import {
   getDefaultStorefrontLanguage,
   languageHtmlLang,
   pickStorefrontLocale,
   type StorefrontLanguage,
 } from '@/lib/storefront-languages';
-
-export function getServerTranslations(locale: Locale = DEFAULT_LOCALE) {
-  return {
-    t: (key: string) => key,
-    locale,
-  };
-}
 
 export type StorefrontLocaleContext = SitePreferences & {
   languages: StorefrontLanguage[];

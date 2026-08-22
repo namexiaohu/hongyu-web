@@ -1,4 +1,5 @@
 import { ProductGallery } from '@/components/product/product-gallery';
+import { formatMultilineTitle } from '@/lib/format-multiline-title';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 import type { SplitContentSection } from '@/lib/storefront-types';
 
@@ -38,7 +39,7 @@ export function SplitContentSectionView({ section }: SplitContentSectionViewProp
             <p className="eyebrow">{section.eyebrow}</p>
             <h2
               style={{ marginTop: 'var(--space-3)', marginBottom: 'var(--space-5)' }}
-              dangerouslySetInnerHTML={{ __html: section.title.replace(/\n/g, '<br/>') }}
+              dangerouslySetInnerHTML={{ __html: formatMultilineTitle(section.title) }}
             />
             <p>{section.body}</p>
             {section.bullets?.length ? (

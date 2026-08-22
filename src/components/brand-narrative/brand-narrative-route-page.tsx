@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { BrandNarrativeRenderer } from '@/components/brand-narrative/brand-narrative-renderer';
 import { BrandNarrativePage } from '@/components/templates/brand-narrative-page';
 import { getServerSitePreferences } from '@/lib/i18n-server';
-import { getStorefrontBrandNarrativeBySlug } from '@/lib/storefront-api';
+import { getStorefrontBrandNarrativeBySlug } from '@/lib/storefront-brand-narratives-api';
 export async function createBrandNarrativeMetadata(slug: string): Promise<Metadata> {
   const { locale } = await getServerSitePreferences();
   const data = await getStorefrontBrandNarrativeBySlug(slug, locale);

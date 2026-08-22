@@ -1,3 +1,5 @@
+import { serverFetch } from '@/lib/api-client';
+
 export type StorefrontLanguage = {
   code: string;
   name: string;
@@ -95,4 +97,14 @@ export function languageSwitchLabel(language: StorefrontLanguage) {
 export function languageHtmlLang(language: StorefrontLanguage) {
   if (language.code === 'zh') return 'zh-CN';
   return language.code;
+}
+
+export async function getStorefrontLanguages(): Promise<StorefrontLanguage[]> {
+  try {
+    const payload = await serverFetch<{ languages?: StorefrontLanguage[] }>('/api/front/languages');
+    const languages = sortStorefrontLanguages(payload.languages ?? []);
+    return languages.length ? languages : FALLBACK_STOREFRONT_LANGUAGES;
+  } catch {
+    return FALLBACK_STOREFRONT_LANGUAGES;
+  }
 }
