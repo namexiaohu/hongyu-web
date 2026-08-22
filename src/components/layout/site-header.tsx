@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { HongyuLogoLink } from '@/components/layout/hongyu-logo';
@@ -17,8 +17,13 @@ type SiteHeaderProps = {
   navColumns: StorefrontNavColumn[];
 };
 
-function pathMatchesHref(pathname: string, href: string) {
-  const pathOnly = href.split('?')[0] || href;
+function splitHref(href: string) {
+  const [pathOnly = href, query = ''] = href.split('?');
+  return { pathOnly, query };
+}
+
+function pathMatchesSection(pathname: string, href: string) {
+  const { pathOnly } = splitHref(href);
   if (pathOnly === '/training') {
     return (
       pathname === '/training' ||
@@ -30,8 +35,28 @@ function pathMatchesHref(pathname: string, href: string) {
   return pathname === pathOnly || pathname.startsWith(`${pathOnly}/`);
 }
 
+/** 子菜单高亮：带 query 的链接必须 path + query 全匹配；无 query 则按路径前缀。 */
+function pathMatchesHref(pathname: string, searchParams: URLSearchParams, href: string) {
+  const { pathOnly, query } = splitHref(href);
+
+  if (pathOnly === '/training') {
+    return pathMatchesSection(pathname, href);
+  }
+
+  if (query) {
+    if (pathname !== pathOnly) return false;
+    const required = new URLSearchParams(query);
+    for (const [key, value] of required.entries()) {
+      if (searchParams.get(key) !== value) return false;
+    }
+    return true;
+  }
+
+  return pathname === pathOnly || pathname.startsWith(`${pathOnly}/`);
+}
+
 function isColumnActive(pathname: string, column: StorefrontNavColumn) {
-  return column.items.some((item) => pathMatchesHref(pathname, item.href));
+  return column.items.some((item) => pathMatchesSection(pathname, item.href));
 }
 
 export function SiteHeader({
@@ -42,6 +67,7 @@ export function SiteHeader({
   navColumns,
 }: SiteHeaderProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [scrolled, setScrolled] = useState(!overlay);
 
   useEffect(() => {
@@ -86,7 +112,7 @@ export function SiteHeader({
                       <Link
                         key={item.id}
                         href={item.href}
-                        className={pathMatchesHref(pathname, item.href) ? 'active' : undefined}
+                        className={pathMatchesHref(pathname, searchParams, item.href) ? 'active' : undefined}
                         role="menuitem"
                       >
                         {item.name}

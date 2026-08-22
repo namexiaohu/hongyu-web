@@ -160,17 +160,25 @@ export function InsightsListPage({
         <span style={{ color: 'var(--fg)' }}>前沿资讯</span>
       </div>
 
-      <div className="container">
-        <div className="page-title" data-od-id="hero">
-          <div className="pt-eyebrow eyebrow">{insightsHero.eyebrow}</div>
-          <h1>
-            {insightsHero.titleLine1}
-            <br />
-            {insightsHero.titleLine2}
-          </h1>
-          <p>{insightsHero.lead}</p>
+      <section className="insights-list-hero" data-od-id="hero">
+        <div className="insights-list-hero-bg" aria-hidden="true">
+          <img src="/images/insights-list-hero.jpg" alt="" />
         </div>
+        <div className="insights-list-hero-overlay" aria-hidden="true" />
+        <div className="container insights-list-hero-content">
+          <div className="page-title">
+            <div className="pt-eyebrow eyebrow">{insightsHero.eyebrow}</div>
+            <h1>
+              {insightsHero.titleLine1}
+              <br />
+              {insightsHero.titleLine2}
+            </h1>
+            <p>{insightsHero.lead}</p>
+          </div>
+        </div>
+      </section>
 
+      <div className="container">
         <div className="cat-filter">
           <Link
             href={insightsListHref()}
@@ -197,6 +205,13 @@ export function InsightsListPage({
           ))}
         </div>
 
+        <Pagination
+          page={page}
+          pageSize={list.pageSize}
+          total={list.total}
+          category={category}
+        />
+
         {randomItems.length ? (
           <div className="compact-section">
             <h2>往期回顾</h2>
@@ -211,13 +226,6 @@ export function InsightsListPage({
             ))}
           </div>
         ) : null}
-
-        <Pagination
-          page={page}
-          pageSize={list.pageSize}
-          total={list.total}
-          category={category}
-        />
       </div>
 
       <CtaStrip {...insightsCta} />

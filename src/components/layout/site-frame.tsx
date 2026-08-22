@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { type ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
@@ -77,13 +77,15 @@ export function SiteFrame({
 
   return (
     <div className={shellClass}>
-      <SiteHeader
-        overlay={overlay}
-        dark={dark}
-        languages={languages}
-        locale={locale}
-        navColumns={navColumns}
-      />
+      <Suspense fallback={null}>
+        <SiteHeader
+          overlay={overlay}
+          dark={dark}
+          languages={languages}
+          locale={locale}
+          navColumns={navColumns}
+        />
+      </Suspense>
       <main id="content" className={pageClass || undefined}>
         {children}
       </main>

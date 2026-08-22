@@ -2800,6 +2800,67 @@
     .page-article-list .breadcrumb a:hover{ color: var(--fg); }
     .page-article-list .breadcrumb span{ margin-inline: 6px; }
 
+    /* ─── Insights list hero board ─── */
+    .page-article-list .insights-list-hero{
+      position: relative;
+      overflow: hidden;
+      min-height: 280px;
+      isolation: isolate;
+    }
+    .page-article-list .insights-list-hero-bg{
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .page-article-list .insights-list-hero-bg img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center right;
+    }
+    .page-article-list .insights-list-hero-overlay{
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(8, 22, 48, 0.82) 0%, rgba(8, 22, 48, 0.55) 42%, rgba(8, 22, 48, 0.28) 100%),
+        linear-gradient(180deg, rgba(8, 22, 48, 0.2) 0%, rgba(8, 22, 48, 0.35) 100%);
+      pointer-events: none;
+    }
+    .page-article-list .insights-list-hero-content{
+      position: relative;
+      z-index: 2;
+    }
+    .page-article-list .insights-list-hero .page-title{
+      padding-block: var(--space-16);
+      border-bottom: none;
+      max-width: 56ch;
+    }
+    .page-article-list .insights-list-hero .page-title .pt-eyebrow{
+      margin-bottom: var(--space-4);
+      color: rgba(255, 255, 255, 0.62);
+    }
+    .page-article-list .insights-list-hero .page-title h1{
+      font-family: var(--font-display);
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: var(--space-5);
+      color: #fff;
+    }
+    .page-article-list .insights-list-hero .page-title p{
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.6;
+      max-width: 52ch;
+    }
+    @media (max-width: 960px) {
+      .page-article-list .insights-list-hero{ min-height: 240px; }
+      .page-article-list .insights-list-hero .page-title{ padding-block: var(--space-12); }
+      .page-article-list .insights-list-hero-bg img{ object-position: 70% center; }
+    }
+
     /* ─── Page Title ─── */
     .page-article-list .page-title{ padding-block: var(--space-16); border-bottom: 1px solid var(--border); }
     .page-article-list .page-title .pt-eyebrow{ margin-bottom: var(--space-4); }
