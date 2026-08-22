@@ -4,17 +4,21 @@ import Link from 'next/link';
 import { DirectoryPage } from '@/components/templates/directory-page';
 import { CtaStrip } from '@/components/shared/cta-strip';
 import { joinCatalogTitles, resolveCompanyName } from '@/lib/company-display';
-import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 import { getStorefrontSolutionsList } from '@/lib/storefront-solutions-api';
 import { getStorefrontSurgeonsList, type StorefrontSurgeonItem } from '@/lib/storefront-surgeons-api';
 
-export const metadata: Metadata = {
-  title: '认证术者',
-  description: DEFAULT_SEO_TITLE,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['surgeons']);
+  return {
+    title: t('surgeons.metaTitle'),
+    description: DEFAULT_SEO_TITLE,
+  };
+}
 
 const locationSvg = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
 const expertiseSvg = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>';
@@ -65,30 +69,25 @@ function SurgeonCard({ surgeon }: { surgeon: StorefrontSurgeonItem }) {
   );
 }
 
-function buildSurgeonsHeroLead(companyName: string, solutionNames: string, isZh: boolean) {
+function buildSurgeonsHeroLead(
+  t: (key: string, params?: Record<string, string>) => string,
+  companyName: string,
+  solutionNames: string,
+) {
   const org = companyName.trim();
   const products = solutionNames.trim();
-  if (isZh) {
-    if (org && products) {
-      return `经过${org}系统化培训与考核，掌握 ${products} 等核心产品标准操作流程的认证兽医师。`;
-    }
-    if (org) {
-      return `经过${org}系统化培训与考核，掌握核心产品标准操作流程的认证兽医师。`;
-    }
-    return '经过系统化培训与考核，掌握核心产品标准操作流程的认证兽医师。';
-  }
   if (org && products) {
-    return `Veterinarians certified through ${org}'s training programs, proficient in standard workflows for ${products} and other core products.`;
+    return t('surgeons.leadWithCompanyAndProducts', { companyName: org, products });
   }
   if (org) {
-    return `Veterinarians certified through ${org}'s training and assessment programs.`;
+    return t('surgeons.leadWithCompany', { companyName: org });
   }
-  return 'Certified veterinarians trained in standard operating workflows for core products.';
+  return t('surgeons.leadFallback');
 }
 
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
-  const isZh = locale.toLowerCase().startsWith('zh');
+  const { t } = await getPageTranslations(locale, ['surgeons', 'breadcrumb', 'cta']);
 
   const [company, solutionsRes, surgeonsRes] = await Promise.all([
     getStorefrontCompanyProfile(locale),
@@ -98,15 +97,18 @@ export default async function Page() {
 
   const companyName = resolveCompanyName(company, locale);
   const solutionNames = joinCatalogTitles(solutionsRes.items, { max: 2, locale });
-  const partnershipCta = buildPartnershipCta('surgeons', companyName);
 
   return (
     <DirectoryPage
-      breadcrumbs={[{ label: '首页', href: '/' }, { label: '全球布局', href: '/surgeons' }, { label: '认证术者' }]}
+      breadcrumbs={[
+        { label: t('breadcrumb.home'), href: '/' },
+        { label: t('breadcrumb.globalLayout'), href: '/surgeons' },
+        { label: t('breadcrumb.certifiedSurgeons') },
+      ]}
       hero={{
-        eyebrow: 'Certified Surgeons · 认证术者',
-        title: '全球认证术者名录',
-        lead: buildSurgeonsHeroLead(companyName, solutionNames, isZh),
+        eyebrow: t('surgeons.eyebrow'),
+        title: t('surgeons.title'),
+        lead: buildSurgeonsHeroLead(t, companyName, solutionNames),
       }}
     >
       <section className="section" style={{ paddingTop: 'var(--space-10)' }}>
@@ -119,7 +121,7 @@ export default async function Page() {
         </div>
       </section>
 
-      <CtaStrip {...partnershipCta} />
+      <CtaStrip {...buildPartnershipCta(t, 'surgeons', { companyName })} />
     </DirectoryPage>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { useTranslation } from '@/lib/i18n-context';
 import type { SpeakerItem } from '@/lib/storefront-summits-api';
 
 type SummitSpeakerModalProps = {
@@ -17,6 +18,7 @@ const locationPinSvg = (
 );
 
 export function SummitSpeakerModal({ speaker, onClose }: SummitSpeakerModalProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(Boolean(speaker));
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export function SummitSpeakerModal({ speaker, onClose }: SummitSpeakerModalProps
   return (
     <div className="speaker-modal-overlay active" onClick={onClose} role="presentation">
       <div className="speaker-modal" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={speaker.name}>
-        <button type="button" className="sm-close" onClick={onClose} aria-label="关闭">
+        <button type="button" className="sm-close" onClick={onClose} aria-label={t('common.close')}>
           <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round">
             <path d="M18 6 6 18M6 6l12 12" />
           </svg>
@@ -75,7 +77,7 @@ export function SummitSpeakerModal({ speaker, onClose }: SummitSpeakerModalProps
         {speaker.description ? (
           <div className="sm-body">
             <div className="sm-section">
-              <div className="sm-label">嘉宾简介</div>
+              <div className="sm-label">{t('detail.summit.speakerBioLabel')}</div>
               <div
                 className="sm-desc cms-article-content"
                 dangerouslySetInnerHTML={{ __html: speaker.description }}

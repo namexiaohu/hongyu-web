@@ -1,25 +1,34 @@
 import { apiFetch } from '@/lib/api-client';
+import type { TranslateFn } from '@/lib/i18n-server';
 
-export const CONTACT_INQUIRY_TYPE = '联系我们';
-export const PARTNERSHIP_INQUIRY_TYPE = '商务合作';
+export const CONTACT_INQUIRY_TYPE_KEY = 'contact';
+export const PARTNERSHIP_INQUIRY_TYPE_KEY = 'partnership';
 
-export const CONTACT_TOPIC_SUMMIT = '行业峰会报名';
 export const CONTACT_TOPIC_SUMMIT_QUERY = 'summit';
 
-export const CONTACT_TOPIC_OPTIONS = [
-  '产品咨询',
-  '技术支持',
-  '培训认证',
-  '售后服务',
-  CONTACT_TOPIC_SUMMIT,
-  '其他',
+export const CONTACT_TOPIC_KEYS = [
+  'product',
+  'technical',
+  'training',
+  'afterSales',
+  'summit',
+  'other',
 ] as const;
 
-export function resolveContactTopicFromQuery(raw: string | null | undefined): string {
+export type ContactTopicKey = (typeof CONTACT_TOPIC_KEYS)[number];
+
+export function contactTopicLabel(t: TranslateFn, key: string) {
+  if (!key) return '';
+  const lookup = `inquiry.topics.${key}` as const;
+  const label = t(lookup);
+  return label === lookup ? key : label;
+}
+
+export function resolveContactTopicFromQuery(t: TranslateFn, raw: string | null | undefined): string {
   const value = raw?.trim() ?? '';
   if (!value) return '';
-  if (value === CONTACT_TOPIC_SUMMIT_QUERY) return CONTACT_TOPIC_SUMMIT;
-  return CONTACT_TOPIC_OPTIONS.includes(value as (typeof CONTACT_TOPIC_OPTIONS)[number]) ? value : '';
+  if (value === CONTACT_TOPIC_SUMMIT_QUERY) return 'summit';
+  return CONTACT_TOPIC_KEYS.includes(value as ContactTopicKey) ? value : '';
 }
 
 export function buildContactHref(options?: { topic?: typeof CONTACT_TOPIC_SUMMIT_QUERY | string; summit?: string }) {
@@ -30,16 +39,23 @@ export function buildContactHref(options?: { topic?: typeof CONTACT_TOPIC_SUMMIT
   return query ? `/contact?${query}` : '/contact';
 }
 
-function filled(value: string) {
-  return value.trim() || '未填写';
+export function buildContactInquiryMessage(t: TranslateFn, topicKey: string, body: string) {
+  const topic = contactTopicLabel(t, topicKey);
+  const messageBody = body.trim() || t('common.notProvided');
+  return t('inquiry.messages.contactTemplate', { topic, body: messageBody });
 }
 
-export function buildContactInquiryMessage(topic: string, body: string) {
-  return `咨询类型：${filled(topic)}\n留言内容：\n${body.trim() || '未填写'}`;
-}
-
-export function buildPartnershipInquiryMessage(coopType: string, scale: string, detail: string) {
-  return `合作类型：${filled(coopType)}\n预计合作规模：${filled(scale)}\n合作需求描述：\n${detail.trim() || '未填写'}`;
+export function buildPartnershipInquiryMessage(
+  t: TranslateFn,
+  coopType: string,
+  scale: string,
+  detail: string,
+) {
+  return t('inquiry.messages.partnershipTemplate', {
+    coopType: coopType.trim() || t('common.notProvided'),
+    scale: scale.trim() || t('common.notProvided'),
+    detail: detail.trim() || t('common.notProvided'),
+  });
 }
 
 export type StorefrontInquiryPayload = {
@@ -62,8 +78,11 @@ export async function submitStorefrontInquiry(payload: StorefrontInquiryPayload)
       body: JSON.stringify(payload),
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : '提交失败，请稍后重试';
-    // apiFetch 会附带 "(status) url"，表单侧只展示可读文案
-    throw new Error(message.replace(/\s*\(\d+\)\s+\S+$/, '') || '提交失败，请稍后重试');
+    const message = error instanceof Error ? error.message : '';
+    throw new Error(message.replace(/\s*\(\d+\)\s+\S+$/, '') || 'Submission failed');
   }
 }
+
+export const PARTNERSHIP_SIZE_KEYS = ['1-10', '11-50', '51-200', '201-1000', '1000+'] as const;
+export const PARTNERSHIP_COOP_KEYS = ['distribution', 'academic', 'oem', 'investment', 'other'] as const;
+export const PARTNERSHIP_SCALE_KEYS = ['pilot', 'annual', 'longTerm'] as const;

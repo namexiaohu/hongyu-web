@@ -3,25 +3,28 @@
 import { useSearchParams } from 'next/navigation';
 import { useMemo, useState, type FormEvent } from 'react';
 
+import { useTranslation } from '@/lib/i18n-context';
 import {
-  CONTACT_INQUIRY_TYPE,
-  CONTACT_TOPIC_OPTIONS,
+  CONTACT_INQUIRY_TYPE_KEY,
+  CONTACT_TOPIC_KEYS,
   buildContactInquiryMessage,
+  contactTopicLabel,
   resolveContactTopicFromQuery,
   submitStorefrontInquiry,
 } from '@/lib/storefront-inquiry';
 
 export function ContactInquiryForm() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const initialTopic = useMemo(
-    () => resolveContactTopicFromQuery(searchParams.get('topic')),
-    [searchParams],
+    () => resolveContactTopicFromQuery(t, searchParams.get('topic')),
+    [searchParams, t],
   );
   const initialBody = useMemo(() => {
     const summit = searchParams.get('summit')?.trim();
     if (!summit) return '';
-    return `意向报名峰会：${summit}\n\n`;
-  }, [searchParams]);
+    return t('forms.contact.summitPrefill', { summit });
+  }, [searchParams, t]);
 
   const [topic, setTopic] = useState(initialTopic);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -44,20 +47,20 @@ export function ContactInquiryForm() {
     setError('');
     try {
       await submitStorefrontInquiry({
-        inquiryType: CONTACT_INQUIRY_TYPE,
+        inquiryType: t(`inquiry.types.${CONTACT_INQUIRY_TYPE_KEY}`),
         fullName,
         email,
         phone: phone || undefined,
         company: company || undefined,
         country: country || undefined,
         jobTitle: jobTitle || undefined,
-        message: buildContactInquiryMessage(selectedTopic, body),
+        message: buildContactInquiryMessage(t, selectedTopic, body),
       });
       form.reset();
       setTopic('');
       setStatus('success');
     } catch (err) {
-      setError(err instanceof Error ? err.message : '提交失败，请稍后重试');
+      setError(err instanceof Error ? err.message : t('common.submitFailed'));
       setStatus('error');
     }
   }
@@ -66,37 +69,79 @@ export function ContactInquiryForm() {
     <form data-allow-submit onSubmit={onSubmit}>
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="contact-full-name">姓名 <span className="required">*</span></label>
-          <input id="contact-full-name" name="fullName" type="text" className="form-input" placeholder="您的姓名" required />
+          <label htmlFor="contact-full-name">
+            {t('forms.contact.fullName')} <span className="required">{t('common.requiredMark')}</span>
+          </label>
+          <input
+            id="contact-full-name"
+            name="fullName"
+            type="text"
+            className="form-input"
+            placeholder={t('forms.contact.fullNamePlaceholder')}
+            required
+          />
         </div>
         <div className="form-group">
-          <label htmlFor="contact-country">国家</label>
-          <input id="contact-country" name="country" type="text" className="form-input" placeholder="所在国家或地区" />
+          <label htmlFor="contact-country">{t('forms.contact.country')}</label>
+          <input
+            id="contact-country"
+            name="country"
+            type="text"
+            className="form-input"
+            placeholder={t('forms.contact.countryPlaceholder')}
+          />
         </div>
       </div>
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="contact-company">医院 / 机构</label>
-          <input id="contact-company" name="company" type="text" className="form-input" placeholder="所在医院或机构名称" />
+          <label htmlFor="contact-company">{t('forms.contact.company')}</label>
+          <input
+            id="contact-company"
+            name="company"
+            type="text"
+            className="form-input"
+            placeholder={t('forms.contact.companyPlaceholder')}
+          />
         </div>
         <div className="form-group">
-          <label htmlFor="contact-job-title">职称</label>
-          <input id="contact-job-title" name="jobTitle" type="text" className="form-input" placeholder="您的职称或职位" />
+          <label htmlFor="contact-job-title">{t('forms.contact.jobTitle')}</label>
+          <input
+            id="contact-job-title"
+            name="jobTitle"
+            type="text"
+            className="form-input"
+            placeholder={t('forms.contact.jobTitlePlaceholder')}
+          />
         </div>
       </div>
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="contact-email">邮箱 <span className="required">*</span></label>
-          <input id="contact-email" name="email" type="email" className="form-input" placeholder="your@email.com" required />
+          <label htmlFor="contact-email">
+            {t('forms.contact.email')} <span className="required">{t('common.requiredMark')}</span>
+          </label>
+          <input
+            id="contact-email"
+            name="email"
+            type="email"
+            className="form-input"
+            placeholder={t('forms.contact.emailPlaceholder')}
+            required
+          />
         </div>
         <div className="form-group">
-          <label htmlFor="contact-phone">电话</label>
-          <input id="contact-phone" name="phone" type="tel" className="form-input" placeholder="联系电话" />
+          <label htmlFor="contact-phone">{t('forms.contact.phone')}</label>
+          <input
+            id="contact-phone"
+            name="phone"
+            type="tel"
+            className="form-input"
+            placeholder={t('forms.contact.phonePlaceholder')}
+          />
         </div>
       </div>
       <div className="form-row">
         <div className="form-group full">
-          <label htmlFor="contact-topic">咨询类型</label>
+          <label htmlFor="contact-topic">{t('forms.contact.topic')}</label>
           <select
             id="contact-topic"
             name="topic"
@@ -104,30 +149,34 @@ export function ContactInquiryForm() {
             value={topic}
             onChange={(event) => setTopic(event.target.value)}
           >
-            <option value="">请选择咨询类型</option>
-            {CONTACT_TOPIC_OPTIONS.map((option) => (
-              <option key={option} value={option}>{option}</option>
+            <option value="">{t('forms.contact.topicPlaceholder')}</option>
+            {CONTACT_TOPIC_KEYS.map((key) => (
+              <option key={key} value={key}>
+                {contactTopicLabel(t, key)}
+              </option>
             ))}
           </select>
         </div>
       </div>
       <div className="form-row">
         <div className="form-group full">
-          <label htmlFor="contact-body">留言内容 <span className="required">*</span></label>
+          <label htmlFor="contact-body">
+            {t('forms.contact.body')} <span className="required">{t('common.requiredMark')}</span>
+          </label>
           <textarea
             id="contact-body"
             name="body"
             className="form-input"
-            placeholder="请描述您的需求或问题..."
+            placeholder={t('forms.contact.bodyPlaceholder')}
             defaultValue={initialBody}
             required
           />
         </div>
       </div>
-      {status === 'success' ? <p className="form-note">留言已提交，我们将尽快与您联系。</p> : null}
+      {status === 'success' ? <p className="form-note">{t('forms.contact.success')}</p> : null}
       {status === 'error' ? <p className="form-note" style={{ color: '#ee1d36' }}>{error}</p> : null}
       <button type="submit" className="form-submit" disabled={status === 'submitting'}>
-        {status === 'submitting' ? '提交中...' : '提交留言'}
+        {status === 'submitting' ? t('common.submitting') : t('forms.contact.submit')}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
           <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>

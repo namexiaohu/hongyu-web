@@ -2,16 +2,18 @@ import type { Metadata } from 'next';
 
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { resolveCompanyName } from '@/lib/company-display';
-import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_DESCRIPTION } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale } = await getStorefrontLocaleContext();
-  const data = await getStorefrontCompanyProfile(locale);
-  const isZh = locale.toLowerCase().startsWith('zh');
+  const [{ t }, data] = await Promise.all([
+    getPageTranslations(locale, ['company']),
+    getStorefrontCompanyProfile(locale),
+  ]);
   return {
-    title: isZh ? '企业信息' : 'Company Information',
+    title: t('company.metaTitle'),
     description: data.positioning || DEFAULT_SEO_DESCRIPTION,
   };
 }
@@ -52,30 +54,27 @@ const fileSvg = (
 
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
-  const data = await getStorefrontCompanyProfile(locale);
+  const [{ t }, data] = await Promise.all([
+    getPageTranslations(locale, ['company', 'breadcrumb', 'common']),
+    getStorefrontCompanyProfile(locale),
+  ]);
   const hasTeam = data.executives.length > 0 || data.managers.length > 0;
-  const isZh = locale.toLowerCase().startsWith('zh');
   const companyName = resolveCompanyName(data, locale);
-  const heroEyebrow = isZh ? 'Corporate Information · 企业信息' : 'Corporate Information';
-  const heroTitle = isZh ? '企业信息' : 'Company Information';
-  const heroLead = isZh
-    ? `${companyName}工商注册信息、组织架构与公开文件。`
-    : `Business registration, organizational structure, and public documents for ${companyName}.`;
 
   return (
     <>
       <Breadcrumb
         items={[
-          { label: isZh ? '首页' : 'Home', href: '/' },
-          { label: isZh ? '联系我们' : 'Contact Us', href: '/contact' },
-          { label: heroTitle },
+          { label: t('breadcrumb.home'), href: '/' },
+          { label: t('breadcrumb.contactUs'), href: '/contact' },
+          { label: t('company.title') },
         ]}
       />
       <section className="page-hero" data-od-id="hero">
         <div className="container">
-          <p className="eyebrow">{heroEyebrow}</p>
-          <h1>{heroTitle}</h1>
-          <p className="lead">{heroLead}</p>
+          <p className="eyebrow">{t('company.eyebrow')}</p>
+          <h1>{t('company.title')}</h1>
+          <p className="lead">{t('company.lead', { companyName })}</p>
         </div>
       </section>
 
@@ -83,8 +82,8 @@ export default async function Page() {
         <section className="section" data-od-id="registration">
           <div className="container">
             <div className="section-header">
-              <p className="eyebrow">Registration</p>
-              <h2>Company profile</h2>
+              <p className="eyebrow">{t('company.registration.eyebrow')}</p>
+              <h2>{t('company.registration.title')}</h2>
             </div>
             <table className="info-table">
               <tbody>
@@ -104,8 +103,8 @@ export default async function Page() {
         <section className="section" data-od-id="org" style={{ background: 'var(--border-soft)' }}>
           <div className="container">
             <div className="section-header">
-              <p className="eyebrow">Organization</p>
-              <h2>Leadership team</h2>
+              <p className="eyebrow">{t('company.organization.eyebrow')}</p>
+              <h2>{t('company.organization.title')}</h2>
             </div>
             <div className="org-chart">
               {data.executives.length > 0 ? (
@@ -137,8 +136,8 @@ export default async function Page() {
         <section className="section" data-od-id="offices">
           <div className="container">
             <div className="section-header">
-              <p className="eyebrow">Offices</p>
-              <h2>Global offices</h2>
+              <p className="eyebrow">{t('company.offices.eyebrow')}</p>
+              <h2>{t('company.offices.title')}</h2>
             </div>
             <div className="grid-3">
               {data.offices.map((office) => (
@@ -174,8 +173,8 @@ export default async function Page() {
         <section className="section" data-od-id="documents" style={{ background: 'var(--border-soft)' }}>
           <div className="container">
             <div className="section-header">
-              <p className="eyebrow">Documents</p>
-              <h2>Public documents</h2>
+              <p className="eyebrow">{t('company.documents.eyebrow')}</p>
+              <h2>{t('company.documents.title')}</h2>
             </div>
             <div className="doc-list">
               {data.publicFiles.map((file) => (
@@ -183,11 +182,11 @@ export default async function Page() {
                   <div className="di-info">
                     <div className="di-icon">{fileSvg}</div>
                     <div>
-                      <div className="di-name">{file.name || 'Document'}</div>
+                      <div className="di-name">{file.name || t('common.documentFallback')}</div>
                     </div>
                   </div>
                   <a href={file.url} className="di-download" target="_blank" rel="noreferrer">
-                    Download →
+                    {t('common.downloadArrow')}
                   </a>
                 </div>
               ))}

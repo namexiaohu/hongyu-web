@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 import { HomePageView } from '@/components/home/home-page-view';
 import { resolveCompanyEyebrow, resolveCompanyName } from '@/lib/company-display';
-import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { buildInsightsHero } from '@/lib/insights';
 import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_DESCRIPTION } from '@/lib/site-config';
@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['home', 'common', 'cta']);
 
   const [company, config, solutionsRes, insightsRes, centersRes] = await Promise.all([
     getStorefrontCompanyProfile(locale),
@@ -46,8 +47,18 @@ export default async function HomePage() {
       insights={insightsRes.items}
       partnerCenters={partnerCenters}
       brandEyebrow={resolveCompanyEyebrow(company, locale)}
-      insightsHero={buildInsightsHero(companyName)}
-      partnershipCta={buildPartnershipCta('home', companyName)}
+      insightsHero={buildInsightsHero(t, companyName)}
+      partnershipCta={buildPartnershipCta(t, 'home', { companyName })}
+      homeCopy={{
+        solutionsEyebrow: t('home.sections.solutionsEyebrow'),
+        aboutEyebrow: t('home.sections.aboutEyebrow'),
+        aboutLearnMore: t('home.sections.aboutLearnMore'),
+        statsEyebrow: t('home.sections.statsEyebrow'),
+        globalEyebrow: t('home.sections.globalEyebrow'),
+        insightsViewAll: t('home.sections.insightsViewAll'),
+        educationEyebrow: t('home.sections.educationEyebrow'),
+        emptyDash: t('common.emptyDash'),
+      }}
     />
   );
 }

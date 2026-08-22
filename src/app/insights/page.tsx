@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 
 import { InsightsListPage } from '@/components/insights/insights-list-page';
 import { resolveCompanyName } from '@/lib/company-display';
-import { getStorefrontLocaleContext } from '@/lib/i18n-server';
-import { buildInsightsHero } from '@/lib/insights';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { buildInsightsCta, buildInsightsHero } from '@/lib/insights';
 import {
   getStorefrontInsightsBoardCounts,
   getStorefrontInsightsList,
@@ -17,11 +17,14 @@ import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale } = await getStorefrontLocaleContext();
-  const company = await getStorefrontCompanyProfile(locale);
+  const [{ t }, company] = await Promise.all([
+    getPageTranslations(locale, ['insights', 'home']),
+    getStorefrontCompanyProfile(locale),
+  ]);
   const companyName = resolveCompanyName(company, locale);
   return {
-    title: '前沿资讯',
-    description: buildInsightsHero(companyName).lead || DEFAULT_SEO_TITLE,
+    title: t('insights.metaTitle'),
+    description: buildInsightsHero(t, companyName).lead || DEFAULT_SEO_TITLE,
   };
 }
 
@@ -34,6 +37,7 @@ export default async function Page({ searchParams }: PageProps) {
   const category = params.category?.trim() || null;
   const page = Math.max(1, Number.parseInt(params.page ?? '1', 10) || 1);
   const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['insights', 'home', 'breadcrumb', 'common', 'cta']);
 
   const emptyList: StorefrontInsightsListResponse = {
     locale,
@@ -80,7 +84,17 @@ export default async function Page({ searchParams }: PageProps) {
       randomItems={randomItems}
       category={category}
       page={page}
-      insightsHero={buildInsightsHero(companyName)}
+      insightsHero={buildInsightsHero(t, companyName)}
+      listCopy={{
+        breadcrumbHome: t('breadcrumb.home'),
+        breadcrumbCurrent: t('insights.metaTitle'),
+        allLabel: t('common.all'),
+        featuredLabel: t('common.featured'),
+        previousPage: t('common.previousPage'),
+        nextPage: t('common.nextPage'),
+        pastHighlights: t('insights.pastHighlights'),
+      }}
+      insightsCta={buildInsightsCta(t)}
     />
   );
 }

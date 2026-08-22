@@ -1,23 +1,25 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
-import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { ContactInquiryForm } from '@/components/contact/contact-inquiry-form';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
-import { ContactInquiryForm } from '@/components/contact/contact-inquiry-form';
 import { telHref } from '@/lib/contact-display';
+import Link from 'next/link';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale } = await getStorefrontLocaleContext();
-  const isZh = locale.toLowerCase().startsWith('zh');
+  const { t } = await getPageTranslations(locale, ['contact']);
   return {
-    title: isZh ? '联系我们' : 'Contact Us',
+    title: t('contact.metaTitle'),
     description: DEFAULT_SEO_TITLE,
   };
 }
 
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['contact', 'breadcrumb', 'common']);
   const company = await getStorefrontCompanyProfile(locale);
   const phone = company.contactPhone.trim();
   const email = company.companyEmail.trim();
@@ -28,16 +30,16 @@ export default async function Page() {
   return (
     <>
       <div className="breadcrumb container">
-        <a href="/">首页</a>
+        <Link href="/">{t('breadcrumb.home')}</Link>
         <span>/</span>
-        <span style={{ color: 'var(--fg)' }}>联系我们</span>
+        <span style={{ color: 'var(--fg)' }}>{t('contact.metaTitle')}</span>
       </div>
 
       <section className="contact-split container" data-od-id="contact">
         <div className="contact-info">
-          <p className="eyebrow">Contact Us · 联系我们</p>
-          <h1>与我们取得联系</h1>
-          <p className="lead">无论是产品咨询、技术支持还是合作洽谈，我们的团队将在 24 小时内回复您。</p>
+          <p className="eyebrow">{t('contact.eyebrow')}</p>
+          <h1>{t('contact.title')}</h1>
+          <p className="lead">{t('contact.lead')}</p>
 
           {phone ? (
             <div className="ci-item">
@@ -47,7 +49,7 @@ export default async function Page() {
                 </svg>
               </div>
               <div>
-                <div className="ci-label">电话咨询</div>
+                <div className="ci-label">{t('contact.phoneLabel')}</div>
                 <div className="ci-value">
                   {phoneLink ? <a href={`tel:${phoneLink}`}>{phone}</a> : phone}
                 </div>
@@ -64,7 +66,7 @@ export default async function Page() {
                 </svg>
               </div>
               <div>
-                <div className="ci-label">邮件联系</div>
+                <div className="ci-label">{t('contact.emailLabel')}</div>
                 <div className="ci-value">
                   <a href={`mailto:${email}`}>{email}</a>
                 </div>
@@ -81,7 +83,7 @@ export default async function Page() {
                 </svg>
               </div>
               <div>
-                <div className="ci-label">总部地址</div>
+                <div className="ci-label">{t('contact.addressLabel')}</div>
                 <div className="ci-value">{address}</div>
               </div>
             </div>
@@ -96,21 +98,21 @@ export default async function Page() {
                 </svg>
               </div>
               <div>
-                <div className="ci-label">工作时间</div>
+                <div className="ci-label">{t('contact.hoursLabel')}</div>
                 <div className="ci-value">{hours}</div>
               </div>
             </div>
           ) : null}
 
           <div className="office-map">
-            <img src="/images/contact-map.jpg" alt="办公地点" />
+            <img src="/images/contact-map.jpg" alt={t('contact.mapAlt')} />
           </div>
         </div>
 
         <div className="contact-form-wrap">
-          <h2>发送消息</h2>
-          <p className="cf-sub">填写以下信息，我们将尽快与您联系。</p>
-          <Suspense fallback={<p className="cf-sub">加载表单...</p>}>
+          <h2>{t('contact.formTitle')}</h2>
+          <p className="cf-sub">{t('contact.formSubtitle')}</p>
+          <Suspense fallback={<p className="cf-sub">{t('common.loadingForm')}</p>}>
             <ContactInquiryForm />
           </Suspense>
         </div>

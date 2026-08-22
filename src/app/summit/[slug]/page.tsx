@@ -6,17 +6,18 @@ import { StatsBar } from '@/components/shared/stats-bar';
 import { SummitSpeakersSection } from '@/components/summit/summit-speakers-section';
 import { SummitSponsorsSection } from '@/components/summit/summit-sponsors-section';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
+import type { TranslateFn } from '@/lib/i18n-server';
 import { buildContactHref, CONTACT_TOPIC_SUMMIT_QUERY } from '@/lib/storefront-inquiry';
 import { type StorefrontSummitDetail, getStorefrontSummitDetail } from '@/lib/storefront-summits-api';
 import type { AgendaGroup, AgendaItem } from '@/lib/storefront-summits-api';
 
-const statusLabels: Record<string, string> = {
-  upcoming: '即将举办',
-  registering: '报名中',
-  completed: '已结束',
-};
-
-function formatDateRange(start: string | null, end: string | null, withWeekday = false): string {
+function formatDateRange(
+  start: string | null,
+  end: string | null,
+  t: TranslateFn,
+  withWeekday = false,
+): string {
   if (!start) return '';
   const s = new Date(start);
   const formatSingle = (d: Date) => {
@@ -24,20 +25,20 @@ function formatDateRange(start: string | null, end: string | null, withWeekday =
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     if (!withWeekday) return `${year}.${month}.${day}`;
-    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    return `${year}.${month}.${day}（${weekdays[d.getDay()]}）`;
+    const weekday = t(`summit.weekdays.${d.getDay()}`);
+    return `${year}.${month}.${day}（${weekday}）`;
   };
   if (!end) return formatSingle(s);
   const e = new Date(end);
   return `${formatSingle(s)} – ${formatSingle(e)}`;
 }
 
-function AgendaSection({ agenda }: { agenda: AgendaGroup[] }) {
+function AgendaSection({ agenda, t }: { agenda: AgendaGroup[]; t: TranslateFn }) {
   if (!agenda.length) return null;
   return (
     <section className="detail-section container" id="agenda" data-od-id="agenda">
-      <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>Agenda · 大会议程</p>
-      <h2>核心议程</h2>
+      <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>{t('detail.summit.agendaEyebrow')}</p>
+      <h2>{t('detail.summit.agendaTitle')}</h2>
       {agenda.map((group) => (
         <div key={group.id} className="agenda-day">
           <div className="agenda-day-header">
@@ -62,13 +63,15 @@ function AgendaSection({ agenda }: { agenda: AgendaGroup[] }) {
 
 export default async function SummitDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['detail', 'summit', 'breadcrumb', 'common']);
   const summit: StorefrontSummitDetail | null = await getStorefrontSummitDetail(slug);
   if (!summit) notFound();
 
   const registerHref = buildContactHref({ topic: CONTACT_TOPIC_SUMMIT_QUERY, summit: summit.title });
   const isRegistering = summit.status === 'registering';
-  const dateRange = formatDateRange(summit.startDate, summit.endDate);
-  const dateRangeWithWeekday = formatDateRange(summit.startDate, summit.endDate, true);
+  const dateRange = formatDateRange(summit.startDate, summit.endDate, t);
+  const dateRangeWithWeekday = formatDateRange(summit.startDate, summit.endDate, t, true);
   const slides = buildHeroMediaSlides({
     id: summit.slug,
     name: summit.title,
@@ -85,6 +88,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
     showHeroMedia ? 'has-cover' : '',
     summit.heroCopyStyle === 'dark' ? 'event-hero--copy-dark' : '',
   ].filter(Boolean).join(' ');
+  const statusLabel = t(`summit.status.${summit.status}`);
 
   return (
     <>
@@ -96,8 +100,8 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
         ) : null}
         {summit.backgroundImage ? <div className="event-hero-overlay" aria-hidden="true" /> : null}
         <div className="breadcrumb container">
-          <Link href="/">首页</Link><span>/</span>
-          <Link href="/summit">行业峰会</Link><span>/</span>
+          <Link href="/">{t('breadcrumb.home')}</Link><span>/</span>
+          <Link href="/summit">{t('breadcrumb.industrySummits')}</Link><span>/</span>
           <span>{summit.title}</span>
         </div>
         <div className="container event-hero-inner">
@@ -106,7 +110,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" /><line x1="4" y1="22" x2="4" y2="15" />
               </svg>
-              {statusLabels[summit.status] ?? summit.status}
+              {statusLabel}
             </div>
             <h1>{summit.title}</h1>
             <div className="eh-meta">
@@ -138,9 +142,9 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
             {summit.description && <p className="eh-desc">{summit.description}</p>}
             <div className="eh-actions">
               {isRegistering && (
-                <Link href={registerHref} className="btn-primary">立即报名</Link>
+                <Link href={registerHref} className="btn-primary">{t('detail.summit.registerNow')}</Link>
               )}
-              <a href="#agenda" className="btn-ghost">查看议程</a>
+              <a href="#agenda" className="btn-ghost">{t('detail.summit.viewAgenda')}</a>
             </div>
           </div>
           {showHeroMedia ? (
@@ -168,7 +172,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
         </section>
       ) : null}
 
-      <AgendaSection agenda={summit.agenda} />
+      <AgendaSection agenda={summit.agenda} t={t} />
 
       <SummitSpeakersSection speakers={summit.speakers} />
 
@@ -176,8 +180,8 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
 
       {(summit.location || summit.address || summit.scale || summit.transportation || summit.venueImage) && (
         <section className="detail-section container" id="venue" data-od-id="venue">
-          <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>Venue · 会议地点</p>
-          <h2>{summit.location || '会议地点'}</h2>
+          <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>{t('detail.summit.venueEyebrow')}</p>
+          <h2>{summit.location || t('detail.summit.venueFallback')}</h2>
           <div className="venue-split">
             <div className="venue-info">
               {summit.address && (
@@ -188,7 +192,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
                     </svg>
                   </div>
                   <div>
-                    <div className="vi-label">地址</div>
+                    <div className="vi-label">{t('detail.summit.addressLabel')}</div>
                     <div className="vi-value">{summit.address}</div>
                   </div>
                 </div>
@@ -201,7 +205,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
                     </svg>
                   </div>
                   <div>
-                    <div className="vi-label">会议时间</div>
+                    <div className="vi-label">{t('detail.summit.timeLabel')}</div>
                     <div className="vi-value">{dateRangeWithWeekday}</div>
                   </div>
                 </div>
@@ -214,7 +218,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
                     </svg>
                   </div>
                   <div>
-                    <div className="vi-label">会议规模</div>
+                    <div className="vi-label">{t('detail.summit.scaleLabel')}</div>
                     <div className="vi-value">{summit.scale}</div>
                   </div>
                 </div>
@@ -227,7 +231,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
                     </svg>
                   </div>
                   <div>
-                    <div className="vi-label">交通指引</div>
+                    <div className="vi-label">{t('detail.summit.transportLabel')}</div>
                     <div className="vi-value">{summit.transportation}</div>
                   </div>
                 </div>
@@ -235,7 +239,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
             </div>
             {summit.venueImage && (
               <div className="venue-map">
-                <img src={summit.venueImage} alt={summit.location || '会议地点'} />
+                <img src={summit.venueImage} alt={summit.location || t('detail.summit.venueFallback')} />
               </div>
             )}
           </div>
@@ -246,11 +250,11 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
         <section className="cta-section" id="cta" data-od-id="cta">
           <div className="container">
             <div className="cta-inner">
-              <p className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 'var(--space-4)' }}>Register · 参会报名</p>
-              <h2>立即报名参会</h2>
-              <p>名额有限，欢迎通过联系页面提交报名意向，会务团队将在 3 个工作日内与您确认。</p>
+              <p className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 'var(--space-4)' }}>{t('detail.summit.registerSectionEyebrow')}</p>
+              <h2>{t('detail.summit.registerSectionTitle')}</h2>
+              <p>{t('detail.summit.registerSectionLead')}</p>
               <Link href={registerHref} className="btn-cta">
-                立即报名
+                {t('detail.summit.registerNow')}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

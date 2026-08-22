@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { useTranslation } from '@/lib/i18n-context';
 import type { ArticleTocItem } from '@/lib/article-toc';
 
 type ArticleTocProps = {
@@ -9,6 +10,7 @@ type ArticleTocProps = {
 };
 
 export function ArticleToc({ items }: ArticleTocProps) {
+  const { t } = useTranslation();
   const [activeId, setActiveId] = useState(items[0]?.id ?? '');
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export function ArticleToc({ items }: ArticleTocProps) {
 
   return (
     <div className="sidebar-card">
-      <h4>目录</h4>
+      <h4>{t('insights.article.toc')}</h4>
       <ul className="sidebar-toc">
         {items.map((item) => (
           <li key={item.id}>

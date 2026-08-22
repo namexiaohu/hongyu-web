@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { useTranslation } from '@/lib/i18n-context';
 import { LOCALE_COOKIE_NAME, localeStorageKey } from '@/lib/i18n';
 import {
   getStorefrontLanguage,
@@ -29,6 +30,7 @@ export function LanguageSwitcher({
   initialLocale,
   transparent = false,
 }: LanguageSwitcherProps) {
+  const { t } = useTranslation();
   const [locale, setLocale] = useState(initialLocale);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -85,7 +87,7 @@ export function LanguageSwitcher({
         className="lang-switcher-trigger"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`语言切换，当前 ${current.nativeName}`}
+        aria-label={t('language.switchAriaLabel', { language: current.nativeName })}
         onClick={() => setOpen((value) => !value)}
       >
         <svg
@@ -117,7 +119,7 @@ export function LanguageSwitcher({
       </button>
 
       {open ? (
-        <ul className="lang-switcher-menu" role="listbox" aria-label="选择语言">
+        <ul className="lang-switcher-menu" role="listbox" aria-label={t('language.selectLanguage')}>
           {languages.map((item) => (
             <li key={item.code} role="option" aria-selected={item.code === locale}>
               <button

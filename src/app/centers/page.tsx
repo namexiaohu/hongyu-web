@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { DirectoryPage } from '@/components/templates/directory-page';
 import { CtaStrip } from '@/components/shared/cta-strip';
-import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import {
@@ -12,10 +12,14 @@ import {
   type StorefrontCenterGroup,
 } from '@/lib/storefront-partner-centers-api';
 
-export const metadata: Metadata = {
-  title: '合作中心',
-  description: DEFAULT_SEO_TITLE,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['centers']);
+  return {
+    title: t('centers.metaTitle'),
+    description: DEFAULT_SEO_TITLE,
+  };
+}
 
 const locationSvg = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
 
@@ -77,13 +81,19 @@ function CenterCard({ center }: { center: StorefrontCenterItem }) {
   );
 }
 
-function RegionSection({ group }: { group: StorefrontCenterGroup }) {
+function RegionSection({
+  group,
+  regionCountLabel,
+}: {
+  group: StorefrontCenterGroup;
+  regionCountLabel: string;
+}) {
   return (
     <section className="region-section">
       <div className="container">
         <div className="region-header">
           <h2>{group.regionLabel}</h2>
-          <span className="rh-count">{group.count} 家合作中心</span>
+          <span className="rh-count">{regionCountLabel}</span>
         </div>
         <div className="center-grid">
           {group.items.map((center) => (
@@ -97,23 +107,32 @@ function RegionSection({ group }: { group: StorefrontCenterGroup }) {
 
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['centers', 'breadcrumb', 'cta']);
   const { groups } = await getStorefrontPartnerCentersList(locale);
 
   return (
     <DirectoryPage
-      breadcrumbs={[{ label: '首页', href: '/' }, { label: '全球布局', href: '/centers' }, { label: '合作中心' }]}
+      breadcrumbs={[
+        { label: t('breadcrumb.home'), href: '/' },
+        { label: t('breadcrumb.globalLayout'), href: '/centers' },
+        { label: t('breadcrumb.partnerCenters') },
+      ]}
       hero={{
-        eyebrow: 'Partner Centers · 合作中心',
-        title: '全球合作医院与研究中心',
-        lead: '与全球顶尖动物医院及研究机构共建临床合作网络，推动循证医学与技术创新。',
+        eyebrow: t('centers.eyebrow'),
+        title: t('centers.title'),
+        lead: t('centers.lead'),
       }}
     >
       <div className="page-centers" style={{ paddingTop: 'var(--space-10)' }}>
         {groups.map((group) => (
-          <RegionSection key={group.region} group={group} />
+          <RegionSection
+            key={group.region}
+            group={group}
+            regionCountLabel={t('centers.regionCount', { count: group.count })}
+          />
         ))}
 
-        <CtaStrip {...buildPartnershipCta('centers')} />
+        <CtaStrip {...buildPartnershipCta(t, 'centers')} />
       </div>
     </DirectoryPage>
   );

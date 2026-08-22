@@ -1,5 +1,6 @@
-import type { CtaBlock } from '@/lib/storefront-types';
+import type { TranslateFn } from '@/lib/i18n-server';
 import { buildPartnershipCta } from '@/lib/partnership-cta';
+import type { CtaBlock } from '@/lib/storefront-types';
 
 export type InsightsHero = {
   eyebrow: string;
@@ -8,20 +9,18 @@ export type InsightsHero = {
   lead: string;
 };
 
-export function buildInsightsHero(companyName: string): InsightsHero {
+export function buildInsightsHero(t: TranslateFn, companyName = ''): InsightsHero {
   const org = companyName.trim();
   return {
-    eyebrow: 'Insights & News · 前沿资讯',
-    titleLine1: '技术前沿与',
-    titleLine2: '临床实践',
-    lead: org
-      ? `来自${org}研发中心、合作医院及行业会议的最新技术动态、临床研究成果与术者实践经验。`
-      : '来自研发中心、合作医院及行业会议的最新技术动态、临床研究成果与术者实践经验。',
+    eyebrow: t('home.insights.eyebrow'),
+    titleLine1: t('home.insights.titleLine1'),
+    titleLine2: t('home.insights.titleLine2'),
+    lead: org ? t('home.insights.leadWithCompany', { companyName: org }) : t('home.insights.leadFallback'),
   };
 }
 
-export function buildInsightsCta(): CtaBlock {
-  return buildPartnershipCta('insights');
+export function buildInsightsCta(t: TranslateFn): CtaBlock {
+  return buildPartnershipCta(t, 'insights');
 }
 
 export function formatInsightDate(value: string | null | undefined) {

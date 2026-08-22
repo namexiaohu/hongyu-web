@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { HongyuLogoLink } from '@/components/layout/hongyu-logo';
 import { LanguageSwitcher } from '@/components/layout/language-switcher';
+import { useTranslation } from '@/lib/i18n-context';
 import type { StorefrontLanguage } from '@/lib/storefront-languages';
 import type { StorefrontNavColumn } from '@/lib/storefront-website-config-api';
 
@@ -66,11 +67,13 @@ export function SiteHeader({
   languages,
   locale,
   navColumns,
-  partnershipCtaLabel = 'Partnership',
+  partnershipCtaLabel,
 }: SiteHeaderProps) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [scrolled, setScrolled] = useState(!overlay);
+  const ctaLabel = partnershipCtaLabel?.trim() || t('header.partnershipCtaDefault');
 
   useEffect(() => {
     if (!overlay) {
@@ -129,7 +132,7 @@ export function SiteHeader({
         <div className="topnav-actions">
           <LanguageSwitcher languages={languages} initialLocale={locale} transparent={transparentOverlay || dark} />
           <Link href="/partnership" className="nav-cta">
-            {partnershipCtaLabel}
+            {ctaLabel}
           </Link>
         </div>
       </div>

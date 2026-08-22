@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { ArticleToc } from '@/components/insights/article-toc';
 import { prepareArticleBody } from '@/lib/article-toc';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import {
   formatInsightDate,
   insightHref,
@@ -83,7 +84,10 @@ function RelatedCard({ item }: { item: StorefrontInsightRelatedItem }) {
   );
 }
 
-export function InsightArticlePage({ article }: InsightArticlePageProps) {
+export async function InsightArticlePage({ article }: InsightArticlePageProps) {
+  const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['insights', 'breadcrumb']);
+
   const { html: bodyHtml, toc } = prepareArticleBody(article.body);
   const dateLabel = formatInsightDate(article.createdAt ?? article.publishedAt);
   const authorLabel = [article.author.name, article.author.title].filter(Boolean).join(', ');
@@ -93,9 +97,9 @@ export function InsightArticlePage({ article }: InsightArticlePageProps) {
       <link rel="stylesheet" href="/cms-article-content.css" />
 
       <div className="breadcrumb container">
-        <Link href="/">首页</Link>
+        <Link href="/">{t('breadcrumb.home')}</Link>
         <span>/</span>
-        <Link href="/insights">前沿资讯</Link>
+        <Link href="/insights">{t('breadcrumb.insights')}</Link>
         <span>/</span>
         <Link href={`/insights?category=${article.boardKey}`}>{article.boardName}</Link>
         <span>/</span>
@@ -141,7 +145,7 @@ export function InsightArticlePage({ article }: InsightArticlePageProps) {
             <ArticleToc items={toc} />
             {article.relatedReading.length ? (
               <div className="sidebar-card sidebar-related">
-                <h4>相关阅读</h4>
+                <h4>{t('insights.article.relatedReading')}</h4>
                 {article.relatedReading.map((item) => (
                   <RelatedSidebarItem key={item.id} item={item} />
                 ))}
@@ -155,8 +159,8 @@ export function InsightArticlePage({ article }: InsightArticlePageProps) {
         <section className="section related-section" data-od-id="related">
           <div className="container">
             <div className="section-header">
-              <p className="eyebrow">More · 更多阅读</p>
-              <h2>相关资讯</h2>
+              <p className="eyebrow">{t('insights.article.moreEyebrow')}</p>
+              <h2>{t('insights.article.relatedTitle')}</h2>
             </div>
             <div className="grid-4">
               {article.relatedArticles.map((item) => (

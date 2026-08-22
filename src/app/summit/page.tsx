@@ -3,22 +3,20 @@ import Link from 'next/link';
 
 import { CtaStrip } from '@/components/shared/cta-strip';
 import { joinCatalogTitles, resolveCompanyName } from '@/lib/company-display';
-import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 import { type StorefrontSummitItem, getStorefrontSummitsList } from '@/lib/storefront-summits-api';
 
-export const metadata: Metadata = {
-  title: '行业峰会',
-  description: DEFAULT_SEO_TITLE,
-};
-
-const statusLabels: Record<string, string> = {
-  upcoming: '即将举办',
-  registering: '报名中',
-  completed: '已结束',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['summit']);
+  return {
+    title: t('summit.metaTitle'),
+    description: DEFAULT_SEO_TITLE,
+  };
+}
 
 const statusClasses: Record<string, string> = {
   upcoming: 'upcoming',
@@ -32,7 +30,15 @@ function formatDate(iso: string | null): string {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
 
-function SummitCard({ item }: { item: StorefrontSummitItem }) {
+function SummitCard({
+  item,
+  statusLabel,
+  cardLinkLabel,
+}: {
+  item: StorefrontSummitItem;
+  statusLabel: string;
+  cardLinkLabel: string;
+}) {
   return (
     <Link href={`/summit/${item.slug}`} className="event-card" style={{ display: 'block', textDecoration: 'none' }}>
       <div className="ec-img">
@@ -41,7 +47,7 @@ function SummitCard({ item }: { item: StorefrontSummitItem }) {
           : <div style={{ width: '100%', height: '100%', background: 'var(--surface)' }} />
         }
         <span className={`ec-status ${statusClasses[item.status] ?? 'upcoming'}`}>
-          {statusLabels[item.status] ?? item.status}
+          {statusLabel}
         </span>
       </div>
       <div className="ec-body">
@@ -62,75 +68,75 @@ function SummitCard({ item }: { item: StorefrontSummitItem }) {
             </span>
           )}
         </div>
-        <span className="ec-link">了解详情 →</span>
+        <span className="ec-link">{cardLinkLabel}</span>
       </div>
     </Link>
   );
 }
 
-function buildSummitHeroLead(companyName: string, isZh: boolean) {
-  const org = companyName.trim();
-  if (isZh) {
-    return org
-      ? `${org}积极参与全球兽医行业重要会议，与同行分享技术成果，推动宠物医疗行业发展。`
-      : '积极参与全球兽医行业重要会议，与同行分享技术成果，推动宠物医疗行业发展。';
-  }
-  return org
-    ? `${org} participates in major global veterinary conferences to share clinical innovations and industry insights.`
-    : 'Participating in major global veterinary conferences to share clinical innovations and industry insights.';
-}
-
-function buildUpcomingSectionLead(companyName: string, upcoming: StorefrontSummitItem[], locale: string) {
-  const isZh = locale.toLowerCase().startsWith('zh');
+function buildUpcomingSectionLead(
+  t: (key: string, params?: Record<string, string>) => string,
+  companyName: string,
+  upcoming: StorefrontSummitItem[],
+  locale: string,
+) {
   const summitNames = joinCatalogTitles(upcoming, { max: 2, locale });
   if (summitNames) {
-    return isZh
-      ? `即将参与 ${summitNames} 等行业峰会与学术会议。`
-      : `Upcoming events include ${summitNames} and more.`;
+    return t('summit.upcoming.leadWithNames', { names: summitNames });
   }
   const org = companyName.trim();
-  return isZh
-    ? org
-      ? `了解${org}即将参与的行业峰会与学术会议。`
-      : '了解即将参与的行业峰会与学术会议。'
-    : org
-      ? `Explore industry summits and conferences ${org} will attend.`
-      : 'Explore upcoming industry summits and conferences.';
+  return org
+    ? t('summit.upcoming.leadWithCompany', { companyName: org })
+    : t('summit.upcoming.leadFallback');
 }
 
 export default async function SummitListPage() {
   const { locale } = await getStorefrontLocaleContext();
-  const isZh = locale.toLowerCase().startsWith('zh');
+  const { t } = await getPageTranslations(locale, ['summit', 'breadcrumb', 'cta']);
   const [company, data] = await Promise.all([
     getStorefrontCompanyProfile(locale),
     getStorefrontSummitsList(),
   ]);
   const companyName = resolveCompanyName(company, locale);
+  const heroLead = companyName.trim()
+    ? t('summit.heroLeadWithCompany', { companyName })
+    : t('summit.heroLeadFallback');
+
+  const statusLabel = (status: string) => {
+    const key = `summit.status.${status}`;
+    const label = t(key);
+    return label === key ? status : label;
+  };
 
   return (
     <div className="page-summit">
       <section className="summit-hero" data-od-id="hero">
         <div className="breadcrumb container">
-          <Link href="/">首页</Link><span>/</span>
-          <span>行业峰会</span>
+          <Link href="/">{t('breadcrumb.home')}</Link><span>/</span>
+          <span>{t('breadcrumb.industrySummits')}</span>
         </div>
         <div className="summit-hero-inner">
-          <div className="sh-eyebrow">Industry Summit · 行业峰会</div>
-          <h1>全球兽医行业会议</h1>
-          <p>{buildSummitHeroLead(companyName, isZh)}</p>
+          <div className="sh-eyebrow">{t('summit.eyebrow')}</div>
+          <h1>{t('summit.title')}</h1>
+          <p>{heroLead}</p>
         </div>
       </section>
 
       {data.upcoming.length > 0 && (
         <div className="container">
           <div className="section-header">
-            <p className="eyebrow">Upcoming · 即将举办</p>
-            <h2>即将举办的行业会议</h2>
-            <p>{buildUpcomingSectionLead(companyName, data.upcoming, locale)}</p>
+            <p className="eyebrow">{t('summit.upcoming.eyebrow')}</p>
+            <h2>{t('summit.upcoming.title')}</h2>
+            <p>{buildUpcomingSectionLead(t, companyName, data.upcoming, locale)}</p>
           </div>
           <div className="event-grid">
             {data.upcoming.map((item) => (
-              <SummitCard key={item.slug} item={item} />
+              <SummitCard
+                key={item.slug}
+                item={item}
+                statusLabel={statusLabel(item.status)}
+                cardLinkLabel={t('summit.cardLink')}
+              />
             ))}
           </div>
         </div>
@@ -139,12 +145,17 @@ export default async function SummitListPage() {
       {data.completed.length > 0 && (
         <div className="container">
           <div className="section-header" style={{ paddingTop: data.upcoming.length > 0 ? undefined : 0 }}>
-            <p className="eyebrow">Past Events · 往期回顾</p>
-            <h2>往年会议回顾</h2>
+            <p className="eyebrow">{t('summit.past.eyebrow')}</p>
+            <h2>{t('summit.past.title')}</h2>
           </div>
           <div className="event-grid">
             {data.completed.map((item) => (
-              <SummitCard key={item.slug} item={item} />
+              <SummitCard
+                key={item.slug}
+                item={item}
+                statusLabel={statusLabel(item.status)}
+                cardLinkLabel={t('summit.cardLink')}
+              />
             ))}
           </div>
         </div>
@@ -152,11 +163,11 @@ export default async function SummitListPage() {
 
       {data.upcoming.length === 0 && data.completed.length === 0 && (
         <div className="container" style={{ paddingBlock: 'var(--space-16)', textAlign: 'center', color: 'var(--muted)' }}>
-          暂无会议数据
+          {t('summit.empty')}
         </div>
       )}
 
-      <CtaStrip {...buildPartnershipCta('summit')} variant="section" />
+      <CtaStrip {...buildPartnershipCta(t, 'summit')} variant="section" />
     </div>
   );
 }

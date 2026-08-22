@@ -130,6 +130,17 @@ function EducationExtraMeta({ text }: { text: string }) {
   );
 }
 
+type HomeCopy = {
+  solutionsEyebrow: string;
+  aboutEyebrow: string;
+  aboutLearnMore: string;
+  statsEyebrow: string;
+  globalEyebrow: string;
+  insightsViewAll: string;
+  educationEyebrow: string;
+  emptyDash: string;
+};
+
 type HomePageViewProps = {
   config: StorefrontHomepageConfig;
   solutions: StorefrontSolutionListItem[];
@@ -138,6 +149,7 @@ type HomePageViewProps = {
   brandEyebrow: string;
   insightsHero: InsightsHero;
   partnershipCta: CtaBlock;
+  homeCopy: HomeCopy;
 };
 
 export function HomePageView({
@@ -148,6 +160,7 @@ export function HomePageView({
   brandEyebrow,
   insightsHero,
   partnershipCta,
+  homeCopy,
 }: HomePageViewProps) {
   return (
     <>
@@ -162,7 +175,7 @@ export function HomePageView({
       <section className="section" id="products" data-od-id="products">
         <div className="container">
           <div className="section-header">
-            <p className="eyebrow">Solutions · 解决方案</p>
+            <p className="eyebrow">{homeCopy.solutionsEyebrow}</p>
             {config.solutionsTitle ? <h2>{config.solutionsTitle}</h2> : null}
             {config.solutionsDescription ? <p className="lead">{config.solutionsDescription}</p> : null}
           </div>
@@ -188,11 +201,11 @@ export function HomePageView({
       <section className="section" id="about" data-od-id="about" style={{ background: 'var(--bg-soft)' }}>
         <div className="container about-grid">
           <div className="about-text">
-            <p className="eyebrow">About · 企业介绍</p>
+            <p className="eyebrow">{homeCopy.aboutEyebrow}</p>
             {config.aboutTitle ? <MultilineTitle text={config.aboutTitle} /> : null}
             <ParagraphBlocks text={config.aboutDescription} />
             <Link href="/about" className="btn-text" style={{ marginTop: 'var(--space-6)', display: 'inline-flex' }}>
-              了解更多 →
+              {homeCopy.aboutLearnMore}
             </Link>
           </div>
           <HomeAboutCarousel slides={config.aboutSlides} />
@@ -202,7 +215,7 @@ export function HomePageView({
       {config.stats.length > 0 ? (
         <section className="section" data-od-id="stats">
           <div className="container">
-            <p className="eyebrow" style={{ marginBottom: 'var(--space-8)' }}>By the Numbers · 核心数据</p>
+            <p className="eyebrow" style={{ marginBottom: 'var(--space-8)' }}>{homeCopy.statsEyebrow}</p>
             <StatsBar
               stats={config.stats.map((stat) => ({
                 value: stat.title,
@@ -217,7 +230,7 @@ export function HomePageView({
       <section className="section" id="global" data-od-id="global">
         <div className="container">
           <div className="section-header">
-            <p className="eyebrow">Global · 全球布局</p>
+            <p className="eyebrow">{homeCopy.globalEyebrow}</p>
             {config.globalTitle ? <h2>{config.globalTitle}</h2> : null}
             {config.globalDescription ? <p className="lead">{config.globalDescription}</p> : null}
           </div>
@@ -237,7 +250,7 @@ export function HomePageView({
               </h2>
             </div>
             <Link href="/insights" className="btn" style={{ fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
-              查看全部 →
+              {homeCopy.insightsViewAll}
             </Link>
           </div>
           <div className="log-list">
@@ -249,7 +262,7 @@ export function HomePageView({
                   href={insightHref(item.slug)}
                   className="log-row"
                 >
-                  <span className="meta num">{dateLabel || '—'}</span>
+                  <span className="meta num">{dateLabel || homeCopy.emptyDash}</span>
                   <div className="log-main">
                     <div className="log-thumb">
                       {item.coverImage ? <img src={item.coverImage} alt="" /> : null}
@@ -271,7 +284,7 @@ export function HomePageView({
       <section className="section" id="education" data-od-id="education">
         <div className="container">
           <div className="section-header">
-            <p className="eyebrow">Education · 持续教育</p>
+            <p className="eyebrow">{homeCopy.educationEyebrow}</p>
             {config.educationTitle ? <h2>{config.educationTitle}</h2> : null}
             {config.educationDescription ? <p className="lead">{config.educationDescription}</p> : null}
           </div>

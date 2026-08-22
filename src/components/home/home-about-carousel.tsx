@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { useTranslation } from '@/lib/i18n-context';
 import type { HomepageMediaSlide } from '@/lib/storefront-homepage-api';
 
 type HomeAboutCarouselProps = {
@@ -9,6 +10,7 @@ type HomeAboutCarouselProps = {
 };
 
 export function HomeAboutCarousel({ slides }: HomeAboutCarouselProps) {
+  const { t } = useTranslation();
   const [current, setCurrent] = useState(0);
   const safeSlides = slides.filter((slide) => slide.url);
 
@@ -54,7 +56,7 @@ export function HomeAboutCarousel({ slides }: HomeAboutCarouselProps) {
               key={`about-dot-${slide.id || index}`}
               type="button"
               className={`about-dot${index === current ? ' active' : ''}`}
-              aria-label={`第 ${index + 1} 张`}
+              aria-label={t('home.aboutCarousel.slideN', { index: index + 1 })}
               onClick={() => setCurrent(index)}
             />
           ))}

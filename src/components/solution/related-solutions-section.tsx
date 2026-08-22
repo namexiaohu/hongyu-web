@@ -1,16 +1,20 @@
 import Link from 'next/link';
 
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import type { StorefrontSolutionListItem } from '@/lib/storefront-solutions-api';
 
-export function RelatedSolutionsSection({ items }: { items: StorefrontSolutionListItem[] }) {
+export async function RelatedSolutionsSection({ items }: { items: StorefrontSolutionListItem[] }) {
   if (!items.length) return null;
+
+  const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['solution']);
 
   return (
     <section className="section" data-od-id="related">
       <div className="container">
         <div className="section-header">
-          <p className="eyebrow">MORE · EXPLORE</p>
-          <h2>Explore more solutions</h2>
+          <p className="eyebrow">{t('solution.relatedEyebrow')}</p>
+          <h2>{t('solution.relatedTitle')}</h2>
         </div>
         <div className="grid-4">
           {items.map((item) => (

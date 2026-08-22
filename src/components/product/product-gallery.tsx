@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { useTranslation } from '@/lib/i18n-context';
+
 export type ProductGallerySlide = {
   id: string;
   url: string;
@@ -15,6 +17,7 @@ type ProductGalleryProps = {
 };
 
 export function ProductGallery({ slides, alt }: ProductGalleryProps) {
+  const { t } = useTranslation();
   const items = slides.filter((item) => item.url?.trim());
   const [index, setIndex] = useState(0);
 
@@ -61,23 +64,23 @@ export function ProductGallery({ slides, alt }: ProductGalleryProps) {
       </div>
       {hasMultiple ? (
         <>
-          <button type="button" className="product-gallery-nav product-gallery-nav--prev" onClick={() => go(-1)} aria-label="Previous">
+          <button type="button" className="product-gallery-nav product-gallery-nav--prev" onClick={() => go(-1)} aria-label={t('product.gallery.previous')}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-          <button type="button" className="product-gallery-nav product-gallery-nav--next" onClick={() => go(1)} aria-label="Next">
+          <button type="button" className="product-gallery-nav product-gallery-nav--next" onClick={() => go(1)} aria-label={t('product.gallery.next')}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
-          <div className="product-gallery-dots" role="tablist" aria-label="Gallery slides">
+          <div className="product-gallery-dots" role="tablist" aria-label={t('product.gallery.slidesAria')}>
             {items.map((slide, i) => (
               <button
                 key={slide.id || `${slide.kind}-${slide.url}-${i}`}
                 type="button"
                 className={`product-gallery-dot${i === index ? ' is-active' : ''}${slide.kind === 'video' ? ' is-video' : ''}`}
-                aria-label={slide.kind === 'video' ? 'Show video' : `Show image ${i + 1}`}
+                aria-label={slide.kind === 'video' ? t('product.gallery.showVideo') : t('product.gallery.showImageN', { index: i + 1 })}
                 aria-selected={i === index}
                 onClick={() => setIndex(i)}
               />

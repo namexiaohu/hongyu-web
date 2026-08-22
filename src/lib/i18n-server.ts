@@ -4,8 +4,11 @@ import {
   LOCALE_COOKIE_NAME,
   LOCALE_REQUEST_HEADER,
   getMarketDefaults,
+  type Locale,
   type SitePreferences,
 } from '@/lib/i18n';
+import { createTranslateFn, type TranslationParams } from '@/lib/i18n-translate';
+import { fetchUiStringGroups } from '@/lib/ui-strings-client';
 import { getStorefrontLanguages } from '@/lib/storefront-languages';
 import {
   getDefaultStorefrontLanguage,
@@ -13,6 +16,8 @@ import {
   pickStorefrontLocale,
   type StorefrontLanguage,
 } from '@/lib/storefront-languages';
+
+export type TranslateFn = (key: string, params?: TranslationParams) => string;
 
 export type StorefrontLocaleContext = SitePreferences & {
   languages: StorefrontLanguage[];
@@ -46,4 +51,14 @@ export async function getStorefrontLocaleContext(): Promise<StorefrontLocaleCont
 export async function getServerSitePreferences(): Promise<SitePreferences> {
   const { locale, currency, unitSystem } = await getStorefrontLocaleContext();
   return { locale, currency, unitSystem };
+}
+
+export function getServerTranslations(locale: Locale = 'en', uiStrings: Record<string, string> = {}) {
+  const t = createTranslateFn(locale, uiStrings);
+  return { t, locale };
+}
+
+export async function getPageTranslations(locale: string, groups: string[]) {
+  const uiStrings = await fetchUiStringGroups(locale, groups).catch(() => ({}));
+  return getServerTranslations(locale, uiStrings);
 }

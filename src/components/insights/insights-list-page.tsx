@@ -4,16 +4,26 @@ import { CtaStrip } from '@/components/shared/cta-strip';
 import {
   formatInsightMeta,
   insightHref,
-  buildInsightsCta,
   insightsListHref,
   type InsightsHero,
 } from '@/lib/insights';
+import type { CtaBlock } from '@/lib/storefront-types';
 import type {
   StorefrontInsightListItem,
   StorefrontInsightRelatedItem,
   StorefrontInsightsBoardCountsResponse,
   StorefrontInsightsListResponse,
 } from '@/lib/storefront-insights-api';
+
+type InsightsListCopy = {
+  breadcrumbHome: string;
+  breadcrumbCurrent: string;
+  allLabel: string;
+  featuredLabel: string;
+  previousPage: string;
+  nextPage: string;
+  pastHighlights: string;
+};
 
 type InsightsListPageProps = {
   list: StorefrontInsightsListResponse;
@@ -22,9 +32,11 @@ type InsightsListPageProps = {
   category?: string | null;
   page: number;
   insightsHero: InsightsHero;
+  listCopy: InsightsListCopy;
+  insightsCta: CtaBlock;
 };
 
-function FeaturedCard({ item }: { item: StorefrontInsightListItem }) {
+function FeaturedCard({ item, featuredLabel }: { item: StorefrontInsightListItem; featuredLabel: string }) {
   return (
     <div className="featured">
       <div className="featured-img">
@@ -36,7 +48,7 @@ function FeaturedCard({ item }: { item: StorefrontInsightListItem }) {
       </div>
       <div>
         <div className="f-tag">
-          {item.boardName} · Featured
+          {item.boardName} · {featuredLabel}
         </div>
         <h2>
           <Link href={insightHref(item.slug)}>{item.title}</Link>
@@ -71,11 +83,15 @@ function Pagination({
   pageSize,
   total,
   category,
+  previousPage,
+  nextPage,
 }: {
   page: number;
   pageSize: number;
   total: number;
   category?: string | null;
+  previousPage: string;
+  nextPage: string;
 }) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   if (totalPages <= 1) return null;
@@ -96,14 +112,14 @@ function Pagination({
           <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round">
             <path d="M15 18l-6-6 6-6" />
           </svg>
-          上一页
+          {previousPage}
         </Link>
       ) : (
         <span className="pg-arrow" style={{ opacity: 0.4, pointerEvents: 'none' }}>
           <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round">
             <path d="M15 18l-6-6 6-6" />
           </svg>
-          上一页
+          {previousPage}
         </span>
       )}
 
@@ -125,14 +141,14 @@ function Pagination({
 
       {page < totalPages ? (
         <Link href={insightsListHref({ category, page: page + 1 })} className="pg-arrow">
-          下一页
+          {nextPage}
           <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round">
             <path d="M9 18l6-6-6-6" />
           </svg>
         </Link>
       ) : (
         <span className="pg-arrow" style={{ opacity: 0.4, pointerEvents: 'none' }}>
-          下一页
+          {nextPage}
           <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round">
             <path d="M9 18l6-6-6-6" />
           </svg>
@@ -149,6 +165,8 @@ export function InsightsListPage({
   category,
   page,
   insightsHero,
+  listCopy,
+  insightsCta,
 }: InsightsListPageProps) {
   const featured = page === 1 && list.items.length ? list.items[0] : null;
   const gridItems =
@@ -157,9 +175,9 @@ export function InsightsListPage({
   return (
     <>
       <div className="breadcrumb container">
-        <Link href="/">首页</Link>
+        <Link href="/">{listCopy.breadcrumbHome}</Link>
         <span>/</span>
-        <span style={{ color: 'var(--fg)' }}>前沿资讯</span>
+        <span style={{ color: 'var(--fg)' }}>{listCopy.breadcrumbCurrent}</span>
       </div>
 
       <section className="insights-list-hero" data-od-id="hero">
@@ -186,7 +204,7 @@ export function InsightsListPage({
             href={insightsListHref()}
             className={`cat-btn${!category ? ' active' : ''}`}
           >
-            All <span className="cat-count">{boardCounts.total}</span>
+            {listCopy.allLabel} <span className="cat-count">{boardCounts.total}</span>
           </Link>
           {boardCounts.boards.map((board) => (
             <Link
@@ -199,7 +217,7 @@ export function InsightsListPage({
           ))}
         </div>
 
-        {featured ? <FeaturedCard item={featured} /> : null}
+        {featured ? <FeaturedCard item={featured} featuredLabel={listCopy.featuredLabel} /> : null}
 
         <div className="article-grid" data-od-id="listing">
           {gridItems.map((item) => (
@@ -212,11 +230,13 @@ export function InsightsListPage({
           pageSize={list.pageSize}
           total={list.total}
           category={category}
+          previousPage={listCopy.previousPage}
+          nextPage={listCopy.nextPage}
         />
 
         {randomItems.length ? (
           <div className="compact-section">
-            <h2>往期回顾</h2>
+            <h2>{listCopy.pastHighlights}</h2>
             {randomItems.map((item) => (
               <div key={item.id} className="compact-row">
                 <div className="cr-date">{formatInsightMeta(item.createdAt, null)}</div>
@@ -230,7 +250,7 @@ export function InsightsListPage({
         ) : null}
       </div>
 
-      <CtaStrip {...buildInsightsCta()} />
+      <CtaStrip {...insightsCta} />
     </>
   );
 }

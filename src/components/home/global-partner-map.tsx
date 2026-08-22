@@ -6,6 +6,7 @@ import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 
+import { useTranslation } from '@/lib/i18n-context';
 import type { CenterRegion } from '@/lib/storefront-partner-centers-api';
 
 export type GlobalMapCenter = {
@@ -21,19 +22,17 @@ type MapRegionId = 'apac' | 'europe' | 'na' | 'latam' | 'mea' | 'oceania';
 type RegionMeta = {
   id: MapRegionId;
   apiRegion: CenterRegion;
-  labelZh: string;
-  labelEn: string;
   colorVar: string;
   softVar: string;
 };
 
 const REGION_META: RegionMeta[] = [
-  { id: 'apac', apiRegion: 'asia-pacific', labelZh: '亚太地区', labelEn: 'Asia-Pacific', colorVar: '--gm-r-apac', softVar: '--gm-r-apac-soft' },
-  { id: 'europe', apiRegion: 'europe', labelZh: '欧洲', labelEn: 'Europe', colorVar: '--gm-r-europe', softVar: '--gm-r-europe-soft' },
-  { id: 'na', apiRegion: 'north-america', labelZh: '北美', labelEn: 'North America', colorVar: '--gm-r-na', softVar: '--gm-r-na-soft' },
-  { id: 'latam', apiRegion: 'latin-america', labelZh: '拉丁美洲', labelEn: 'Latin America', colorVar: '--gm-r-latam', softVar: '--gm-r-latam-soft' },
-  { id: 'mea', apiRegion: 'middle-east-africa', labelZh: '中东与非洲', labelEn: 'Middle East & Africa', colorVar: '--gm-r-mea', softVar: '--gm-r-mea-soft' },
-  { id: 'oceania', apiRegion: 'oceania', labelZh: '大洋洲', labelEn: 'Oceania', colorVar: '--gm-r-oceania', softVar: '--gm-r-oceania-soft' },
+  { id: 'apac', apiRegion: 'asia-pacific', colorVar: '--gm-r-apac', softVar: '--gm-r-apac-soft' },
+  { id: 'europe', apiRegion: 'europe', colorVar: '--gm-r-europe', softVar: '--gm-r-europe-soft' },
+  { id: 'na', apiRegion: 'north-america', colorVar: '--gm-r-na', softVar: '--gm-r-na-soft' },
+  { id: 'latam', apiRegion: 'latin-america', colorVar: '--gm-r-latam', softVar: '--gm-r-latam-soft' },
+  { id: 'mea', apiRegion: 'middle-east-africa', colorVar: '--gm-r-mea', softVar: '--gm-r-mea-soft' },
+  { id: 'oceania', apiRegion: 'oceania', colorVar: '--gm-r-oceania', softVar: '--gm-r-oceania-soft' },
 ];
 
 const ISO_TO_REGION: Record<string, MapRegionId> = {
@@ -94,6 +93,7 @@ function regionIdOfFeature(d: Feature) {
 }
 
 export function GlobalPartnerMap({ centers }: Props) {
+  const { t } = useTranslation();
   const rootRef = useRef<HTMLElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -404,22 +404,22 @@ export function GlobalPartnerMap({ centers }: Props) {
       ref={rootRef}
       className="global-map-embed"
       id="global-map-embed"
-      aria-label="全球合作中心地图"
+      aria-label={t('map.ariaLabel')}
     >
       <div className="map-stage" ref={stageRef}>
         {(loading || loadError) ? (
           <div className="loading">
             {loadError ? (
-              <span>地图加载失败</span>
+              <span>{t('map.loadFailed')}</span>
             ) : (
               <>
                 <div className="spinner" />
-                <span>加载地图…</span>
+                <span>{t('map.loading')}</span>
               </>
             )}
           </div>
         ) : null}
-        <svg ref={svgRef} role="img" aria-label="全球合作板块地图" />
+        <svg ref={svgRef} role="img" aria-label={t('map.svgAriaLabel')} />
 
         <div
           className={`region-tooltip${tipOpen ? ' is-open' : ''}`}
@@ -435,15 +435,15 @@ export function GlobalPartnerMap({ centers }: Props) {
             <div className="tip-head">
               <div>
                 <div className="tip-label">
-                  {activeMeta ? `${activeMeta.labelZh} · ${activeMeta.labelEn}` : ''}
+                  {activeMeta ? t(`map.regions.${activeMeta.id}`) : ''}
                 </div>
                 <div className="tip-title" id="tip-title">
-                  {activeMeta ? activeMeta.labelZh : ''}
+                  {activeMeta ? t(`map.regions.${activeMeta.id}`) : ''}
                 </div>
               </div>
               <div className="tip-count">
                 <strong>{activeCenters.length}</strong>
-                <em>合作中心</em>
+                <em>{t('map.partnerCenters')}</em>
               </div>
             </div>
             <div className="center-list">
@@ -461,11 +461,11 @@ export function GlobalPartnerMap({ centers }: Props) {
                       {[center.location, center.badgeText].filter(Boolean).join(' · ')}
                     </span>
                   </div>
-                  <span className="go">详情 →</span>
+                  <span className="go">{t('map.detailsArrow')}</span>
                 </a>
               ))}
             </div>
-            <p className="tip-foot">点击条目可打开合作中心详情页</p>
+            <p className="tip-foot">{t('map.tipFoot')}</p>
           </div>
         </div>
       </div>

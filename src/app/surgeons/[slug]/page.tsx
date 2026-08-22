@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { Breadcrumb } from '@/components/shared/breadcrumb';
-import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontSurgeonBySlug } from '@/lib/storefront-surgeons-api';
 
@@ -24,10 +24,11 @@ function formatCount(value: number) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['detail', 'common']);
   const surgeon = await getStorefrontSurgeonBySlug(slug, locale);
-  if (!surgeon) return { title: 'Not Found' };
+  if (!surgeon) return { title: t('common.notFound') };
   return {
-    title: `${surgeon.name} · 认证术者`,
+    title: `${surgeon.name} · ${t('detail.surgeon.metaTitleSuffix')}`,
     description: surgeon.expertise || surgeon.experience || DEFAULT_SEO_TITLE,
   };
 }
@@ -35,6 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function SurgeonDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['detail', 'breadcrumb', 'common']);
   const surgeon = await getStorefrontSurgeonBySlug(slug, locale);
   if (!surgeon) notFound();
 
@@ -51,8 +53,8 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
     <>
       <Breadcrumb
         items={[
-          { label: '首页', href: '/' },
-          { label: '认证术者', href: '/surgeons' },
+          { label: t('breadcrumb.home'), href: '/' },
+          { label: t('breadcrumb.certifiedSurgeons'), href: '/surgeons' },
           { label: surgeon.name },
         ]}
       />
@@ -77,13 +79,13 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
                 {surgeon.certificationYear != null ? (
                   <div className="pi-stat">
                     <span className="ps-num">{surgeon.certificationYear}</span>
-                    <span className="ps-label">认证年份</span>
+                    <span className="ps-label">{t('detail.surgeon.statCertificationYear')}</span>
                   </div>
                 ) : null}
                 {surgeon.surgeryCount != null ? (
                   <div className="pi-stat">
                     <span className="ps-num">{formatCount(surgeon.surgeryCount)}</span>
-                    <span className="ps-label">累计手术</span>
+                    <span className="ps-label">{t('detail.surgeon.statTotalSurgeries')}</span>
                   </div>
                 ) : null}
               </div>
@@ -97,8 +99,8 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
           <div className="main-content">
             {surgeon.detailDescription.trim() ? (
               <section data-od-id="about">
-                <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>About · 术者简介</p>
-                <h2 className="surgeon-section-title">个人简介</h2>
+                <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>{t('detail.surgeon.aboutEyebrow')}</p>
+                <h2 className="surgeon-section-title">{t('detail.surgeon.aboutTitle')}</h2>
                 <div
                   className="rich-content"
                   dangerouslySetInnerHTML={{ __html: surgeon.detailDescription }}
@@ -110,7 +112,7 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
           <aside className="sidebar" data-od-id="sidebar">
             {surgeon.partnerCenters.length > 0 ? (
               <div className="sidebar-card">
-                <div className="sc-label">从属合作中心</div>
+                <div className="sc-label">{t('detail.surgeon.affiliatedCenters')}</div>
                 <div className="sc-centers">
                   {surgeon.partnerCenters.map((center) => (
                     <div key={center.slug} className="sc-center-item">
@@ -126,11 +128,11 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
 
             {hasCertInfo ? (
               <div className="sidebar-card">
-                <div className="sc-label">认证信息</div>
+                <div className="sc-label">{t('detail.surgeon.certificationInfo')}</div>
                 <div className="sc-cert-rows">
                   {surgeon.gradeTitle ? (
                     <div className="sc-cert-row">
-                      <span className="sc-cert-key">认证等级</span>
+                      <span className="sc-cert-key">{t('detail.surgeon.certificationLevel')}</span>
                       <span className={`pi-badge ${surgeon.gradeKey} pi-badge-sm`}>
                         {surgeon.gradeTitle}
                       </span>
@@ -138,13 +140,13 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
                   ) : null}
                   {surgeon.certificationYear != null ? (
                     <div className="sc-cert-row">
-                      <span className="sc-cert-key">认证年份</span>
+                      <span className="sc-cert-key">{t('detail.surgeon.certificationYear')}</span>
                       <span className="sc-cert-value">{surgeon.certificationYear}</span>
                     </div>
                   ) : null}
                   {surgeon.surgeryCount != null ? (
                     <div className="sc-cert-row">
-                      <span className="sc-cert-key">累计手术</span>
+                      <span className="sc-cert-key">{t('detail.surgeon.totalSurgeries')}</span>
                       <span className="sc-cert-value">{formatCount(surgeon.surgeryCount)}</span>
                     </div>
                   ) : null}
@@ -160,7 +162,7 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
 
             {surgeon.specialties.length > 0 ? (
               <div className="sidebar-card">
-                <div className="sc-label">专业方向</div>
+                <div className="sc-label">{t('detail.surgeon.specialties')}</div>
                 <div className="sc-specialty-tags">
                   {surgeon.specialties.map((item) => (
                     <span key={item} className="sc-specialty-tag">{item}</span>
@@ -171,12 +173,12 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
 
             {firstCenter ? (
               <div className="sidebar-card sidebar-card-muted">
-                <div className="sc-label">联系术者</div>
+                <div className="sc-label">{t('detail.surgeon.contactSurgeon')}</div>
                 <p className="sc-contact-copy">
-                  如需预约手术咨询或学术交流，请通过所属医院联系。
+                  {t('detail.surgeon.contactCopy')}
                 </p>
                 <Link href={`/centers/${firstCenter.slug}`} className="sc-contact-link">
-                  前往医院主页 →
+                  {t('detail.center.visitHospital')}
                 </Link>
               </div>
             ) : null}
@@ -187,9 +189,11 @@ export default async function SurgeonDetailPage({ params }: PageProps) {
       {surgeon.relatedSurgeons.length > 0 ? (
         <section className="section related-surgeons-section" data-od-id="related">
           <div className="container">
-            <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>Related · 同中心术者</p>
+            <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>{t('detail.surgeon.relatedEyebrow')}</p>
             <h2 className="surgeon-section-title">
-              {firstCenter ? `${firstCenter.name}其他术者` : '同中心其他术者'}
+              {firstCenter
+                ? t('detail.surgeon.relatedTitleWithCenter', { centerName: firstCenter.name })
+                : t('detail.surgeon.relatedTitleFallback')}
             </h2>
             <div className="related-surgeons-grid">
               {surgeon.relatedSurgeons.map((peer) => (

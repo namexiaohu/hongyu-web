@@ -4,24 +4,29 @@ import { ProductGallery } from '@/components/product/product-gallery';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { SplitBackgroundHero } from '@/components/shared/split-background-hero';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
+import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
+import type { TranslateFn } from '@/lib/i18n-server';
 import {
   productCoverUrl,
   type StorefrontProductDetail,
 } from '@/lib/storefront-products-api';
 
-function attachmentMeta(mimeType: string) {
+function attachmentMeta(mimeType: string, t: TranslateFn) {
   const mime = mimeType.trim().toLowerCase();
-  if (mime.includes('pdf')) return 'PDF';
-  if (mime.startsWith('image/')) return 'Image';
-  if (mime.includes('word') || mime.includes('document')) return 'Document';
-  return mimeType || 'File';
+  if (mime.includes('pdf')) return t('product.attachmentTypes.pdf');
+  if (mime.startsWith('image/')) return t('product.attachmentTypes.image');
+  if (mime.includes('word') || mime.includes('document')) return t('product.attachmentTypes.document');
+  return mimeType || t('product.attachmentTypes.file');
 }
 
 type ProductPageViewProps = {
   product: StorefrontProductDetail;
 };
 
-export function ProductPageView({ product }: ProductPageViewProps) {
+export async function ProductPageView({ product }: ProductPageViewProps) {
+  const { locale } = await getStorefrontLocaleContext();
+  const { t } = await getPageTranslations(locale, ['product', 'breadcrumb', 'common']);
+
   const stats = (product.stats ?? []).filter((row) => row.label?.trim() && row.value?.trim());
   const attachments = (product.attachments ?? []).filter((item) => item.url?.trim());
   const series = (product.seriesProducts ?? []).slice(0, 3);
@@ -40,13 +45,13 @@ export function ProductPageView({ product }: ProductPageViewProps) {
 
   const breadcrumbs = solution
     ? [
-        { label: 'Home', href: '/' },
-        { label: 'Solutions', href: '/solutions' },
+        { label: t('breadcrumb.home'), href: '/' },
+        { label: t('breadcrumb.solutions'), href: '/solutions' },
         { label: solution.title, href: `/solutions/${solution.slug}` },
         { label: product.name },
       ]
     : [
-        { label: 'Home', href: '/' },
+        { label: t('breadcrumb.home'), href: '/' },
         { label: product.name },
       ];
 
@@ -76,7 +81,7 @@ export function ProductPageView({ product }: ProductPageViewProps) {
           <div className="product-hero-actions">
             {stats.length ? (
               <a href="#specs" className="btn-hero-primary">
-                View specifications
+                {t('product.viewSpecifications')}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
@@ -84,7 +89,7 @@ export function ProductPageView({ product }: ProductPageViewProps) {
             ) : null}
             {attachments.length ? (
               <a href="#downloads" className={stats.length ? 'btn-hero-secondary' : 'btn-hero-primary'}>
-                Get product materials
+                {t('product.getMaterials')}
               </a>
             ) : null}
           </div>
@@ -96,7 +101,7 @@ export function ProductPageView({ product }: ProductPageViewProps) {
           <div className="container">
             <div className="product-rich-content">
               <p className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>
-                Overview
+                {t('product.overviewEyebrow')}
               </p>
               <h2 style={{ marginBottom: 'var(--space-6)' }}>{product.name}</h2>
               <div dangerouslySetInnerHTML={{ __html: product.description }} />
@@ -109,14 +114,14 @@ export function ProductPageView({ product }: ProductPageViewProps) {
         <section className="section section--muted" id="specs" data-od-id="specs">
           <div className="container">
             <div className="section-header">
-              <p className="eyebrow">Specifications · 技术规格</p>
-              <h2>Specifications</h2>
+              <p className="eyebrow">{t('product.specificationsEyebrow')}</p>
+              <h2>{t('product.specificationsTitle')}</h2>
             </div>
             <table className="spec-table">
               <thead>
                 <tr>
-                  <th>Parameter</th>
-                  <th>Specification</th>
+                  <th>{t('product.parameterColumn')}</th>
+                  <th>{t('product.specificationColumn')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -136,9 +141,9 @@ export function ProductPageView({ product }: ProductPageViewProps) {
         <section className="section" id="downloads" data-od-id="downloads">
           <div className="container">
             <div className="section-header">
-              <p className="eyebrow">Downloads</p>
-              <h2>Downloads</h2>
-              <p>Technical documents and clinical materials for {product.name}.</p>
+              <p className="eyebrow">{t('product.downloadsEyebrow')}</p>
+              <h2>{t('product.downloadsTitle')}</h2>
+              <p>{t('product.downloadsLead', { productName: product.name })}</p>
             </div>
             <div className="download-list">
               {attachments.map((item) => (
@@ -160,10 +165,10 @@ export function ProductPageView({ product }: ProductPageViewProps) {
                     </div>
                     <div>
                       <div className="di-name">{item.name}</div>
-                      <div className="di-meta">{attachmentMeta(item.mimeType)}</div>
+                      <div className="di-meta">{attachmentMeta(item.mimeType, t)}</div>
                     </div>
                   </div>
-                  <span className="di-btn">Download →</span>
+                  <span className="di-btn">{t('common.downloadArrow')}</span>
                 </a>
               ))}
             </div>
@@ -175,8 +180,8 @@ export function ProductPageView({ product }: ProductPageViewProps) {
         <section className="section section--muted" data-od-id="related">
           <div className="container">
             <div className="section-header">
-              <p className="eyebrow">Related</p>
-              <h2>Other models in this series</h2>
+              <p className="eyebrow">{t('product.relatedEyebrow')}</p>
+              <h2>{t('product.relatedTitle')}</h2>
             </div>
             <div className="grid-3">
               {series.map((item) => {
