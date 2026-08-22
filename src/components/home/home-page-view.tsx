@@ -4,11 +4,14 @@ import type { ReactNode } from 'react';
 import { GlobalPartnerMap, type GlobalMapCenter } from '@/components/home/global-partner-map';
 import { HomeAboutCarousel } from '@/components/home/home-about-carousel';
 import { HomeBannerCarousel } from '@/components/home/home-banner-carousel';
+import { CtaStrip } from '@/components/shared/cta-strip';
 import { StatsBar } from '@/components/shared/stats-bar';
-import { formatInsightDate, insightHref } from '@/lib/insights';
+import { formatInsightDate, insightHref, type InsightsHero } from '@/lib/insights';
+import { buildPartnershipCta } from '@/lib/partnership-cta';
 import type { StorefrontHomepageConfig } from '@/lib/storefront-homepage-api';
 import type { StorefrontInsightListItem } from '@/lib/storefront-insights-api';
 import type { StorefrontSolutionListItem } from '@/lib/storefront-solutions-api';
+import type { CtaBlock } from '@/lib/storefront-types';
 
 function MultilineTitle({ text, as: Tag = 'h2' }: { text: string; as?: 'h1' | 'h2' }) {
   const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean);
@@ -132,9 +135,20 @@ type HomePageViewProps = {
   solutions: StorefrontSolutionListItem[];
   insights: StorefrontInsightListItem[];
   partnerCenters: GlobalMapCenter[];
+  brandEyebrow: string;
+  insightsHero: InsightsHero;
+  partnershipCta: CtaBlock;
 };
 
-export function HomePageView({ config, solutions, insights, partnerCenters }: HomePageViewProps) {
+export function HomePageView({
+  config,
+  solutions,
+  insights,
+  partnerCenters,
+  brandEyebrow,
+  insightsHero,
+  partnershipCta,
+}: HomePageViewProps) {
   return (
     <>
       <HomeBannerCarousel
@@ -142,6 +156,7 @@ export function HomePageView({ config, solutions, insights, partnerCenters }: Ho
         title={config.bannerTitle}
         subtitle={config.bannerSubtitle}
         description={config.bannerDescription}
+        brandEyebrow={brandEyebrow}
       />
 
       <section className="section" id="products" data-od-id="products">
@@ -214,8 +229,12 @@ export function HomePageView({ config, solutions, insights, partnerCenters }: Ho
         <div className="container">
           <div className="row-between" style={{ marginBottom: 'var(--space-8)' }}>
             <div>
-              <p className="eyebrow">Insights · 前沿资讯</p>
-              <h2 style={{ marginTop: 'var(--space-3)' }}>技术前沿与临床实践</h2>
+              <p className="eyebrow">{insightsHero.eyebrow}</p>
+              <h2 style={{ marginTop: 'var(--space-3)' }}>
+                {insightsHero.titleLine1}
+                <br />
+                {insightsHero.titleLine2}
+              </h2>
             </div>
             <Link href="/insights" className="btn" style={{ fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
               查看全部 →
@@ -290,23 +309,7 @@ export function HomePageView({ config, solutions, insights, partnerCenters }: Ho
         </div>
       </section>
 
-      <section className="section" id="contact" data-od-id="cta">
-        <div className="container">
-          <div className="cta-strip">
-            <p className="eyebrow" style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 'var(--space-4)' }}>
-              Partnership · 商务合作
-            </p>
-            <h2>期待与您携手同行</h2>
-            <p className="lead">无论您希望探讨产品合作、市场拓展还是联合推广，欢迎与我们交流。</p>
-            <Link href="/partnership" className="btn-cta-white">
-              商务合作咨询
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <CtaStrip {...partnershipCta} id="contact" />
     </>
   );
 }

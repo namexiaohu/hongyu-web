@@ -6,7 +6,9 @@ import { Suspense, type ReactNode } from 'react';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { StaticInteractions } from '@/components/layout/static-interactions';
+import { findNavItemLabel } from '@/lib/company-display';
 import type { StorefrontCompanyBranding } from '@/lib/storefront-company';
+import { PARTNERSHIP_HREF } from '@/lib/partnership-cta';
 import type { StorefrontLanguage } from '@/lib/storefront-languages';
 import type { StorefrontSocialChannel } from '@/lib/storefront-social-media';
 import type { StorefrontNavColumn } from '@/lib/storefront-website-config-api';
@@ -74,6 +76,8 @@ export function SiteFrame({
     dark ? 'site-shell-dark' : '',
   ].filter(Boolean).join(' ');
 
+  const partnershipCtaLabel = findNavItemLabel(navColumns, PARTNERSHIP_HREF);
+
   return (
     <div className={shellClass}>
       <Suspense fallback={null}>
@@ -83,6 +87,7 @@ export function SiteFrame({
           languages={languages}
           locale={locale}
           navColumns={navColumns}
+          partnershipCtaLabel={partnershipCtaLabel}
         />
       </Suspense>
       <main id="content" className={pageClass || undefined}>

@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { MediaPlatformCard } from '@/components/media/media-platform-card';
+import { resolveCompanyName } from '@/lib/company-display';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
+import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 import { getStorefrontSocialMedia } from '@/lib/storefront-social-media-api';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -17,8 +19,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
-  const data = await getStorefrontSocialMedia(locale);
+  const [company, data] = await Promise.all([
+    getStorefrontCompanyProfile(locale),
+    getStorefrontSocialMedia(locale),
+  ]);
+  const companyName = resolveCompanyName(company, locale);
   const isZh = locale.toLowerCase().startsWith('zh');
+  const businessEmail = company.businessEmail.trim();
 
   return (
     <div className="page-media-dark" style={{ background: '#0f172a', color: '#f1f5f9', minHeight: '100vh' }}>
@@ -39,7 +46,7 @@ export default async function Page() {
           <div className="pmd-hero-eyebrow">
             {isZh ? 'Social Media · 海外社媒' : 'Social Media'}
           </div>
-          <h1>{isZh ? '关注竑宇医疗' : 'Follow HONGYU Medical'}</h1>
+          <h1>{isZh ? `关注${companyName}` : `Follow ${companyName}`}</h1>
           <p>
             {isZh
               ? '在各大海外社交平台关注我们，获取最新产品动态、临床案例分享与行业会议资讯。'
@@ -74,8 +81,12 @@ export default async function Page() {
             <h2>{isZh ? '海外业务联系方式' : 'Global business contacts'}</h2>
             <p className="pmd-sub">
               {isZh
-                ? '按区域联系对应办事处，或直接发送邮件至全球商务合作邮箱。'
-                : 'Reach the regional office closest to you, or email our global partnerships team.'}
+                ? businessEmail
+                  ? `按区域联系对应办事处，或直接发送邮件至 ${businessEmail}。`
+                  : '按区域联系对应办事处，或直接发送邮件至全球商务合作邮箱。'
+                : businessEmail
+                  ? `Reach the regional office closest to you, or email ${businessEmail}.`
+                  : 'Reach the regional office closest to you, or email our global partnerships team.'}
             </p>
             <div className="pmd-contact-grid">
               {data.overseasContacts.map((contact) => (

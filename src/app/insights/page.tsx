@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 
 import { InsightsListPage } from '@/components/insights/insights-list-page';
+import { resolveCompanyName } from '@/lib/company-display';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
-import { insightsHero } from '@/lib/insights';
+import { buildInsightsHero } from '@/lib/insights';
 import {
   getStorefrontInsightsBoardCounts,
   getStorefrontInsightsList,
@@ -11,12 +12,18 @@ import {
   type StorefrontInsightsBoardCountsResponse,
   type StorefrontInsightsListResponse,
 } from '@/lib/storefront-insights-api';
+import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
-export const metadata: Metadata = {
-  title: '前沿资讯',
-  description: insightsHero.lead || DEFAULT_SEO_TITLE,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale } = await getStorefrontLocaleContext();
+  const company = await getStorefrontCompanyProfile(locale);
+  const companyName = resolveCompanyName(company, locale);
+  return {
+    title: '前沿资讯',
+    description: buildInsightsHero(companyName).lead || DEFAULT_SEO_TITLE,
+  };
+}
 
 type PageProps = {
   searchParams: Promise<{ category?: string; page?: string }>;
@@ -49,13 +56,19 @@ export default async function Page({ searchParams }: PageProps) {
   let list: StorefrontInsightsListResponse = emptyList;
   let boardCounts: StorefrontInsightsBoardCountsResponse = emptyCounts;
   let randomItems: StorefrontInsightRelatedItem[] = [];
+  let companyName = resolveCompanyName({ companyName: '' }, locale);
 
   try {
-    [list, boardCounts, randomItems] = await Promise.all([
+    const [company, listRes, countsRes, randomRes] = await Promise.all([
+      getStorefrontCompanyProfile(locale),
       getStorefrontInsightsList({ category, page, pageSize: 6, locale }),
       getStorefrontInsightsBoardCounts(locale),
       getStorefrontRandomInsights({ limit: 6, locale }).then((payload) => payload.items),
     ]);
+    companyName = resolveCompanyName(company, locale);
+    list = listRes;
+    boardCounts = countsRes;
+    randomItems = randomRes;
   } catch {
     // CMS unavailable — render empty shell.
   }
@@ -67,6 +80,7 @@ export default async function Page({ searchParams }: PageProps) {
       randomItems={randomItems}
       category={category}
       page={page}
+      insightsHero={buildInsightsHero(companyName)}
     />
   );
 }

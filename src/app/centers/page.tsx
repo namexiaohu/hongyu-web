@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { DirectoryPage } from '@/components/templates/directory-page';
+import { CtaStrip } from '@/components/shared/cta-strip';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import {
   getStorefrontPartnerCentersList,
@@ -111,21 +113,7 @@ export default async function Page() {
           <RegionSection key={group.region} group={group} />
         ))}
 
-        <section className="section" id="contact">
-          <div className="container">
-            <div className="cta-strip">
-              <p className="eyebrow" style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 'var(--space-4)' }}>
-                Partnership · 商务合作
-              </p>
-              <h2>共建区域合作中心</h2>
-              <p className="lead">欢迎医院与研究机构洽谈合作中心共建，拓展区域服务与交流能力。</p>
-              <Link href="/partnership" className="btn-cta-white">
-                商务合作咨询
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </Link>
-            </div>
-          </div>
-        </section>
+        <CtaStrip {...buildPartnershipCta('centers')} />
       </div>
     </DirectoryPage>
   );

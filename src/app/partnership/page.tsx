@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 import { PartnershipInquiryForm } from '@/components/partnership/partnership-inquiry-form';
+import { resolveCompanyName } from '@/lib/company-display';
 import { escapeHtml, telHref } from '@/lib/contact-display';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
@@ -15,7 +17,30 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const upperHtml = "<div class=\"breadcrumb container\">\n      <a href=\"/\">首页</a><span>/</span>\n      <span style=\"color:var(--fg);\">商务合作</span>\n    </div>\n\n    <!-- HERO -->\n    <section class=\"hero-dark\" data-od-id=\"hero\">\n      <div class=\"container hero-dark-content\">\n        <div>\n          <div class=\"ph-eyebrow\">Business Partnership · 商务合作</div>\n          <h1>携手共建宠物医疗<br/>产业生态</h1>\n          <p>竑宇医疗开放多种合作模式，期待与全球兽医学界、产业伙伴及投资机构建立长期共赢的合作关系。</p>\n        </div>\n        <div class=\"hero-dark-img\">\n          <img src=\"/images/partnership-handshake.jpg\" alt=\"商务合作\">\n        </div>\n      </div>\n    </section>\n\n    <!-- COOPERATION TYPES -->\n    <div class=\"container\" data-od-id=\"coop-types\">\n      <div class=\"coop-types\">\n        <div class=\"coop-card\">\n          <div class=\"cc-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"1.8\" stroke-linecap=\"round\"><path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/></svg></div>\n          <h3>渠道分销</h3>\n          <p>成为区域授权经销商，拓展本地市场</p>\n        </div>\n        <div class=\"coop-card\">\n          <div class=\"cc-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"1.8\" stroke-linecap=\"round\"><path d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\"/><path d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\"/></svg></div>\n          <h3>学术合作</h3>\n          <p>联合开展临床研究与学术推广项目</p>\n        </div>\n        <div class=\"coop-card\">\n          <div class=\"cc-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"1.8\" stroke-linecap=\"round\"><path d=\"M12 2L2 7l10 5 10-5-10-5z\"/><path d=\"M2 17l10 5 10-5\"/><path d=\"M2 12l10 5 10-5\"/></svg></div>\n          <h3>OEM / ODM</h3>\n          <p>定制化产品设计与生产制造服务</p>\n        </div>\n        <div class=\"coop-card\">\n          <div class=\"cc-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"1.8\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg></div>\n          <h3>战略投资</h3>\n          <p>面向机构投资者的股权合作机会</p>\n        </div>\n      </div>\n    </div>";
+const coopTypesHtml = `<div class="container" data-od-id="coop-types">
+      <div class="coop-types">
+        <div class="coop-card">
+          <div class="cc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3>渠道分销</h3>
+          <p>成为区域授权经销商，拓展本地市场</p>
+        </div>
+        <div class="coop-card">
+          <div class="cc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <h3>学术合作</h3>
+          <p>联合开展临床研究与学术推广项目</p>
+        </div>
+        <div class="coop-card">
+          <div class="cc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+          <h3>OEM / ODM</h3>
+          <p>定制化产品设计与生产制造服务</p>
+        </div>
+        <div class="coop-card">
+          <div class="cc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <h3>战略投资</h3>
+          <p>面向机构投资者的股权合作机会</p>
+        </div>
+      </div>
+    </div>`;
 
 function partnershipContactsHtml(hotline: string, email: string) {
   const blocks: string[] = [];
@@ -44,14 +69,55 @@ function partnershipFormInfoHtml(contacts: string) {
             ${contacts}`;
 }
 
+function buildPartnershipHeroLead(companyName: string, isZh: boolean) {
+  const org = companyName.trim();
+  if (isZh) {
+    return org
+      ? `${org}开放多种合作模式，期待与全球兽医学界、产业伙伴及投资机构建立长期共赢的合作关系。`
+      : '我们开放多种合作模式，期待与全球兽医学界、产业伙伴及投资机构建立长期共赢的合作关系。';
+  }
+  return org
+    ? `${org} welcomes partnerships with veterinary institutions, industry partners, and investors worldwide.`
+    : 'We welcome partnerships with veterinary institutions, industry partners, and investors worldwide.';
+}
+
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
+  const isZh = locale.toLowerCase().startsWith('zh');
   const company = await getStorefrontCompanyProfile(locale);
+  const companyName = resolveCompanyName(company, locale);
   const contacts = partnershipContactsHtml(company.businessHotline.trim(), company.businessEmail.trim());
+  const pageTitle = isZh ? '商务合作' : 'Partnership';
 
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: upperHtml }} />
+      <div className="breadcrumb container">
+        <Link href="/">首页</Link>
+        <span>/</span>
+        <span style={{ color: 'var(--fg)' }}>{pageTitle}</span>
+      </div>
+
+      <section className="hero-dark" data-od-id="hero">
+        <div className="container hero-dark-content">
+          <div>
+            <div className="ph-eyebrow">Business Partnership · {pageTitle}</div>
+            <h1>
+              {isZh ? (
+                <>携手共建宠物医疗<br />产业生态</>
+              ) : (
+                <>Building the future of<br />veterinary partnerships</>
+              )}
+            </h1>
+            <p>{buildPartnershipHeroLead(companyName, isZh)}</p>
+          </div>
+          <div className="hero-dark-img">
+            <img src="/images/partnership-handshake.jpg" alt={pageTitle} />
+          </div>
+        </div>
+      </section>
+
+      <div dangerouslySetInnerHTML={{ __html: coopTypesHtml }} />
+
       <section className="form-section" data-od-id="form">
         <div className="container">
           <div className="form-layout">

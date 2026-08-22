@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { Breadcrumb } from '@/components/shared/breadcrumb';
+import { resolveCompanyName } from '@/lib/company-display';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_DESCRIPTION } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
@@ -54,11 +55,13 @@ export default async function Page() {
   const data = await getStorefrontCompanyProfile(locale);
   const hasTeam = data.executives.length > 0 || data.managers.length > 0;
   const isZh = locale.toLowerCase().startsWith('zh');
+  const companyName = resolveCompanyName(data, locale);
   const heroEyebrow = isZh ? 'Corporate Information · 企业信息' : 'Corporate Information';
   const heroTitle = isZh ? '企业信息' : 'Company Information';
-  const heroLead = isZh
-    ? '竑宇医疗工商注册信息、组织架构与公开文件。'
-    : 'Business registration, organizational structure, and public documents for HONGYU Medical.';
+  const heroLead = data.positioning.trim()
+    || (isZh
+      ? `${companyName}工商注册信息、组织架构与公开文件。`
+      : `Business registration, organizational structure, and public documents for ${companyName}.`);
 
   return (
     <>

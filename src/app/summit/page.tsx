@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { CtaStrip } from '@/components/shared/cta-strip';
+import { joinCatalogTitles, resolveCompanyName } from '@/lib/company-display';
+import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
+import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 import { type StorefrontSummitItem, getStorefrontSummitsList } from '@/lib/storefront-summits-api';
 
 export const metadata: Metadata = {
@@ -63,12 +68,47 @@ function SummitCard({ item }: { item: StorefrontSummitItem }) {
   );
 }
 
+function buildSummitHeroLead(companyName: string, isZh: boolean) {
+  const org = companyName.trim();
+  if (isZh) {
+    return org
+      ? `${org}积极参与全球兽医行业重要会议，与同行分享技术成果，推动宠物医疗行业发展。`
+      : '积极参与全球兽医行业重要会议，与同行分享技术成果，推动宠物医疗行业发展。';
+  }
+  return org
+    ? `${org} participates in major global veterinary conferences to share clinical innovations and industry insights.`
+    : 'Participating in major global veterinary conferences to share clinical innovations and industry insights.';
+}
+
+function buildUpcomingSectionLead(companyName: string, upcoming: StorefrontSummitItem[], locale: string) {
+  const isZh = locale.toLowerCase().startsWith('zh');
+  const summitNames = joinCatalogTitles(upcoming, { max: 2, locale });
+  if (summitNames) {
+    return isZh
+      ? `即将参与 ${summitNames} 等行业峰会与学术会议。`
+      : `Upcoming events include ${summitNames} and more.`;
+  }
+  const org = companyName.trim();
+  return isZh
+    ? org
+      ? `了解${org}即将参与的行业峰会与学术会议。`
+      : '了解即将参与的行业峰会与学术会议。'
+    : org
+      ? `Explore industry summits and conferences ${org} will attend.`
+      : 'Explore upcoming industry summits and conferences.';
+}
+
 export default async function SummitListPage() {
-  const data = await getStorefrontSummitsList();
+  const { locale } = await getStorefrontLocaleContext();
+  const isZh = locale.toLowerCase().startsWith('zh');
+  const [company, data] = await Promise.all([
+    getStorefrontCompanyProfile(locale),
+    getStorefrontSummitsList(),
+  ]);
+  const companyName = resolveCompanyName(company, locale);
 
   return (
     <div className="page-summit">
-      {/* HERO */}
       <section className="summit-hero" data-od-id="hero">
         <div className="breadcrumb container">
           <Link href="/">首页</Link><span>/</span>
@@ -77,17 +117,16 @@ export default async function SummitListPage() {
         <div className="summit-hero-inner">
           <div className="sh-eyebrow">Industry Summit · 行业峰会</div>
           <h1>全球兽医行业会议</h1>
-          <p>竑宇医疗积极参与全球兽医行业重要会议，与同行分享技术成果，推动宠物医疗行业发展。</p>
+          <p>{buildSummitHeroLead(companyName, isZh)}</p>
         </div>
       </section>
 
-      {/* UPCOMING */}
       {data.upcoming.length > 0 && (
         <div className="container">
           <div className="section-header">
             <p className="eyebrow">Upcoming · 即将举办</p>
             <h2>即将举办的行业会议</h2>
-            <p>了解竑宇医疗即将参与的行业峰会与学术会议。</p>
+            <p>{buildUpcomingSectionLead(companyName, data.upcoming, locale)}</p>
           </div>
           <div className="event-grid">
             {data.upcoming.map((item) => (
@@ -97,7 +136,6 @@ export default async function SummitListPage() {
         </div>
       )}
 
-      {/* COMPLETED */}
       {data.completed.length > 0 && (
         <div className="container">
           <div className="section-header" style={{ paddingTop: data.upcoming.length > 0 ? undefined : 0 }}>
@@ -118,22 +156,7 @@ export default async function SummitListPage() {
         </div>
       )}
 
-      {/* CTA */}
-      <section className="cta-section" data-od-id="cta">
-        <div className="container">
-          <div className="cta-inner">
-            <p className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 'var(--space-4)' }}>Partnership · 商务合作</p>
-            <h2>欢迎洽谈会议合作</h2>
-            <p>如需联合办会、赞助支持或品牌合作，欢迎与我们交流，共同促进行业沟通与交流。</p>
-            <Link href="/partnership" className="btn-cta">
-              商务合作咨询
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <CtaStrip {...buildPartnershipCta('summit')} variant="section" />
     </div>
   );
 }

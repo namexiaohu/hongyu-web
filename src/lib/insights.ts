@@ -1,19 +1,28 @@
 import type { CtaBlock } from '@/lib/storefront-types';
+import { buildPartnershipCta } from '@/lib/partnership-cta';
 
-export const insightsCta: CtaBlock = {
-  eyebrow: 'Partnership · 商务合作',
-  title: '欢迎交流合作机会',
-  lead: '如需内容转载、联合发布或开展临床与市场合作，欢迎与我们进一步沟通。',
-  href: '/partnership',
-  buttonLabel: '商务合作咨询',
+export type InsightsHero = {
+  eyebrow: string;
+  titleLine1: string;
+  titleLine2: string;
+  lead: string;
 };
 
-export const insightsHero = {
-  eyebrow: 'Insights & News · 前沿资讯',
-  titleLine1: '技术前沿与',
-  titleLine2: '临床实践',
-  lead: '来自竑宇医疗研发中心、合作医院及行业会议的最新技术动态、临床研究成果与术者实践经验。',
-};
+export function buildInsightsHero(companyName: string): InsightsHero {
+  const org = companyName.trim();
+  return {
+    eyebrow: 'Insights & News · 前沿资讯',
+    titleLine1: '技术前沿与',
+    titleLine2: '临床实践',
+    lead: org
+      ? `来自${org}研发中心、合作医院及行业会议的最新技术动态、临床研究成果与术者实践经验。`
+      : '来自研发中心、合作医院及行业会议的最新技术动态、临床研究成果与术者实践经验。',
+  };
+}
+
+export function buildInsightsCta(): CtaBlock {
+  return buildPartnershipCta('insights');
+}
 
 export function formatInsightDate(value: string | null | undefined) {
   if (!value) return '';

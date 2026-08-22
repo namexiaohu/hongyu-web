@@ -4,9 +4,9 @@ import { CtaStrip } from '@/components/shared/cta-strip';
 import {
   formatInsightMeta,
   insightHref,
-  insightsCta,
-  insightsHero,
+  buildInsightsCta,
   insightsListHref,
+  type InsightsHero,
 } from '@/lib/insights';
 import type {
   StorefrontInsightListItem,
@@ -21,6 +21,7 @@ type InsightsListPageProps = {
   randomItems: StorefrontInsightRelatedItem[];
   category?: string | null;
   page: number;
+  insightsHero: InsightsHero;
 };
 
 function FeaturedCard({ item }: { item: StorefrontInsightListItem }) {
@@ -147,6 +148,7 @@ export function InsightsListPage({
   randomItems,
   category,
   page,
+  insightsHero,
 }: InsightsListPageProps) {
   const featured = page === 1 && list.items.length ? list.items[0] : null;
   const gridItems =
@@ -228,7 +230,7 @@ export function InsightsListPage({
         ) : null}
       </div>
 
-      <CtaStrip {...insightsCta} />
+      <CtaStrip {...buildInsightsCta()} />
     </>
   );
 }

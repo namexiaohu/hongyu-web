@@ -2,8 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { DirectoryPage } from '@/components/templates/directory-page';
+import { CtaStrip } from '@/components/shared/cta-strip';
+import { joinCatalogTitles, resolveCompanyName } from '@/lib/company-display';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
+import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
+import { getStorefrontSolutionsList } from '@/lib/storefront-solutions-api';
 import { getStorefrontSurgeonsList, type StorefrontSurgeonItem } from '@/lib/storefront-surgeons-api';
 
 export const metadata: Metadata = {
@@ -60,9 +65,40 @@ function SurgeonCard({ surgeon }: { surgeon: StorefrontSurgeonItem }) {
   );
 }
 
+function buildSurgeonsHeroLead(companyName: string, solutionNames: string, isZh: boolean) {
+  const org = companyName.trim();
+  const products = solutionNames.trim();
+  if (isZh) {
+    if (org && products) {
+      return `经过${org}系统化培训与考核，掌握 ${products} 等核心产品标准操作流程的认证兽医师。`;
+    }
+    if (org) {
+      return `经过${org}系统化培训与考核，掌握核心产品标准操作流程的认证兽医师。`;
+    }
+    return '经过系统化培训与考核，掌握核心产品标准操作流程的认证兽医师。';
+  }
+  if (org && products) {
+    return `Veterinarians certified through ${org}'s training programs, proficient in standard workflows for ${products} and other core products.`;
+  }
+  if (org) {
+    return `Veterinarians certified through ${org}'s training and assessment programs.`;
+  }
+  return 'Certified veterinarians trained in standard operating workflows for core products.';
+}
+
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
-  const { items } = await getStorefrontSurgeonsList(locale);
+  const isZh = locale.toLowerCase().startsWith('zh');
+
+  const [company, solutionsRes, surgeonsRes] = await Promise.all([
+    getStorefrontCompanyProfile(locale),
+    getStorefrontSolutionsList({ page: 1, pageSize: 2, sort: 'createdAt', locale }),
+    getStorefrontSurgeonsList(locale),
+  ]);
+
+  const companyName = resolveCompanyName(company, locale);
+  const solutionNames = joinCatalogTitles(solutionsRes.items, { max: 2, locale });
+  const partnershipCta = buildPartnershipCta('surgeons', companyName);
 
   return (
     <DirectoryPage
@@ -70,34 +106,20 @@ export default async function Page() {
       hero={{
         eyebrow: 'Certified Surgeons · 认证术者',
         title: '全球认证术者名录',
-        lead: '经过竑宇医疗系统化培训与考核，掌握 V-CLAMP 等核心产品标准操作流程的认证兽医师。',
+        lead: buildSurgeonsHeroLead(companyName, solutionNames, isZh),
       }}
     >
       <section className="section" style={{ paddingTop: 'var(--space-10)' }}>
         <div className="container">
           <div className="grid-3">
-            {items.map((surgeon) => (
+            {surgeonsRes.items.map((surgeon) => (
               <SurgeonCard key={surgeon.slug} surgeon={surgeon} />
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section" id="contact">
-        <div className="container">
-          <div className="cta-strip">
-            <p className="eyebrow" style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 'var(--space-4)' }}>
-              Partnership · 商务合作
-            </p>
-            <h2>加入竑宇专业合作网络</h2>
-            <p className="lead">欢迎临床机构与术者与我们建立合作，共同推进专业交流与产品落地。</p>
-            <Link href="/partnership" className="btn-cta-white">
-              商务合作咨询
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <CtaStrip {...partnershipCta} />
     </DirectoryPage>
   );
 }

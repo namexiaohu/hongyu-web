@@ -15,6 +15,7 @@ type SiteHeaderProps = {
   languages: StorefrontLanguage[];
   locale: string;
   navColumns: StorefrontNavColumn[];
+  partnershipCtaLabel?: string;
 };
 
 function splitHref(href: string) {
@@ -65,6 +66,7 @@ export function SiteHeader({
   languages,
   locale,
   navColumns,
+  partnershipCtaLabel = 'Partnership',
 }: SiteHeaderProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -127,7 +129,7 @@ export function SiteHeader({
         <div className="topnav-actions">
           <LanguageSwitcher languages={languages} initialLocale={locale} transparent={transparentOverlay || dark} />
           <Link href="/partnership" className="nav-cta">
-            商务合作
+            {partnershipCtaLabel}
           </Link>
         </div>
       </div>

@@ -10,6 +10,7 @@ type HomeBannerCarouselProps = {
   title: string;
   subtitle: string;
   description: string;
+  brandEyebrow: string;
 };
 
 function MultilineHeading({ text }: { text: string }) {
@@ -27,7 +28,7 @@ function MultilineHeading({ text }: { text: string }) {
   );
 }
 
-export function HomeBannerCarousel({ slides, title, subtitle, description }: HomeBannerCarouselProps) {
+export function HomeBannerCarousel({ slides, title, subtitle, description, brandEyebrow }: HomeBannerCarouselProps) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchStartX = useRef(0);
@@ -102,7 +103,7 @@ export function HomeBannerCarousel({ slides, title, subtitle, description }: Hom
 
       <div className="container hero-content">
         <div className="hero-text">
-          <div className="hero-eyebrow">HONGYU MEDICAL · 竑宇医疗</div>
+          <div className="hero-eyebrow">{brandEyebrow}</div>
           <MultilineHeading text={title} />
           {subtitle ? <div className="hero-sub">{subtitle}</div> : null}
           {description ? <p className="hero-desc">{description}</p> : null}
