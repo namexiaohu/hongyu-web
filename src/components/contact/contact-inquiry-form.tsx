@@ -1,16 +1,29 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useMemo, useState, type FormEvent } from 'react';
 
 import {
   CONTACT_INQUIRY_TYPE,
+  CONTACT_TOPIC_OPTIONS,
   buildContactInquiryMessage,
+  resolveContactTopicFromQuery,
   submitStorefrontInquiry,
 } from '@/lib/storefront-inquiry';
 
-const TOPIC_OPTIONS = ['产品咨询', '技术支持', '培训认证', '售后服务', '其他'];
-
 export function ContactInquiryForm() {
+  const searchParams = useSearchParams();
+  const initialTopic = useMemo(
+    () => resolveContactTopicFromQuery(searchParams.get('topic')),
+    [searchParams],
+  );
+  const initialBody = useMemo(() => {
+    const summit = searchParams.get('summit')?.trim();
+    if (!summit) return '';
+    return `意向报名峰会：${summit}\n\n`;
+  }, [searchParams]);
+
+  const [topic, setTopic] = useState(initialTopic);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
 
@@ -19,10 +32,12 @@ export function ContactInquiryForm() {
     const form = event.currentTarget;
     const data = new FormData(form);
     const fullName = String(data.get('fullName') ?? '').trim();
+    const country = String(data.get('country') ?? '').trim();
+    const company = String(data.get('company') ?? '').trim();
+    const jobTitle = String(data.get('jobTitle') ?? '').trim();
     const email = String(data.get('email') ?? '').trim();
     const phone = String(data.get('phone') ?? '').trim();
-    const company = String(data.get('company') ?? '').trim();
-    const topic = String(data.get('topic') ?? '').trim();
+    const selectedTopic = String(data.get('topic') ?? '').trim();
     const body = String(data.get('body') ?? '').trim();
 
     setStatus('submitting');
@@ -34,9 +49,12 @@ export function ContactInquiryForm() {
         email,
         phone: phone || undefined,
         company: company || undefined,
-        message: buildContactInquiryMessage(topic, body),
+        country: country || undefined,
+        jobTitle: jobTitle || undefined,
+        message: buildContactInquiryMessage(selectedTopic, body),
       });
       form.reset();
+      setTopic('');
       setStatus('success');
     } catch (err) {
       setError(err instanceof Error ? err.message : '提交失败，请稍后重试');
@@ -52,8 +70,18 @@ export function ContactInquiryForm() {
           <input id="contact-full-name" name="fullName" type="text" className="form-input" placeholder="您的姓名" required />
         </div>
         <div className="form-group">
+          <label htmlFor="contact-country">国家</label>
+          <input id="contact-country" name="country" type="text" className="form-input" placeholder="所在国家或地区" />
+        </div>
+      </div>
+      <div className="form-row">
+        <div className="form-group">
           <label htmlFor="contact-company">医院 / 机构</label>
           <input id="contact-company" name="company" type="text" className="form-input" placeholder="所在医院或机构名称" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="contact-job-title">职称</label>
+          <input id="contact-job-title" name="jobTitle" type="text" className="form-input" placeholder="您的职称或职位" />
         </div>
       </div>
       <div className="form-row">
@@ -69,9 +97,15 @@ export function ContactInquiryForm() {
       <div className="form-row">
         <div className="form-group full">
           <label htmlFor="contact-topic">咨询类型</label>
-          <select id="contact-topic" name="topic" className="form-input">
+          <select
+            id="contact-topic"
+            name="topic"
+            className="form-input"
+            value={topic}
+            onChange={(event) => setTopic(event.target.value)}
+          >
             <option value="">请选择咨询类型</option>
-            {TOPIC_OPTIONS.map((option) => (
+            {CONTACT_TOPIC_OPTIONS.map((option) => (
               <option key={option} value={option}>{option}</option>
             ))}
           </select>
@@ -80,7 +114,14 @@ export function ContactInquiryForm() {
       <div className="form-row">
         <div className="form-group full">
           <label htmlFor="contact-body">留言内容 <span className="required">*</span></label>
-          <textarea id="contact-body" name="body" className="form-input" placeholder="请描述您的需求或问题..." required />
+          <textarea
+            id="contact-body"
+            name="body"
+            className="form-input"
+            placeholder="请描述您的需求或问题..."
+            defaultValue={initialBody}
+            required
+          />
         </div>
       </div>
       {status === 'success' ? <p className="form-note">留言已提交，我们将尽快与您联系。</p> : null}

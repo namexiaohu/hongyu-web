@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
@@ -109,7 +110,9 @@ export default async function Page() {
         <div className="contact-form-wrap">
           <h2>发送消息</h2>
           <p className="cf-sub">填写以下信息，我们将尽快与您联系。</p>
-          <ContactInquiryForm />
+          <Suspense fallback={<p className="cf-sub">加载表单...</p>}>
+            <ContactInquiryForm />
+          </Suspense>
         </div>
       </section>
     </>

@@ -3,6 +3,33 @@ import { apiFetch } from '@/lib/api-client';
 export const CONTACT_INQUIRY_TYPE = '联系我们';
 export const PARTNERSHIP_INQUIRY_TYPE = '商务合作';
 
+export const CONTACT_TOPIC_SUMMIT = '行业峰会报名';
+export const CONTACT_TOPIC_SUMMIT_QUERY = 'summit';
+
+export const CONTACT_TOPIC_OPTIONS = [
+  '产品咨询',
+  '技术支持',
+  '培训认证',
+  '售后服务',
+  CONTACT_TOPIC_SUMMIT,
+  '其他',
+] as const;
+
+export function resolveContactTopicFromQuery(raw: string | null | undefined): string {
+  const value = raw?.trim() ?? '';
+  if (!value) return '';
+  if (value === CONTACT_TOPIC_SUMMIT_QUERY) return CONTACT_TOPIC_SUMMIT;
+  return CONTACT_TOPIC_OPTIONS.includes(value as (typeof CONTACT_TOPIC_OPTIONS)[number]) ? value : '';
+}
+
+export function buildContactHref(options?: { topic?: typeof CONTACT_TOPIC_SUMMIT_QUERY | string; summit?: string }) {
+  const params = new URLSearchParams();
+  if (options?.topic) params.set('topic', options.topic);
+  if (options?.summit?.trim()) params.set('summit', options.summit.trim());
+  const query = params.toString();
+  return query ? `/contact?${query}` : '/contact';
+}
+
 function filled(value: string) {
   return value.trim() || '未填写';
 }

@@ -8,7 +8,6 @@ import {
   submitStorefrontInquiry,
 } from '@/lib/storefront-inquiry';
 
-const COUNTRY_OPTIONS = ['中国', '日本', '韩国', '德国', '英国', '法国', '美国', '加拿大', '其他'];
 const SIZE_OPTIONS = ['1–10 人', '11–50 人', '51–200 人', '201–1000 人', '1000 人以上'];
 const COOP_OPTIONS = ['渠道分销 / 代理', '学术合作 / 临床研究', 'OEM / ODM 定制', '战略投资', '其他'];
 const SCALE_OPTIONS = ['初期试合作', '年度框架合作', '长期战略合作'];
@@ -75,12 +74,7 @@ export function PartnershipInquiryForm() {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="partner-country">所在国家 / 地区 <span className="required">*</span></label>
-            <select id="partner-country" name="country" className="form-input" required>
-              <option value="">请选择</option>
-              {COUNTRY_OPTIONS.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
+            <input id="partner-country" name="country" type="text" className="form-input" placeholder="所在国家或地区" required />
           </div>
           <div className="form-group">
             <label htmlFor="partner-size">公司规模</label>

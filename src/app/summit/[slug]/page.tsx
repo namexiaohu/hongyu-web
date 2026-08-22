@@ -6,6 +6,7 @@ import { StatsBar } from '@/components/shared/stats-bar';
 import { SummitSpeakersSection } from '@/components/summit/summit-speakers-section';
 import { SummitSponsorsSection } from '@/components/summit/summit-sponsors-section';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
+import { buildContactHref, CONTACT_TOPIC_SUMMIT_QUERY } from '@/lib/storefront-inquiry';
 import { type StorefrontSummitDetail, getStorefrontSummitDetail } from '@/lib/storefront-summits-api';
 import type { AgendaGroup, AgendaItem } from '@/lib/storefront-summits-api';
 
@@ -64,6 +65,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
   const summit: StorefrontSummitDetail | null = await getStorefrontSummitDetail(slug);
   if (!summit) notFound();
 
+  const registerHref = buildContactHref({ topic: CONTACT_TOPIC_SUMMIT_QUERY, summit: summit.title });
   const isRegistering = summit.status === 'registering';
   const dateRange = formatDateRange(summit.startDate, summit.endDate);
   const dateRangeWithWeekday = formatDateRange(summit.startDate, summit.endDate, true);
@@ -136,7 +138,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
             {summit.description && <p className="eh-desc">{summit.description}</p>}
             <div className="eh-actions">
               {isRegistering && (
-                <Link href="/contact" className="btn-primary">立即报名</Link>
+                <Link href={registerHref} className="btn-primary">立即报名</Link>
               )}
               <a href="#agenda" className="btn-ghost">查看议程</a>
             </div>
@@ -247,7 +249,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
               <p className="eyebrow" style={{ color: 'var(--accent)', marginBottom: 'var(--space-4)' }}>Register · 参会报名</p>
               <h2>立即报名参会</h2>
               <p>名额有限，欢迎通过联系页面提交报名意向，会务团队将在 3 个工作日内与您确认。</p>
-              <Link href="/contact" className="btn-cta">
+              <Link href={registerHref} className="btn-cta">
                 立即报名
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
