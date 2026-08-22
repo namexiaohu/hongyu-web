@@ -58,6 +58,7 @@ export function ProductPageView({ product }: ProductPageViewProps) {
         className="product-hero"
         backgroundImage={product.backgroundImage}
         backgroundSolidCss={product.backgroundSolidCss}
+        heroCopyStyle={product.heroCopyStyle}
         showCover={showHeroMedia}
         coverSlot={showHeroMedia ? <ProductGallery slides={gallery} alt={product.name} /> : undefined}
       >

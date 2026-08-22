@@ -17,6 +17,7 @@ export type StorefrontCenterItem = {
   backgroundImage: string;
   backgroundSolidCss: string;
   showCoverOnBackground: boolean;
+  heroCopyStyle?: 'light' | 'dark';
   region: CenterRegion;
   email: string;
   website: string;

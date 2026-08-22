@@ -61,6 +61,8 @@ export type StorefrontSummitDetail = StorefrontSummitItem & {
   backgroundImage: string;
   backgroundSolidCss: string;
   showCoverOnBackground: boolean;
+  heroCopyStyle?: 'light' | 'dark';
+  detailDescription: string;
   stats: SummitStat[];
   venueImage: string;
   address: string;

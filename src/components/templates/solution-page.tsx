@@ -38,6 +38,7 @@ export function SolutionPage({
       <SplitBackgroundHero
         backgroundImage={hero.backgroundImage}
         backgroundSolidCss={hero.backgroundSolidCss}
+        heroCopyStyle={hero.heroCopyStyle}
         showCover={showHeroMedia}
         coverSlot={showHeroMedia ? <ProductGallery slides={slides} alt={hero.imageAlt || hero.title} /> : undefined}
       >

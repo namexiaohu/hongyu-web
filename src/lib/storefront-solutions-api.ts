@@ -39,6 +39,7 @@ export type StorefrontSolutionDetail = {
     backgroundImage: string;
     backgroundSolidCss: string;
     showCoverOnBackground: boolean;
+    heroCopyStyle?: 'light' | 'dark';
     videoUrl?: string;
     gallery?: Array<{ url: string; alt?: string }>;
   };

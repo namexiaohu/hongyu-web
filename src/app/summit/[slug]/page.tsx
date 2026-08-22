@@ -81,6 +81,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
     'event-hero',
     hasImageBackground ? 'has-bg' : '',
     showHeroMedia ? 'has-cover' : '',
+    summit.heroCopyStyle === 'dark' ? 'event-hero--copy-dark' : '',
   ].filter(Boolean).join(' ');
 
   return (
@@ -91,6 +92,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
             <img src={summit.backgroundImage} alt="" />
           </div>
         ) : null}
+        {summit.backgroundImage ? <div className="event-hero-overlay" aria-hidden="true" /> : null}
         <div className="breadcrumb container">
           <Link href="/">首页</Link><span>/</span>
           <Link href="/summit">行业峰会</Link><span>/</span>
@@ -151,6 +153,17 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
         <div className="container summit-stats-wrap">
           <StatsBar stats={summit.stats} className="summit-stats-bar" />
         </div>
+      ) : null}
+
+      {summit.detailDescription.trim() ? (
+        <section className="conf-desc" data-od-id="conf-desc">
+          <div className="container conf-desc-inner">
+            <div
+              className="conf-desc-content"
+              dangerouslySetInnerHTML={{ __html: summit.detailDescription }}
+            />
+          </div>
+        </section>
       ) : null}
 
       <AgendaSection agenda={summit.agenda} />

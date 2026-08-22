@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { GlobalPartnerMap, type GlobalMapCenter } from '@/components/home/global-partner-map';
 import { HomeAboutCarousel } from '@/components/home/home-about-carousel';
 import { HomeBannerCarousel } from '@/components/home/home-banner-carousel';
+import { StatsBar } from '@/components/shared/stats-bar';
 import { formatInsightDate, insightHref } from '@/lib/insights';
 import type { StorefrontHomepageConfig } from '@/lib/storefront-homepage-api';
 import type { StorefrontInsightListItem } from '@/lib/storefront-insights-api';
@@ -187,17 +188,13 @@ export function HomePageView({ config, solutions, insights, partnerCenters }: Ho
         <section className="section" data-od-id="stats">
           <div className="container">
             <p className="eyebrow" style={{ marginBottom: 'var(--space-8)' }}>By the Numbers · 核心数据</p>
-            <div className="grid-3">
-              {config.stats.map((stat, index) => (
-                <div key={`${stat.title}-${index}`} className="stat-item">
-                  <div className="stat-num num">
-                    {stat.title}
-                    {stat.subtitle ? <span className="stat-suffix">{stat.subtitle}</span> : null}
-                  </div>
-                  {stat.description ? <p className="stat-label">{stat.description}</p> : null}
-                </div>
-              ))}
-            </div>
+            <StatsBar
+              stats={config.stats.map((stat) => ({
+                value: stat.title,
+                suffix: stat.subtitle || undefined,
+                label: stat.description,
+              }))}
+            />
           </div>
         </section>
       ) : null}

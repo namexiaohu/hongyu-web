@@ -49,6 +49,7 @@ export type StorefrontProductDetail = {
   backgroundImage?: string;
   backgroundSolidCss?: string;
   showCoverOnBackground?: boolean;
+  heroCopyStyle?: 'light' | 'dark';
   stats?: StorefrontProductStat[];
   attachments: StorefrontProductAttachment[];
   seriesProducts?: StorefrontSeriesProduct[];

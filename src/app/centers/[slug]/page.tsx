@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { Breadcrumb } from '@/components/shared/breadcrumb';
+import { StatsBar } from '@/components/shared/stats-bar';
 import { SplitBackgroundHero } from '@/components/shared/split-background-hero';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
@@ -89,6 +90,7 @@ export default async function PartnerCenterDetailPage({ params }: PageProps) {
       <SplitBackgroundHero
         backgroundImage={center.backgroundImage}
         backgroundSolidCss={center.backgroundSolidCss}
+        heroCopyStyle={center.heroCopyStyle}
         showCover={showHeroMedia}
         coverSlot={showHeroMedia ? <ProductGallery slides={slides} alt={center.name} /> : undefined}
       >
@@ -103,15 +105,8 @@ export default async function PartnerCenterDetailPage({ params }: PageProps) {
       </SplitBackgroundHero>
 
       {center.stats.length > 0 ? (
-        <div className="container center-stats-wrap">
-          <div className="stats-bar" data-od-id="stats">
-            {center.stats.map((stat) => (
-              <div key={`${stat.label}-${stat.value}`} className="sb-item">
-                <div className="sb-num">{stat.value}</div>
-                <div className="sb-label">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+        <div className="container center-stats-wrap" data-od-id="stats">
+          <StatsBar stats={center.stats} />
         </div>
       ) : null}
 
