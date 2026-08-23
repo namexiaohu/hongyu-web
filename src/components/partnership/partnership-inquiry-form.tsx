@@ -91,7 +91,7 @@ export function PartnershipInquiryForm() {
             <input
               id="partner-website"
               name="companyWebsite"
-              type="url"
+              type="text"
               className="form-input"
               placeholder={t('forms.partnership.companyWebsitePlaceholder')}
             />
