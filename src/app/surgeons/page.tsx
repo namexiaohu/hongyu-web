@@ -10,6 +10,7 @@ import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 import { getStorefrontSolutionsList } from '@/lib/storefront-solutions-api';
 import { getStorefrontSurgeonsList, type StorefrontSurgeonItem } from '@/lib/storefront-surgeons-api';
+import { getStorefrontWebsiteConfig } from '@/lib/storefront-website-config-api';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale } = await getStorefrontLocaleContext();
@@ -89,10 +90,11 @@ export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
   const { t } = await getPageTranslations(locale, ['surgeons', 'breadcrumb', 'cta']);
 
-  const [company, solutionsRes, surgeonsRes] = await Promise.all([
+  const [company, solutionsRes, surgeonsRes, websiteConfig] = await Promise.all([
     getStorefrontCompanyProfile(locale),
     getStorefrontSolutionsList({ page: 1, pageSize: 2, sort: 'createdAt', locale }),
     getStorefrontSurgeonsList(locale),
+    getStorefrontWebsiteConfig(locale),
   ]);
 
   const companyName = resolveCompanyName(company, locale);
@@ -110,6 +112,7 @@ export default async function Page() {
         title: t('surgeons.title'),
         lead: buildSurgeonsHeroLead(t, companyName, solutionNames),
       }}
+      heroBoard={websiteConfig.listHeroBoards.surgeons}
     >
       <section className="section" style={{ paddingTop: 'var(--space-10)' }}>
         <div className="container">

@@ -11,6 +11,7 @@ import {
   type StorefrontCenterItem,
   type StorefrontCenterGroup,
 } from '@/lib/storefront-partner-centers-api';
+import { getStorefrontWebsiteConfig } from '@/lib/storefront-website-config-api';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale } = await getStorefrontLocaleContext();
@@ -108,7 +109,10 @@ function RegionSection({
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
   const { t } = await getPageTranslations(locale, ['centers', 'breadcrumb', 'cta']);
-  const { groups } = await getStorefrontPartnerCentersList(locale);
+  const [{ groups }, websiteConfig] = await Promise.all([
+    getStorefrontPartnerCentersList(locale),
+    getStorefrontWebsiteConfig(locale),
+  ]);
 
   return (
     <DirectoryPage
@@ -122,6 +126,7 @@ export default async function Page() {
         title: t('centers.title'),
         lead: t('centers.lead'),
       }}
+      heroBoard={websiteConfig.listHeroBoards.centers}
     >
       <div className="page-centers" style={{ paddingTop: 'var(--space-10)' }}>
         {groups.map((group) => (

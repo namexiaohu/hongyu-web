@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { CtaStrip } from '@/components/shared/cta-strip';
+import { ListPageHero } from '@/components/shared/list-page-hero';
 import {
   formatInsightMeta,
   insightHref,
@@ -14,6 +15,7 @@ import type {
   StorefrontInsightsBoardCountsResponse,
   StorefrontInsightsListResponse,
 } from '@/lib/storefront-insights-api';
+import type { StorefrontListHeroBoard } from '@/lib/storefront-website-config-api';
 
 type InsightsListCopy = {
   breadcrumbHome: string;
@@ -32,9 +34,24 @@ type InsightsListPageProps = {
   category?: string | null;
   page: number;
   insightsHero: InsightsHero;
+  heroBoard: StorefrontListHeroBoard;
   listCopy: InsightsListCopy;
   insightsCta: CtaBlock;
 };
+
+function InsightsHeroText({ insightsHero }: { insightsHero: InsightsHero }) {
+  return (
+    <div className="page-title insights-list-hero-title">
+      <div className="pt-eyebrow eyebrow">{insightsHero.eyebrow}</div>
+      <h1>
+        {insightsHero.titleLine1}
+        <br />
+        {insightsHero.titleLine2}
+      </h1>
+      <p>{insightsHero.lead}</p>
+    </div>
+  );
+}
 
 function FeaturedCard({ item, featuredLabel }: { item: StorefrontInsightListItem; featuredLabel: string }) {
   return (
@@ -165,6 +182,7 @@ export function InsightsListPage({
   category,
   page,
   insightsHero,
+  heroBoard,
   listCopy,
   insightsCta,
 }: InsightsListPageProps) {
@@ -180,23 +198,12 @@ export function InsightsListPage({
         <span style={{ color: 'var(--fg)' }}>{listCopy.breadcrumbCurrent}</span>
       </div>
 
-      <section className="insights-list-hero" data-od-id="hero">
-        <div className="insights-list-hero-bg" aria-hidden="true">
-          <img src="/images/insights-list-hero.jpg" alt="" />
-        </div>
-        <div className="insights-list-hero-overlay" aria-hidden="true" />
-        <div className="container insights-list-hero-content">
-          <div className="page-title">
-            <div className="pt-eyebrow eyebrow">{insightsHero.eyebrow}</div>
-            <h1>
-              {insightsHero.titleLine1}
-              <br />
-              {insightsHero.titleLine2}
-            </h1>
-            <p>{insightsHero.lead}</p>
-          </div>
-        </div>
-      </section>
+      <ListPageHero
+        board={heroBoard}
+        className="insights-list-split-hero"
+      >
+        <InsightsHeroText insightsHero={insightsHero} />
+      </ListPageHero>
 
       <div className="container">
         <div className="cat-filter">
