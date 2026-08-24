@@ -27,6 +27,7 @@ export type SplitHero = {
   backgroundImage?: string;
   backgroundSolidCss?: string;
   showCoverOnBackground?: boolean;
+  coverDisplay?: import('@/lib/hero-cover-display').HeroCoverDisplay;
   heroCopyStyle?: 'light' | 'dark';
   videoUrl?: string;
   gallery?: Array<{ url: string; alt?: string }>;

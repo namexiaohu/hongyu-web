@@ -61,6 +61,7 @@ export type StorefrontSummitDetail = StorefrontSummitItem & {
   backgroundImage: string;
   backgroundSolidCss: string;
   showCoverOnBackground: boolean;
+  coverDisplay?: import('@/lib/hero-cover-display').HeroCoverDisplay;
   heroCopyStyle?: 'light' | 'dark';
   detailDescription: string;
   stats: SummitStat[];

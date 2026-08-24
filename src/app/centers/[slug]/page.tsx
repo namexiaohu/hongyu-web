@@ -78,6 +78,7 @@ export default async function PartnerCenterDetailPage({ params }: PageProps) {
     coverUrl: center.coverImage,
     coverAlt: center.name,
     gallery: center.gallery,
+    coverDisplay: center.coverDisplay,
   });
   const showHeroMedia = Boolean(center.showCoverOnBackground && slides.length);
 

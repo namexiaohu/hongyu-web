@@ -39,6 +39,7 @@ export async function ProductPageView({ product }: ProductPageViewProps) {
     coverAlt: cover?.alt || product.name,
     coverId: cover?.id,
     gallery: product.gallery,
+    coverDisplay: product.coverDisplay,
   });
   const showHeroMedia = Boolean(product.showCoverOnBackground && gallery.length);
   const solution = product.solution;

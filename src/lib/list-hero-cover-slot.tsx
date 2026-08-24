@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 
+import { ProductGallery } from '@/components/product/product-gallery';
 import type { ListHeroCoverDisplay } from '@/lib/list-hero-cover-display';
+import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
 
 export type ListHeroCoverBoard = {
   videoUrl: string;
@@ -18,28 +20,25 @@ export function resolveListHeroCoverSlot(board: ListHeroCoverBoard): {
     return { showCover: false };
   }
 
-  const { coverDisplay } = board;
-  const videoUrl = board.videoUrl?.trim();
-  const coverImage = board.coverImage?.trim();
+  const slides = buildHeroMediaSlides({
+    id: 'list-hero',
+    name: 'hero',
+    videoUrl: board.videoUrl,
+    coverUrl: board.coverImage,
+    coverAlt: '',
+    gallery: [],
+    coverDisplay: board.coverDisplay,
+    includeGalleryInDisplay: false,
+  });
 
-  // Priority: video → cover → gallery (list pages have no gallery)
-  if (coverDisplay.video && videoUrl) {
-    return {
-      showCover: true,
-      coverSlot: (
-        <video src={videoUrl} autoPlay muted loop playsInline />
-      ),
-    };
+  if (!slides.length) {
+    return { showCover: false };
   }
 
-  if (coverDisplay.cover && coverImage) {
-    return {
-      showCover: true,
-      coverImage,
-    };
-  }
-
-  return { showCover: false };
+  return {
+    showCover: true,
+    coverSlot: <ProductGallery slides={slides} alt="" />,
+  };
 }
 
 export function listHeroBoardHasVisual(board: {

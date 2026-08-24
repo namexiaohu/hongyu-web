@@ -38,6 +38,7 @@ export function SplitHeroPageTemplate({
     coverUrl: hero.image,
     coverAlt: hero.imageAlt,
     gallery: hero.gallery,
+    coverDisplay: hero.coverDisplay,
   });
   const showHeroMedia = Boolean(hero.showCoverOnBackground && slides.length);
 
