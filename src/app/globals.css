@@ -181,10 +181,10 @@
       flex-wrap: nowrap;
       min-width: 0;
     }
-    .topnav nav a,
-    .topnav .nav-dropdown-trigger {
+    .topnav nav > a,
+    .topnav nav > .nav-dropdown > .nav-dropdown-trigger {
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 700;
       transition: opacity var(--motion-fast);
     }
     .topnav:not(.scrolled) nav a,
@@ -286,7 +286,7 @@
       border-radius: 7px;
       border: none;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 700;
       letter-spacing: 0.02em;
       line-height: 1.35;
       color: #334155 !important;
@@ -303,7 +303,7 @@
     .nav-dropdown-menu a.active {
       color: #212D5D !important;
       background: rgba(33, 45, 93, 0.08) !important;
-      font-weight: 600;
+      font-weight: 700;
     }
     .nav-dropdown-menu a:focus-visible {
       outline: 2px solid rgba(33, 45, 93, 0.28);
@@ -2271,16 +2271,23 @@
 .page-solutions-list .split-bg-hero--copy-dark .split-bg-hero-main .lead{ color: #334155; }
 
 .page-solutions-list .sol-grid{
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-6);
+  --sol-gap: var(--space-6);
+  --sol-cols: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sol-gap);
   margin-bottom: var(--space-16);
 }
+.page-solutions-list .sol-grid > .sol-card{
+  box-sizing: border-box;
+  flex: 1 1 calc((100% - (var(--sol-cols) - 1) * var(--sol-gap)) / var(--sol-cols));
+  min-width: calc((100% - (var(--sol-cols) - 1) * var(--sol-gap)) / var(--sol-cols));
+}
 @media (max-width: 960px) {
-  .page-solutions-list .sol-grid{ grid-template-columns: repeat(2, 1fr); }
+  .page-solutions-list .sol-grid{ --sol-cols: 2; }
 }
 @media (max-width: 640px) {
-  .page-solutions-list .sol-grid{ grid-template-columns: 1fr; }
+  .page-solutions-list .sol-grid{ --sol-cols: 1; }
 }
 .page-solutions-list .sol-card{
   display: flex;
