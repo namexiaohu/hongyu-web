@@ -11,11 +11,11 @@ type SiteFooterProps = {
   dark?: boolean;
   branding?: StorefrontCompanyBranding;
   socialChannels?: StorefrontSocialChannel[];
-  navColumns: StorefrontNavColumn[];
+  footerNavColumns: StorefrontNavColumn[];
 };
 
-export function SiteFooter({ dark = false, branding, socialChannels = [], navColumns }: SiteFooterProps) {
-  const columnCount = Math.max(navColumns.length, 1);
+export function SiteFooter({ dark = false, branding, socialChannels = [], footerNavColumns }: SiteFooterProps) {
+  const columnCount = Math.max(footerNavColumns.length, 1);
   const gridStyle = {
     '--footer-nav-count': String(columnCount),
   } as CSSProperties;
@@ -31,16 +31,24 @@ export function SiteFooter({ dark = false, branding, socialChannels = [], navCol
             {branding?.positioning ? <p>{branding.positioning}</p> : null}
             <FooterSocialLinks channels={socialChannels} />
           </div>
-          {navColumns.map((column) => (
+          {footerNavColumns.map((column) => (
             <div className="footer-col" key={column.id}>
-              <h4>{column.name}</h4>
-              <ul>
-                {column.items.map((item) => (
-                  <li key={item.id}>
-                    <Link href={item.href}>{item.name}</Link>
-                  </li>
-                ))}
-              </ul>
+              <h4>
+                {column.href?.trim() ? (
+                  <Link href={column.href.trim()}>{column.name}</Link>
+                ) : (
+                  column.name
+                )}
+              </h4>
+              {column.items.length > 0 ? (
+                <ul>
+                  {column.items.map((item) => (
+                    <li key={item.id}>
+                      <Link href={item.href}>{item.name}</Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
           ))}
         </div>

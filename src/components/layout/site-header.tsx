@@ -15,7 +15,7 @@ type SiteHeaderProps = {
   dark?: boolean;
   languages: StorefrontLanguage[];
   locale: string;
-  navColumns: StorefrontNavColumn[];
+  headerNavColumns: StorefrontNavColumn[];
   partnershipCtaLabel?: string;
 };
 
@@ -58,6 +58,8 @@ function pathMatchesHref(pathname: string, searchParams: URLSearchParams, href: 
 }
 
 function isColumnActive(pathname: string, column: StorefrontNavColumn) {
+  const columnHref = column.href?.trim();
+  if (columnHref && pathMatchesSection(pathname, columnHref)) return true;
   return column.items.some((item) => pathMatchesSection(pathname, item.href));
 }
 
@@ -66,7 +68,7 @@ export function SiteHeader({
   dark = false,
   languages,
   locale,
-  navColumns,
+  headerNavColumns,
   partnershipCtaLabel,
 }: SiteHeaderProps) {
   const { t } = useTranslation();
@@ -98,33 +100,50 @@ export function SiteHeader({
       <div className="container topnav-inner">
         <HongyuLogoLink light={dark || transparentOverlay} />
         <nav>
-          {navColumns.map((column) => {
+          {headerNavColumns.map((column) => {
             const active = isColumnActive(pathname, column);
-            return (
-              <div key={column.id} className="nav-dropdown">
-                <span
-                  className={['nav-dropdown-trigger', active ? 'active' : ''].filter(Boolean).join(' ')}
-                  tabIndex={0}
-                >
-                  <span className="nav-dropdown-label">{column.name}</span>
+            const columnHref = column.href?.trim() ?? '';
+            const hasItems = column.items.length > 0;
+            const triggerClass = ['nav-dropdown-trigger', active ? 'active' : ''].filter(Boolean).join(' ');
+
+            const triggerInner = (
+              <>
+                <span className="nav-dropdown-label">{column.name}</span>
+                {hasItems ? (
                   <svg className="nav-dropdown-caret" viewBox="0 0 12 12" aria-hidden="true">
                     <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </span>
-                <div className="nav-dropdown-panel">
-                  <div className="nav-dropdown-menu" role="menu">
-                    {column.items.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={item.href}
-                        className={pathMatchesHref(pathname, searchParams, item.href) ? 'active' : undefined}
-                        role="menuitem"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
+                ) : null}
+              </>
+            );
+
+            return (
+              <div key={column.id} className={hasItems ? 'nav-dropdown' : 'nav-dropdown nav-dropdown--link-only'}>
+                {columnHref ? (
+                  <Link href={columnHref} className={triggerClass}>
+                    {triggerInner}
+                  </Link>
+                ) : (
+                  <span className={triggerClass} tabIndex={hasItems ? 0 : undefined}>
+                    {triggerInner}
+                  </span>
+                )}
+                {hasItems ? (
+                  <div className="nav-dropdown-panel">
+                    <div className="nav-dropdown-menu" role="menu">
+                      {column.items.map((item) => (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          className={pathMatchesHref(pathname, searchParams, item.href) ? 'active' : undefined}
+                          role="menuitem"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                ) : null}
               </div>
             );
           })}

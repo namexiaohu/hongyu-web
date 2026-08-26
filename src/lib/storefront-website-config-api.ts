@@ -13,6 +13,7 @@ export type StorefrontNavItem = {
 
 export type StorefrontNavColumn = {
   id: string;
+  href: string;
   name: string;
   items: StorefrontNavItem[];
 };
@@ -30,6 +31,7 @@ export type StorefrontListHeroBoard = {
 };
 
 export type StorefrontListHeroBoardsRecord = {
+  solutions: StorefrontListHeroBoard;
   insights: StorefrontListHeroBoard;
   surgeons: StorefrontListHeroBoard;
   centers: StorefrontListHeroBoard;
@@ -37,7 +39,8 @@ export type StorefrontListHeroBoardsRecord = {
 
 export type StorefrontWebsiteConfig = {
   locale: string;
-  navColumns: StorefrontNavColumn[];
+  headerNavColumns: StorefrontNavColumn[];
+  footerNavColumns: StorefrontNavColumn[];
   listHeroBoards: StorefrontListHeroBoardsRecord;
 };
 
@@ -55,8 +58,10 @@ const emptyBoard = (): StorefrontListHeroBoard => ({
 
 export const EMPTY_STOREFRONT_WEBSITE_CONFIG: StorefrontWebsiteConfig = {
   locale: '',
-  navColumns: [],
+  headerNavColumns: [],
+  footerNavColumns: [],
   listHeroBoards: {
+    solutions: emptyBoard(),
     insights: emptyBoard(),
     surgeons: emptyBoard(),
     centers: emptyBoard(),

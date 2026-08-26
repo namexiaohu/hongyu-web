@@ -71,7 +71,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               icpNumber: company.icpNumber,
             }}
             socialChannels={socialMedia.socialChannels}
-            navColumns={websiteConfig.navColumns}
+            headerNavColumns={websiteConfig.headerNavColumns}
+            footerNavColumns={websiteConfig.footerNavColumns}
           >
             {children}
           </SiteFrame>

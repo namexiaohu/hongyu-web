@@ -19,13 +19,15 @@ type SiteFrameProps = {
   locale: string;
   branding?: StorefrontCompanyBranding;
   socialChannels?: StorefrontSocialChannel[];
-  navColumns: StorefrontNavColumn[];
+  headerNavColumns: StorefrontNavColumn[];
+  footerNavColumns: StorefrontNavColumn[];
 };
 
 const PAGE_CLASS: Record<string, string> = {
   '/': 'page-home',
   '/surgeons': 'page-surgeons',
   '/centers': 'page-centers',
+  '/solutions': 'page-solutions-list',
   '/insights': 'page-article-list',
   '/summit': 'page-summit',
   '/course': 'page-recordings',
@@ -61,7 +63,8 @@ export function SiteFrame({
   locale,
   branding,
   socialChannels = [],
-  navColumns,
+  headerNavColumns,
+  footerNavColumns,
 }: SiteFrameProps) {
   const pathname = usePathname();
   const overlay = pathname === '/';
@@ -76,7 +79,7 @@ export function SiteFrame({
     dark ? 'site-shell-dark' : '',
   ].filter(Boolean).join(' ');
 
-  const partnershipCtaLabel = findNavItemLabel(navColumns, PARTNERSHIP_HREF);
+  const partnershipCtaLabel = findNavItemLabel(headerNavColumns, PARTNERSHIP_HREF);
 
   return (
     <div className={shellClass}>
@@ -86,14 +89,14 @@ export function SiteFrame({
           dark={dark}
           languages={languages}
           locale={locale}
-          navColumns={navColumns}
+          headerNavColumns={headerNavColumns}
           partnershipCtaLabel={partnershipCtaLabel}
         />
       </Suspense>
       <main id="content" className={pageClass || undefined}>
         {children}
       </main>
-      <SiteFooter dark={dark} branding={branding} socialChannels={socialChannels} navColumns={navColumns} />
+      <SiteFooter dark={dark} branding={branding} socialChannels={socialChannels} footerNavColumns={footerNavColumns} />
       <StaticInteractions />
     </div>
   );

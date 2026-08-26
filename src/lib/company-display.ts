@@ -36,6 +36,8 @@ export function joinCatalogTitles(
 export function findNavItemLabel(navColumns: StorefrontNavColumn[], href: string): string | undefined {
   const normalized = href.replace(/\/$/, '') || '/';
   for (const column of navColumns) {
+    const columnPath = column.href?.split('?')[0]?.replace(/\/$/, '') || '';
+    if (columnPath && columnPath === normalized) return column.name;
     for (const item of column.items) {
       const itemPath = item.href.split('?')[0]?.replace(/\/$/, '') || '/';
       if (itemPath === normalized) return item.name;

@@ -98,6 +98,10 @@
       "title": "Collaboration opportunities welcome",
       "lead": "For content syndication, co-publishing, or clinical and market collaboration, we welcome further discussion."
     },
+    "solutions": {
+      "title": "Explore product and technology partnerships",
+      "lead": "Whether you need clinical collaboration, distribution, or co-development, we welcome further discussion."
+    },
     "default": {
       "title": "Collaboration opportunities welcome",
       "lead": "For product collaboration, market expansion, or co-marketing, we welcome the conversation."
@@ -207,6 +211,14 @@
     "title": "Global partner hospitals and research centers",
     "lead": "We co-build a clinical collaboration network with leading animal hospitals and research institutions worldwide to advance evidence-based medicine and innovation.",
     "regionCount": "{count} partner centers"
+  },
+  "solutionsList": {
+    "metaTitle": "Solutions",
+    "eyebrow": "Solutions",
+    "title": "Full product-line solutions",
+    "lead": "Covering animal surgery, sports medicine, and cardiovascular care—from mature products to pipeline programs—providing complete technical support for veterinary medicine.",
+    "viewDetails": "View details",
+    "empty": "No solutions available"
   },
   "surgeons": {
     "metaTitle": "Certified Surgeons",
