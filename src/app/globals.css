@@ -974,7 +974,7 @@
     .global-map-embed {
       --gm-ocean: #dbe4ee;
       --gm-ocean-grid: rgba(100, 116, 139, 0.22);
-      --gm-land: #9aa8b8;
+      --gm-land: #c5d0dc;
       --gm-land-stroke: #f8fafc;
       --gm-map-stroke: #f8fafc;
       --gm-map-stroke-active: #ffffff;
@@ -991,15 +991,16 @@
       --gm-r-apac: #0e7490;
       --gm-r-europe: #2563eb;
       --gm-r-na: #0369a1;
-      --gm-r-latam: #be123c;
-      --gm-r-mea: #b45309;
-      --gm-r-oceania: #0f766e;
+      /* SA / Africa sampled from legacy map screenshots */
+      --gm-r-sa: #d87088;
+      --gm-r-china: #dc2626;
+      --gm-r-africa: #d89868;
       --gm-r-apac-soft: #cffafe;
       --gm-r-europe-soft: #dbeafe;
       --gm-r-na-soft: #e0f2fe;
-      --gm-r-latam-soft: #ffe4e6;
-      --gm-r-mea-soft: #ffedd5;
-      --gm-r-oceania-soft: #ccfbf1;
+      --gm-r-sa-soft: #eeb0be;
+      --gm-r-china-soft: #fee2e2;
+      --gm-r-africa-soft: #ebc49a;
       width: 100%;
       aspect-ratio: 2.15 / 1;
       position: relative;
@@ -1029,75 +1030,85 @@
       stroke-width: 0.5;
       pointer-events: none;
     }
-    .global-map-embed .country {
-      stroke: var(--gm-map-stroke);
-      stroke-width: 0.55;
-      cursor: default;
+    .global-map-embed .region {
+      stroke: rgba(248, 250, 252, 0.85);
+      stroke-width: 0.7;
+      cursor: pointer;
       transition: fill 0.28s ease, opacity 0.28s ease, stroke-width 0.2s ease;
     }
-    .global-map-embed .country.is-active-region {
-      cursor: pointer;
-    }
-    .global-map-embed .country.is-idle {
-      stroke: color-mix(in srgb, var(--gm-land) 70%, #ffffff);
-      stroke-width: 0.45;
-    }
-    .global-map-embed .country.is-dim {
+    .global-map-embed .region.is-dim {
       opacity: 0.45;
     }
-    .global-map-embed .country.is-dim.is-idle {
-      opacity: 0.65;
-    }
-    .global-map-embed .country.is-active {
+    .global-map-embed .region.is-active {
       stroke: var(--gm-map-stroke-active);
-      stroke-width: 0.9;
-    }
-    .global-map-embed .hotspot { pointer-events: none; opacity: 0.95; }
-    .global-map-embed .hotspot-ring {
-      pointer-events: none;
-      fill: none;
       stroke-width: 1.1;
-      opacity: 0.45;
-      animation: gm-ring-out 2.6s ease-out infinite;
-    }
-    @keyframes gm-ring-out {
-      0% { r: 2.2; opacity: 0.5; }
-      100% { r: 8; opacity: 0; }
     }
     .global-map-embed .region-tooltip {
       position: absolute;
       z-index: 30;
-      width: 320px;
-      max-width: min(320px, calc(100% - 24px));
+      top: 12px;
+      height: calc(100% - 24px);
+      width: 300px;
+      max-width: min(300px, calc(100% - 24px));
+      display: flex;
+      flex-direction: column;
       background: var(--gm-card);
       border: 1px solid var(--gm-line);
       border-radius: 14px;
       box-shadow: var(--gm-tip-shadow);
       opacity: 0;
       visibility: hidden;
-      transform: translateY(6px) scale(0.98);
-      transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.18s;
       pointer-events: none;
       overflow: hidden;
+      transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.18s;
+    }
+    .global-map-embed .region-tooltip.is-side-left {
+      left: 12px;
+      right: auto;
+      transform: translateX(-10px);
+    }
+    .global-map-embed .region-tooltip.is-side-right {
+      right: 12px;
+      left: auto;
+      transform: translateX(10px);
     }
     .global-map-embed .region-tooltip.is-open {
       opacity: 1;
       visibility: visible;
-      transform: translateY(0) scale(1);
+      transform: translateX(0);
       pointer-events: auto;
     }
-    .global-map-embed .region-tooltip::before {
+    /* Inward hover bridge only — avoid covering the opposite map side */
+    .global-map-embed .region-tooltip.is-side-left::before {
       content: "";
       position: absolute;
-      /* Hover bridge so the cursor can reach the tip without leaving the hit area */
-      inset: -20px;
+      top: 0;
+      bottom: 0;
+      left: 100%;
+      width: 28px;
+      z-index: -1;
+    }
+    .global-map-embed .region-tooltip.is-side-right::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 100%;
+      width: 28px;
       z-index: -1;
     }
     .global-map-embed .tip-accent {
       height: 2px;
+      flex-shrink: 0;
       background: linear-gradient(90deg, var(--accent-color, var(--gm-accent)), transparent);
     }
-    .global-map-embed .tip-body { padding: 14px 14px 12px; }
+    .global-map-embed .tip-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 14px 14px 12px;
+    }
     .global-map-embed .tip-head {
       display: flex;
       justify-content: space-between;
@@ -1106,6 +1117,7 @@
       margin-bottom: 12px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--gm-line);
+      flex-shrink: 0;
     }
     .global-map-embed .tip-label {
       font-size: 11px;
@@ -1123,25 +1135,38 @@
     .global-map-embed .tip-count { text-align: right; flex-shrink: 0; }
     .global-map-embed .tip-count strong {
       display: block;
-      font-size: 24px;
+      font-size: 44px;
       font-weight: 700;
-      line-height: 1;
+      line-height: 0.95;
       color: var(--accent-color, var(--gm-accent));
-      letter-spacing: -0.03em;
+      letter-spacing: -0.04em;
     }
     .global-map-embed .tip-count em {
+      display: block;
+      margin-top: 4px;
       font-style: normal;
       font-size: 10px;
       color: var(--gm-ink-mute);
       font-weight: 600;
     }
     .global-map-embed .center-list {
+      flex: 1;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: 6px;
-      max-height: 220px;
       overflow: auto;
       padding-right: 2px;
+    }
+    .global-map-embed .center-list-empty {
+      margin: 0;
+      padding: 14px 12px;
+      border-radius: 10px;
+      border: 1px dashed var(--gm-line);
+      background: var(--gm-line-soft);
+      font-size: 13px;
+      color: var(--gm-ink-mute);
+      text-align: center;
     }
     .global-map-embed .center-link {
       display: grid;
@@ -1184,6 +1209,7 @@
     }
     .global-map-embed .tip-foot {
       margin-top: 10px;
+      flex-shrink: 0;
       font-size: 11px;
       color: var(--gm-ink-mute);
     }
@@ -1210,6 +1236,11 @@
     @keyframes gm-spin { to { transform: rotate(360deg); } }
     @media (max-width: 760px) {
       .global-map-embed { aspect-ratio: 4 / 3; }
+      .global-map-embed .region-tooltip {
+        width: min(280px, 42%);
+        max-width: min(280px, calc(100% - 24px));
+      }
+      .global-map-embed .tip-count strong { font-size: 36px; }
     }
 
     /* 鈹€鈹€鈹€ log list 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */

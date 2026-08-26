@@ -480,15 +480,16 @@
     "loadFailed": "Failed to load map",
     "loading": "Loading map…",
     "partnerCenters": "Partner centers",
+    "noCenters": "No partner centers",
     "detailsArrow": "Details →",
     "tipFoot": "Click an entry to open the partner center detail page.",
     "regions": {
-      "apac": "Asia-Pacific",
-      "europe": "Europe",
       "na": "North America",
-      "latam": "Latin America",
-      "mea": "Middle East & Africa",
-      "oceania": "Oceania"
+      "sa": "South America",
+      "europe": "Europe",
+      "china": "China",
+      "apac": "Asia Pacific",
+      "africa": "Africa"
     }
   }
 }

@@ -264,9 +264,7 @@ export function HomePageView({
             <div>
               <p className="eyebrow">{insightsHero.eyebrow}</p>
               <h2 style={{ marginTop: 'var(--space-3)' }}>
-                {insightsHero.titleLine1}
-                <br />
-                {insightsHero.titleLine2}
+                {insightsHero.titleLine1} {insightsHero.titleLine2}
               </h2>
             </div>
             <Link href="/insights" className="btn" style={{ fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>

@@ -1,6 +1,6 @@
 import { serverFetch } from '@/lib/api-client';
 
-export type CenterRegion = 'asia-pacific' | 'europe' | 'north-america' | 'latin-america' | 'middle-east-africa' | 'oceania';
+export type CenterRegion = 'north-america' | 'south-america' | 'europe' | 'china' | 'asia-pacific' | 'africa';
 
 export type PartnerCenterMetric = {
   label: string;

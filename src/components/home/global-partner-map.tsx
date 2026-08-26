@@ -4,9 +4,10 @@ import * as d3 from 'd3';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
-import type { Feature, FeatureCollection, Geometry } from 'geojson';
+import type { Feature, FeatureCollection, Geometry, MultiPolygon, Position } from 'geojson';
 
 import { useTranslation } from '@/lib/i18n-context';
+import { mapRegionLabelForLocale } from '@/lib/center-region-labels';
 import type { CenterRegion } from '@/lib/storefront-partner-centers-api';
 
 export type GlobalMapCenter = {
@@ -17,7 +18,7 @@ export type GlobalMapCenter = {
   badgeText: string;
 };
 
-type MapRegionId = 'apac' | 'europe' | 'na' | 'latam' | 'mea' | 'oceania';
+type MapRegionId = 'na' | 'sa' | 'europe' | 'china' | 'apac' | 'africa';
 
 type RegionMeta = {
   id: MapRegionId;
@@ -26,74 +27,201 @@ type RegionMeta = {
   softVar: string;
 };
 
+function noCentersLabel(locale: string, fallback: string): string {
+  const normalized = locale.trim().toLowerCase();
+  if (normalized.startsWith('zh')) return '无合作中心';
+  if (normalized.startsWith('es')) return 'Sin centros asociados';
+  return fallback;
+}
+
 const REGION_META: RegionMeta[] = [
-  { id: 'apac', apiRegion: 'asia-pacific', colorVar: '--gm-r-apac', softVar: '--gm-r-apac-soft' },
-  { id: 'europe', apiRegion: 'europe', colorVar: '--gm-r-europe', softVar: '--gm-r-europe-soft' },
   { id: 'na', apiRegion: 'north-america', colorVar: '--gm-r-na', softVar: '--gm-r-na-soft' },
-  { id: 'latam', apiRegion: 'latin-america', colorVar: '--gm-r-latam', softVar: '--gm-r-latam-soft' },
-  { id: 'mea', apiRegion: 'middle-east-africa', colorVar: '--gm-r-mea', softVar: '--gm-r-mea-soft' },
-  { id: 'oceania', apiRegion: 'oceania', colorVar: '--gm-r-oceania', softVar: '--gm-r-oceania-soft' },
+  { id: 'sa', apiRegion: 'south-america', colorVar: '--gm-r-sa', softVar: '--gm-r-sa-soft' },
+  { id: 'europe', apiRegion: 'europe', colorVar: '--gm-r-europe', softVar: '--gm-r-europe-soft' },
+  { id: 'china', apiRegion: 'china', colorVar: '--gm-r-china', softVar: '--gm-r-china-soft' },
+  { id: 'apac', apiRegion: 'asia-pacific', colorVar: '--gm-r-apac', softVar: '--gm-r-apac-soft' },
+  { id: 'africa', apiRegion: 'africa', colorVar: '--gm-r-africa', softVar: '--gm-r-africa-soft' },
 ];
 
+/** Sovereignty ISO → default business region (overseas fragments reassigned by centroid). */
 const ISO_TO_REGION: Record<string, MapRegionId> = {
-  156: 'apac', 158: 'apac', 344: 'apac', 446: 'apac', 392: 'apac', 410: 'apac', 408: 'apac',
-  496: 'apac', 704: 'apac', 764: 'apac', 458: 'apac', 702: 'apac', 360: 'apac', 608: 'apac',
-  104: 'apac', 116: 'apac', 418: 'apac', 96: 'apac', 626: 'apac', 356: 'apac', 586: 'apac',
-  50: 'apac', 144: 'apac', 524: 'apac', 64: 'apac', 462: 'apac',
+  // China (+ HK / MO / TW)
+  156: 'china', 344: 'china', 446: 'china', 158: 'china',
+
+  // North America (incl. Mexico, Central America, Caribbean)
+  840: 'na', 124: 'na', 304: 'na', 484: 'na',
+  320: 'na', 84: 'na', 222: 'na', 340: 'na', 558: 'na', 188: 'na', 591: 'na',
+  192: 'na', 214: 'na', 332: 'na', 388: 'na', 780: 'na', 52: 'na', 44: 'na', 28: 'na',
+  630: 'na', 238: 'na',
+
+  // South America
+  76: 'sa', 32: 'sa', 152: 'sa', 170: 'sa', 604: 'sa', 862: 'sa', 218: 'sa', 68: 'sa',
+  600: 'sa', 858: 'sa', 328: 'sa', 740: 'sa',
+
+  // Europe (broad; excludes Russia & former-Soviet listed under apac)
   250: 'europe', 276: 'europe', 826: 'europe', 380: 'europe', 724: 'europe', 620: 'europe',
   528: 'europe', 56: 'europe', 40: 'europe', 756: 'europe', 752: 'europe', 578: 'europe',
   208: 'europe', 246: 'europe', 372: 'europe', 616: 'europe', 203: 'europe', 348: 'europe',
   642: 'europe', 100: 'europe', 191: 'europe', 705: 'europe', 703: 'europe', 440: 'europe',
-  428: 'europe', 233: 'europe', 112: 'europe', 804: 'europe', 643: 'europe', 498: 'europe',
-  51: 'europe', 268: 'europe', 31: 'europe', 8: 'europe', 807: 'europe', 70: 'europe',
+  428: 'europe', 233: 'europe', 8: 'europe', 807: 'europe', 70: 'europe',
   499: 'europe', 688: 'europe', 300: 'europe', 196: 'europe', 470: 'europe', 352: 'europe',
   438: 'europe', 442: 'europe', 492: 'europe', 674: 'europe', 20: 'europe', 336: 'europe',
-  840: 'na', 124: 'na', 304: 'na',
-  484: 'latam', 320: 'latam', 84: 'latam', 222: 'latam', 340: 'latam', 558: 'latam',
-  188: 'latam', 591: 'latam', 192: 'latam', 214: 'latam', 332: 'latam', 388: 'latam',
-  780: 'latam', 52: 'latam', 44: 'latam', 28: 'latam', 76: 'latam', 32: 'latam',
-  152: 'latam', 170: 'latam', 604: 'latam', 862: 'latam', 218: 'latam', 68: 'latam',
-  600: 'latam', 858: 'latam',
-  682: 'mea', 784: 'mea', 634: 'mea', 414: 'mea', 48: 'mea', 512: 'mea', 887: 'mea',
-  400: 'mea', 376: 'mea', 422: 'mea', 760: 'mea', 368: 'mea', 364: 'mea', 792: 'mea',
-  818: 'mea', 434: 'mea', 788: 'mea', 12: 'mea', 504: 'mea', 710: 'mea', 516: 'mea',
-  72: 'mea', 426: 'mea', 748: 'mea', 508: 'mea', 716: 'mea', 454: 'mea', 894: 'mea',
-  404: 'mea', 800: 'mea', 834: 'mea', 566: 'mea', 288: 'mea', 231: 'mea', 232: 'mea',
-  4: 'mea',
-  36: 'oceania', 554: 'oceania', 598: 'oceania', 242: 'oceania', 90: 'oceania',
-  548: 'oceania', 540: 'oceania', 584: 'oceania', 583: 'oceania', 585: 'oceania',
-};
 
-const HOTSPOTS: Record<MapRegionId, Array<[number, number]>> = {
-  apac: [[121.5, 31.2], [139.7, 35.7], [127, 37.5], [103.8, 1.3]],
-  europe: [[13.4, 52.5], [2.35, 48.85], [-0.12, 51.5]],
-  na: [[-74, 40.7], [-118.2, 34], [-79.4, 43.7]],
-  latam: [[-46.6, -23.5], [-99.1, 19.4], [-58.4, -34.6]],
-  mea: [[55.3, 25.2], [31.2, 30], [28, -26.2]],
-  oceania: [[151.2, -33.9], [145, -37.8], [174.8, -36.85]],
+  // Africa
+  710: 'africa', 516: 'africa', 72: 'africa', 426: 'africa', 748: 'africa', 508: 'africa',
+  716: 'africa', 454: 'africa', 894: 'africa', 404: 'africa', 800: 'africa', 834: 'africa',
+  566: 'africa', 288: 'africa', 231: 'africa', 232: 'africa', 24: 'africa', 108: 'africa',
+  120: 'africa', 140: 'africa', 148: 'africa', 178: 'africa', 180: 'africa', 204: 'africa',
+  226: 'africa', 262: 'africa', 266: 'africa', 270: 'africa', 324: 'africa', 384: 'africa',
+  430: 'africa', 450: 'africa', 466: 'africa', 478: 'africa', 562: 'africa', 624: 'africa',
+  646: 'africa', 686: 'africa', 694: 'africa', 706: 'africa', 728: 'africa', 729: 'africa',
+  732: 'africa', 768: 'africa', 854: 'africa', 818: 'africa', 434: 'africa', 788: 'africa',
+  12: 'africa', 504: 'africa',
+
+  // Asia-Pacific: rest of Asia, Middle East, Oceania, Russia & former Soviet
+  392: 'apac', 410: 'apac', 408: 'apac', 496: 'apac', 704: 'apac', 764: 'apac', 458: 'apac',
+  702: 'apac', 360: 'apac', 608: 'apac', 104: 'apac', 116: 'apac', 418: 'apac', 96: 'apac',
+  626: 'apac', 356: 'apac', 586: 'apac', 50: 'apac', 144: 'apac', 524: 'apac', 64: 'apac',
+  462: 'apac',
+  682: 'apac', 784: 'apac', 634: 'apac', 414: 'apac', 48: 'apac', 512: 'apac', 887: 'apac',
+  400: 'apac', 376: 'apac', 422: 'apac', 760: 'apac', 368: 'apac', 364: 'apac', 792: 'apac',
+  275: 'apac', 4: 'apac',
+  643: 'apac', 804: 'apac', 112: 'apac', 498: 'apac', 51: 'apac', 268: 'apac', 31: 'apac',
+  398: 'apac', 417: 'apac', 762: 'apac', 860: 'apac', 795: 'apac',
+  36: 'apac', 554: 'apac', 598: 'apac', 242: 'apac', 90: 'apac', 548: 'apac', 540: 'apac',
+  584: 'apac', 583: 'apac', 585: 'apac', 260: 'apac',
 };
 
 const SHOW_DELAY = 320;
 const HIDE_DELAY = 280;
 const WORLD_ATLAS_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+const TIP_SIDE_RIGHT: MapRegionId[] = ['na', 'sa'];
+
+function tipSideForRegion(regionId: MapRegionId): 'left' | 'right' {
+  return TIP_SIDE_RIGHT.includes(regionId) ? 'right' : 'left';
+}
 
 type Props = {
   centers: GlobalMapCenter[];
 };
 
+type RegionFeatureProps = { regionId: MapRegionId };
+
 function heatT(count: number) {
   if (count >= 5) return 0.92;
   if (count >= 4) return 0.78;
   if (count >= 3) return 0.64;
-  return 0.52;
+  if (count >= 1) return 0.52;
+  // Empty regions still show a clear regional tint (never land-grey).
+  return 0.55;
 }
 
-function regionIdOfFeature(d: Feature) {
-  return ISO_TO_REGION[String(d.id ?? '')] ?? null;
+function normalizeIsoId(raw: string | number | null | undefined) {
+  const text = String(raw ?? '').trim();
+  if (!text) return '';
+  const asNum = Number(text);
+  if (Number.isFinite(asNum)) return String(asNum);
+  return text;
+}
+
+function ringCentroid(ring: Position[]): [number, number] | null {
+  if (!ring.length) return null;
+  let sumLon = 0;
+  let sumLat = 0;
+  let n = 0;
+  for (const pt of ring) {
+    const lon = pt[0];
+    const lat = pt[1];
+    if (!Number.isFinite(lon) || !Number.isFinite(lat)) continue;
+    sumLon += lon;
+    sumLat += lat;
+    n += 1;
+  }
+  if (!n) return null;
+  return [sumLon / n, sumLat / n];
+}
+
+function polygonCentroid(coords: Position[][]): [number, number] | null {
+  const outer = coords[0];
+  if (!outer?.length) return null;
+  return ringCentroid(outer);
+}
+
+/** Geographic overrides for overseas fragments / disputed placement. */
+function regionFromCentroid(lon: number, lat: number, isoHint: MapRegionId | null): MapRegionId | null {
+  if (lat < -60) return null;
+
+  // French Guiana & nearby S. America mainland
+  if (lon > -82 && lon < -34 && lat > -56 && lat < 13) return 'sa';
+
+  // Caribbean / Central America / Mexico → NA
+  if (lon > -120 && lon < -55 && lat >= 7 && lat < 33) {
+    if (lat < 15 && lon > -82) return 'sa'; // northern South America edge
+    return 'na';
+  }
+
+  // Continental Europe box (excludes Russia east of ~40°E deep inland handled by ISO)
+  if (lon > -25 && lon < 40 && lat > 34 && lat < 72) {
+    if (isoHint === 'apac') return 'apac'; // e.g. fragments wrongly placed
+    return 'europe';
+  }
+
+  // North Africa vs Middle East: lon/lat for Africa Maghreb already ISO africa;
+  // Reunion etc. in Indian Ocean east of Africa → africa if near
+  if (lon > 40 && lon < 60 && lat > -30 && lat < 0 && isoHint === 'europe') return 'africa';
+
+  return isoHint;
+}
+
+function explodeCountryPolygons(countries: FeatureCollection<Geometry>): Array<{
+  polygon: Position[][];
+  isoHint: MapRegionId | null;
+}> {
+  const out: Array<{ polygon: Position[][]; isoHint: MapRegionId | null }> = [];
+  for (const f of countries.features) {
+    const iso = normalizeIsoId(f.id as string | number | null | undefined);
+    if (iso === '10') continue; // Antarctica
+    const isoHint = ISO_TO_REGION[iso] ?? null;
+    const geom = f.geometry;
+    if (!geom) continue;
+    if (geom.type === 'Polygon') {
+      out.push({ polygon: geom.coordinates, isoHint });
+    } else if (geom.type === 'MultiPolygon') {
+      for (const poly of geom.coordinates) {
+        out.push({ polygon: poly, isoHint });
+      }
+    }
+  }
+  return out;
+}
+
+function buildRegionFeatures(countries: FeatureCollection<Geometry>): FeatureCollection<MultiPolygon, RegionFeatureProps> {
+  const buckets = new Map<MapRegionId, Position[][][]>();
+  for (const meta of REGION_META) buckets.set(meta.id, []);
+
+  for (const { polygon, isoHint } of explodeCountryPolygons(countries)) {
+    const c = polygonCentroid(polygon);
+    if (!c) continue;
+    const rid = regionFromCentroid(c[0], c[1], isoHint);
+    if (!rid) continue;
+    buckets.get(rid)?.push(polygon);
+  }
+
+  const features: Feature<MultiPolygon, RegionFeatureProps>[] = [];
+  for (const meta of REGION_META) {
+    const polys = buckets.get(meta.id) ?? [];
+    if (!polys.length) continue;
+    features.push({
+      type: 'Feature',
+      properties: { regionId: meta.id },
+      geometry: { type: 'MultiPolygon', coordinates: polys },
+    });
+  }
+  return { type: 'FeatureCollection', features };
 }
 
 export function GlobalPartnerMap({ centers }: Props) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const rootRef = useRef<HTMLElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -102,11 +230,9 @@ export function GlobalPartnerMap({ centers }: Props) {
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingRegionRef = useRef<MapRegionId | null>(null);
   const activeRegionRef = useRef<MapRegionId | null>(null);
-  const pointerRef = useRef({ x: 0, y: 0 });
-  const countrySelectionRef = useRef<d3.Selection<SVGPathElement, Feature, SVGGElement, unknown> | null>(null);
+  const regionSelectionRef = useRef<d3.Selection<SVGPathElement, Feature<MultiPolygon, RegionFeatureProps>, SVGGElement, unknown> | null>(null);
   const centersByRegionRef = useRef(new Map<MapRegionId, GlobalMapCenter[]>());
   const scheduleShowRef = useRef<(regionId: MapRegionId | null) => void>(() => {});
-  const positionTipRef = useRef<() => void>(() => {});
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -156,23 +282,19 @@ export function GlobalPartnerMap({ centers }: Props) {
     }, HIDE_DELAY);
   }
 
-  function onCountryPointerLeave(event: PointerEvent) {
+  function onRegionPointerLeave(event: PointerEvent) {
     const related = event.relatedTarget as Element | null;
     const tip = tooltipRef.current;
     if (tip && related && tip.contains(related)) return;
-    // Moving into another country — keep pending/open tip for same region.
-    if (related?.closest?.('path.country')) return;
+    if (related?.closest?.('path.region')) return;
     cancelShow();
     scheduleHide();
   }
 
   function scheduleShow(regionId: MapRegionId | null) {
     if (!regionId) return;
-    if (!(centersByRegionRef.current.get(regionId)?.length ?? 0)) return;
     cancelHide();
-    // Already open on this region — keep it.
     if (activeRegionRef.current === regionId) return;
-    // Same region already waiting — don't reset the debounce timer.
     if (pendingRegionRef.current === regionId) return;
 
     cancelShow();
@@ -181,49 +303,20 @@ export function GlobalPartnerMap({ centers }: Props) {
       if (pendingRegionRef.current !== regionId) return;
       pendingRegionRef.current = null;
       showTimerRef.current = null;
+      // Cursor reached the open side panel while a flyover was pending — keep current region.
+      if (isPointerOverTooltip()) return;
       setActiveRegion(regionId);
-      requestAnimationFrame(() => positionTipRef.current());
     }, SHOW_DELAY);
   }
 
-  function updatePointerFromEvent(event: { clientX: number; clientY: number }) {
-    const stage = stageRef.current;
-    if (!stage) return;
-    const rect = stage.getBoundingClientRect();
-    pointerRef.current = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    };
-  }
-
-  function positionTooltipNearPointer() {
-    const stage = stageRef.current;
-    const tooltip = tooltipRef.current;
-    if (!stage || !tooltip) return;
-    if (!tooltip.classList.contains('is-open')) return;
-
-    const tipW = tooltip.offsetWidth || 320;
-    const tipH = tooltip.offsetHeight || 280;
-    const stageW = stage.clientWidth;
-    const stageH = stage.clientHeight;
-    const gap = 12;
-    const px = pointerRef.current.x;
-    const py = pointerRef.current.y;
-
-    let x = px + gap;
-    let y = py + gap;
-    if (x + tipW > stageW - 12) x = px - tipW - gap;
-    if (y + tipH > stageH - 12) y = py - tipH - gap;
-    x = Math.max(12, Math.min(x, stageW - tipW - 12));
-    y = Math.max(12, Math.min(y, stageH - tipH - 12));
-    tooltip.style.left = `${x}px`;
-    tooltip.style.top = `${y}px`;
+  function onTooltipPointerEnter() {
+    cancelShow();
+    cancelHide();
   }
 
   scheduleShowRef.current = scheduleShow;
-  positionTipRef.current = positionTooltipNearPointer;
-  const onCountryPointerLeaveRef = useRef(onCountryPointerLeave);
-  onCountryPointerLeaveRef.current = onCountryPointerLeave;
+  const onRegionPointerLeaveRef = useRef(onRegionPointerLeave);
+  onRegionPointerLeaveRef.current = onRegionPointerLeave;
 
   useEffect(() => {
     const root = rootRef.current;
@@ -238,14 +331,13 @@ export function GlobalPartnerMap({ centers }: Props) {
       return getComputedStyle(root!).getPropertyValue(name).trim();
     }
 
-    function regionFill(rid: MapRegionId | null) {
-      const land = cssVar('--gm-land');
-      if (!rid) return land;
-      const count = centersByRegionRef.current.get(rid)?.length ?? 0;
-      if (!count) return land;
+    function regionFill(rid: MapRegionId) {
       const meta = REGION_META.find((item) => item.id === rid);
-      if (!meta) return land;
-      return d3.interpolateRgb(cssVar(meta.softVar), cssVar(meta.colorVar))(heatT(count));
+      if (!meta) return cssVar('--gm-land');
+      const soft = cssVar(meta.softVar);
+      const strong = cssVar(meta.colorVar);
+      const count = centersByRegionRef.current.get(rid)?.length ?? 0;
+      return d3.interpolateRgb(soft, strong)(heatT(count));
     }
 
     async function renderMap() {
@@ -267,14 +359,11 @@ export function GlobalPartnerMap({ centers }: Props) {
       const countriesObject = world.objects.countries;
       if (!countriesObject) throw new Error('countries topology missing');
       const countries = feature(world, countriesObject) as FeatureCollection<Geometry>;
-      // Exclude Antarctica so fit focuses on inhabited continents (less bottom empty space)
-      const fitFeatures: FeatureCollection<Geometry> = {
-        type: 'FeatureCollection',
-        features: countries.features.filter((f) => String(f.id ?? '') !== '010'),
-      };
+      const regionFc = buildRegionFeatures(countries);
+
       const projection = d3.geoNaturalEarth1().fitExtent(
         [[8, 4], [width - 8, height - 4]],
-        fitFeatures,
+        regionFc,
       );
       const path = d3.geoPath(projection);
 
@@ -283,54 +372,20 @@ export function GlobalPartnerMap({ centers }: Props) {
       gOcean.append('path').datum(d3.geoGraticule10()).attr('class', 'ocean-grid').attr('d', path);
 
       const gLand = svg.append('g');
-      countrySelectionRef.current = gLand
-        .selectAll('path.country')
-        .data(fitFeatures.features)
+      regionSelectionRef.current = gLand
+        .selectAll('path.region')
+        .data(regionFc.features)
         .join('path')
-        .attr('class', (d) => {
-          const rid = regionIdOfFeature(d);
-          const hasCenters = rid ? (centersByRegionRef.current.get(rid)?.length ?? 0) > 0 : false;
-          return hasCenters ? 'country is-active-region' : 'country is-idle';
-        })
+        .attr('class', 'region is-active-region')
         .attr('d', path)
-        .attr('data-region', (d) => regionIdOfFeature(d) ?? '')
-        .attr('fill', (d) => regionFill(regionIdOfFeature(d)))
-        .on('pointerenter', (event, d) => {
-          updatePointerFromEvent(event);
-          scheduleShowRef.current(regionIdOfFeature(d));
-        })
-        .on('pointermove', (event) => {
-          // Keep latest cursor so tip opens beside where the user actually paused.
-          updatePointerFromEvent(event);
+        .attr('data-region', (d) => d.properties.regionId)
+        .attr('fill', (d) => regionFill(d.properties.regionId))
+        .on('pointerenter', (_event, d) => {
+          scheduleShowRef.current(d.properties.regionId);
         })
         .on('pointerleave', (event) => {
-          onCountryPointerLeaveRef.current(event as PointerEvent);
-        }) as d3.Selection<SVGPathElement, Feature, SVGGElement, unknown>;
-
-      const gHot = svg.append('g').attr('pointer-events', 'none');
-      for (const meta of REGION_META) {
-        if (!(centersByRegionRef.current.get(meta.id)?.length ?? 0)) continue;
-        const color = cssVar(meta.colorVar);
-        (HOTSPOTS[meta.id] ?? []).forEach(([lon, lat], i) => {
-          const p = projection([lon, lat]);
-          if (!p) return;
-          gHot
-            .append('circle')
-            .attr('class', 'hotspot-ring')
-            .attr('cx', p[0])
-            .attr('cy', p[1])
-            .attr('r', 2.5)
-            .attr('stroke', color)
-            .style('animation-delay', `${i * 0.3}s`);
-          gHot
-            .append('circle')
-            .attr('class', 'hotspot')
-            .attr('cx', p[0])
-            .attr('cy', p[1])
-            .attr('r', 2)
-            .attr('fill', color);
-        });
-      }
+          onRegionPointerLeaveRef.current(event as PointerEvent);
+        }) as d3.Selection<SVGPathElement, Feature<MultiPolygon, RegionFeatureProps>, SVGGElement, unknown>;
 
       setLoading(false);
     }
@@ -361,14 +416,14 @@ export function GlobalPartnerMap({ centers }: Props) {
       cancelShow();
       if (resizeTimer) clearTimeout(resizeTimer);
       window.removeEventListener('resize', onResize);
-      countrySelectionRef.current = null;
+      regionSelectionRef.current = null;
     };
   }, [centers]);
 
   useEffect(() => {
     const root = rootRef.current;
     const tooltip = tooltipRef.current;
-    const selection = countrySelectionRef.current;
+    const selection = regionSelectionRef.current;
     if (!root || !tooltip) return;
 
     function cssVar(name: string) {
@@ -382,20 +437,18 @@ export function GlobalPartnerMap({ centers }: Props) {
         const meta = REGION_META.find((item) => item.id === activeRegion);
         const glow = meta ? cssVar(meta.colorVar) : cssVar('--gm-accent');
         selection
-          .classed('is-dim', (d) => regionIdOfFeature(d) !== activeRegion)
-          .classed('is-active', (d) => regionIdOfFeature(d) === activeRegion)
-          .style('--active-glow', (d) => (regionIdOfFeature(d) === activeRegion ? glow : null));
+          .classed('is-dim', (d) => d.properties.regionId !== activeRegion)
+          .classed('is-active', (d) => d.properties.regionId === activeRegion)
+          .style('--active-glow', (d) => (d.properties.regionId === activeRegion ? glow : null));
         if (meta) tooltip.style.setProperty('--accent-color', glow);
       }
     }
-
-    if (!activeRegion) return;
-    requestAnimationFrame(() => positionTooltipNearPointer());
   }, [activeRegion]);
 
   const activeMeta = activeRegion ? REGION_META.find((item) => item.id === activeRegion) ?? null : null;
   const activeCenters = activeRegion ? centersByRegion.get(activeRegion) ?? [] : [];
-  const tipOpen = Boolean(activeRegion && activeCenters.length);
+  const tipOpen = Boolean(activeRegion);
+  const tipSide = activeRegion ? tipSideForRegion(activeRegion) : 'left';
 
   if (!centers.length) return null;
 
@@ -422,12 +475,12 @@ export function GlobalPartnerMap({ centers }: Props) {
         <svg ref={svgRef} role="img" aria-label={t('map.svgAriaLabel')} />
 
         <div
-          className={`region-tooltip${tipOpen ? ' is-open' : ''}`}
+          className={`region-tooltip is-side-${tipSide}${tipOpen ? ' is-open' : ''}`}
           ref={tooltipRef}
           role="dialog"
           aria-hidden={!tipOpen}
           aria-labelledby="tip-title"
-          onPointerEnter={cancelHide}
+          onPointerEnter={onTooltipPointerEnter}
           onPointerLeave={scheduleHide}
         >
           <div className="tip-accent" />
@@ -435,10 +488,10 @@ export function GlobalPartnerMap({ centers }: Props) {
             <div className="tip-head">
               <div>
                 <div className="tip-label">
-                  {activeMeta ? t(`map.regions.${activeMeta.id}`) : ''}
+                  {activeMeta ? mapRegionLabelForLocale(activeMeta.id, locale) : ''}
                 </div>
                 <div className="tip-title" id="tip-title">
-                  {activeMeta ? t(`map.regions.${activeMeta.id}`) : ''}
+                  {activeMeta ? mapRegionLabelForLocale(activeMeta.id, locale) : ''}
                 </div>
               </div>
               <div className="tip-count">
@@ -447,25 +500,31 @@ export function GlobalPartnerMap({ centers }: Props) {
               </div>
             </div>
             <div className="center-list">
-              {activeCenters.map((center) => (
-                <a
-                  key={center.slug}
-                  className="center-link"
-                  href={`/centers/${center.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div>
-                    <strong>{center.name}</strong>
-                    <span>
-                      {[center.location, center.badgeText].filter(Boolean).join(' · ')}
-                    </span>
-                  </div>
-                  <span className="go">{t('map.detailsArrow')}</span>
-                </a>
-              ))}
+              {activeCenters.length ? (
+                activeCenters.map((center) => (
+                  <a
+                    key={center.slug}
+                    className="center-link"
+                    href={`/centers/${center.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div>
+                      <strong>{center.name}</strong>
+                      <span>
+                        {[center.location, center.badgeText].filter(Boolean).join(' · ')}
+                      </span>
+                    </div>
+                    <span className="go">{t('map.detailsArrow')}</span>
+                  </a>
+                ))
+              ) : (
+                <p className="center-list-empty">{noCentersLabel(locale, t('map.noCenters'))}</p>
+              )}
             </div>
-            <p className="tip-foot">{t('map.tipFoot')}</p>
+            {activeCenters.length ? (
+              <p className="tip-foot">{t('map.tipFoot')}</p>
+            ) : null}
           </div>
         </div>
       </div>
