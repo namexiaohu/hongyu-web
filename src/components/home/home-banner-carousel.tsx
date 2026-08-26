@@ -98,12 +98,16 @@ export function HomeBannerCarousel({ slides, title, subtitle, description, brand
             ) : (
               <div className="carousel-media" style={{ background: 'var(--accent)' }} />
             )}
-            <div className="carousel-overlay" />
+            {/* 左侧遮罩仅挂在第一屏，随该 slide 显隐 */}
+            {index === 0 ? <div className="carousel-overlay" /> : null}
           </div>
         ))}
       </div>
 
-      <div className="container hero-content">
+      <div
+        className={`container hero-content${current === 0 ? '' : ' hero-content--hidden'}`}
+        aria-hidden={current !== 0}
+      >
         <div className="hero-text">
           <div className="hero-eyebrow">{brandEyebrow}</div>
           <MultilineHeading text={title} />

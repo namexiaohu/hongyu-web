@@ -10,7 +10,6 @@ import { formatInsightDate, insightHref, type InsightsHero } from '@/lib/insight
 import { buildPartnershipCta } from '@/lib/partnership-cta';
 import type { StorefrontHomepageConfig } from '@/lib/storefront-homepage-api';
 import type { StorefrontInsightListItem } from '@/lib/storefront-insights-api';
-import type { StorefrontSolutionListItem } from '@/lib/storefront-solutions-api';
 import type { CtaBlock } from '@/lib/storefront-types';
 
 function MultilineTitle({ text, as: Tag = 'h2' }: { text: string; as?: 'h1' | 'h2' }) {
@@ -143,7 +142,6 @@ type HomeCopy = {
 
 type HomePageViewProps = {
   config: StorefrontHomepageConfig;
-  solutions: StorefrontSolutionListItem[];
   insights: StorefrontInsightListItem[];
   partnerCenters: GlobalMapCenter[];
   brandEyebrow: string;
@@ -154,7 +152,6 @@ type HomePageViewProps = {
 
 export function HomePageView({
   config,
-  solutions,
   insights,
   partnerCenters,
   brandEyebrow,
@@ -162,6 +159,8 @@ export function HomePageView({
   partnershipCta,
   homeCopy,
 }: HomePageViewProps) {
+  const solutionItems = config.solutionItems ?? [];
+
   return (
     <>
       <HomeBannerCarousel
@@ -179,22 +178,43 @@ export function HomePageView({
             {config.solutionsTitle ? <h2>{config.solutionsTitle}</h2> : null}
             {config.solutionsDescription ? <p className="lead">{config.solutionsDescription}</p> : null}
           </div>
-          <div className="grid-4">
-            {solutions.map((item) => (
-              <Link key={item.slug} href={item.href || `/solutions/${item.slug}`} className="product-card">
-                {item.coverImage ? (
-                  <div className="product-cover">
-                    <img src={item.coverImage} alt={item.title} />
+          {solutionItems.length > 0 ? (
+            <div className="home-sol-grid">
+              {solutionItems.map((item, index) => {
+                const title = item.title.trim();
+                const href = item.href.trim();
+                const media = (
+                  <div className={item.coverImage ? 'home-sol-media' : 'home-sol-media home-sol-media--empty'}>
+                    {item.coverImage ? (
+                      <img src={item.coverImage} alt={title} />
+                    ) : null}
                   </div>
-                ) : (
-                  <div className="product-cover product-cover-empty" />
-                )}
-                <h3>{item.title}</h3>
-                {item.description ? <p>{item.description}</p> : null}
-                {item.badgeText ? <span className="product-tag">{item.badgeText}</span> : null}
-              </Link>
-            ))}
-          </div>
+                );
+                const body = (
+                  <div className="home-sol-body">
+                    {item.badgeText ? <span className="home-sol-tag">{item.badgeText}</span> : null}
+                    {title ? <h3>{title}</h3> : null}
+                    {item.description ? <p>{item.description}</p> : null}
+                  </div>
+                );
+                const key = `${href || title || 'item'}-${index}`;
+                if (href) {
+                  return (
+                    <Link key={key} href={href} className="home-sol-card">
+                      {media}
+                      {body}
+                    </Link>
+                  );
+                }
+                return (
+                  <div key={key} className="home-sol-card">
+                    {media}
+                    {body}
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       </section>
 

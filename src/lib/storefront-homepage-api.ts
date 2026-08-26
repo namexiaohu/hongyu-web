@@ -21,6 +21,14 @@ export type HomepageEducationItem = {
   coverImage: string;
 };
 
+export type HomepageSolutionItem = {
+  title: string;
+  description: string;
+  badgeText: string;
+  coverImage: string;
+  href: string;
+};
+
 export type StorefrontHomepageConfig = {
   locale: string;
   bannerSlides: HomepageMediaSlide[];
@@ -38,6 +46,7 @@ export type StorefrontHomepageConfig = {
   educationTitle: string;
   educationDescription: string;
   educationItems: HomepageEducationItem[];
+  solutionItems: HomepageSolutionItem[];
 };
 
 export const EMPTY_STOREFRONT_HOMEPAGE: StorefrontHomepageConfig = {
@@ -57,6 +66,7 @@ export const EMPTY_STOREFRONT_HOMEPAGE: StorefrontHomepageConfig = {
   educationTitle: '',
   educationDescription: '',
   educationItems: [],
+  solutionItems: [],
 };
 
 export async function getStorefrontHomepageConfig(locale?: string): Promise<StorefrontHomepageConfig> {
