@@ -11,10 +11,20 @@ function displayHandle(url: string) {
   return url.replace(/^https?:\/\/(www\.)?/, '');
 }
 
+function secondaryText(channel: StorefrontSocialChannel, qrHint: string, hasLink: boolean) {
+  const accountName = channel.name.trim();
+  if (accountName) return accountName;
+  if (channel.qrCode) return qrHint;
+  if (hasLink) return displayHandle(channel.url);
+  return '';
+}
+
 export function MediaPlatformCard({ channel, qrHint }: MediaPlatformCardProps) {
   const meta = socialPlatformMeta[channel.type];
-  const displayName = channel.name || socialPlatformDisplayNames[channel.type];
+  const platformName = socialPlatformDisplayNames[channel.type];
+  const accountName = channel.name.trim();
   const hasLink = Boolean(channel.url && channel.url !== '#');
+  const subtitle = secondaryText(channel, qrHint, hasLink);
   const CardTag = hasLink ? 'a' : 'div';
   const cardProps = hasLink
     ? { href: channel.url, target: '_blank' as const, rel: 'noopener noreferrer' as const }
@@ -38,18 +48,18 @@ export function MediaPlatformCard({ channel, qrHint }: MediaPlatformCardProps) {
       {...cardProps}
     >
       {channel.qrCode ? (
-        <SocialQrTooltip qrCode={channel.qrCode} label={displayName} className="pmd-pc-icon-wrap">
+        <SocialQrTooltip qrCode={channel.qrCode} label={accountName || platformName} className="pmd-pc-icon-wrap">
           {iconNode}
         </SocialQrTooltip>
       ) : (
         iconNode
       )}
       <div className="pmd-pc-info">
-        <div className="pmd-pc-name">{displayName}</div>
-        {channel.qrCode ? (
-          <div className="pmd-pc-handle pmd-pc-qr-hint">{qrHint}</div>
-        ) : hasLink ? (
-          <div className="pmd-pc-handle">{displayHandle(channel.url)}</div>
+        <div className="pmd-pc-name">{platformName}</div>
+        {subtitle ? (
+          <div className={`pmd-pc-handle${channel.qrCode && !accountName ? ' pmd-pc-qr-hint' : ''}`}>
+            {subtitle}
+          </div>
         ) : null}
       </div>
       {hasLink ? <span className="pmd-pc-arrow">→</span> : null}
