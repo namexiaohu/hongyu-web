@@ -3,9 +3,19 @@ export type CompanyLabelValue = {
   value: string;
 };
 
+export type CompanyTeamLevel = 'executive' | 'manager' | 'staff';
+
 export type CompanyTeamMember = {
-  title: string;
+  id: string;
+  level: CompanyTeamLevel;
+  sortOrder: number;
   name: string;
+  title: string;
+  email: string;
+  contact: string;
+  region: string;
+  avatarUrl: string;
+  supervisorId: string;
 };
 
 export type CompanyOffice = {
@@ -37,8 +47,7 @@ export type StorefrontCompanyProfile = {
   businessHours: string;
   businessHotline: string;
   basicInfo: CompanyLabelValue[];
-  executives: CompanyTeamMember[];
-  managers: CompanyTeamMember[];
+  managementTeam: CompanyTeamMember[];
   offices: CompanyOffice[];
   publicFiles: CompanyPublicFile[];
 };
@@ -65,8 +74,19 @@ export const EMPTY_COMPANY_PROFILE: StorefrontCompanyProfile = {
   businessHours: '',
   businessHotline: '',
   basicInfo: [],
-  executives: [],
-  managers: [],
+  managementTeam: [],
   offices: [],
   publicFiles: [],
 };
+
+export function membersAtLevel(team: CompanyTeamMember[] | undefined, level: CompanyTeamLevel) {
+  return (team ?? [])
+    .filter((member) => member.level === level && member.name.trim())
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+export function staffForManager(team: CompanyTeamMember[] | undefined, managerId: string) {
+  return (team ?? [])
+    .filter((member) => member.level === 'staff' && member.supervisorId === managerId && member.name.trim())
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}

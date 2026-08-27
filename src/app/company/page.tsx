@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 
+import { TeamMemberCard } from '@/components/company/team-member-card';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { resolveCompanyName } from '@/lib/company-display';
 import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_DESCRIPTION } from '@/lib/site-config';
+import { membersAtLevel, staffForManager } from '@/lib/storefront-company';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -58,7 +60,9 @@ export default async function Page() {
     getPageTranslations(locale, ['company', 'breadcrumb', 'common']),
     getStorefrontCompanyProfile(locale),
   ]);
-  const hasTeam = data.executives.length > 0 || data.managers.length > 0;
+  const executives = membersAtLevel(data.managementTeam, 'executive');
+  const managers = membersAtLevel(data.managementTeam, 'manager');
+  const hasTeam = data.managementTeam.some((member) => member.name.trim());
   const companyName = resolveCompanyName(data, locale);
 
   return (
@@ -106,25 +110,27 @@ export default async function Page() {
               <p className="eyebrow">{t('company.organization.eyebrow')}</p>
               <h2>{t('company.organization.title')}</h2>
             </div>
-            <div className="org-chart">
-              {data.executives.length > 0 ? (
-                <div className="org-level">
-                  {data.executives.map((member) => (
-                    <div className="org-node primary" key={`${member.title}-${member.name}`}>
-                      <div className="on-title">{member.title}</div>
-                      <div className="on-name">{member.name}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-              {data.managers.length > 0 ? (
-                <div className="org-level">
-                  {data.managers.map((member) => (
-                    <div className="org-node" key={`${member.title}-${member.name}`}>
-                      <div className="on-title">{member.title}</div>
-                      <div className="on-name">{member.name}</div>
-                    </div>
-                  ))}
+            <div className="team-tree">
+              {executives.map((member) => (
+                <TeamMemberCard key={member.id} member={member} size="lg" primary />
+              ))}
+              {managers.length > 0 ? (
+                <div className="team-depts">
+                  {managers.map((manager) => {
+                    const staff = staffForManager(data.managementTeam, manager.id);
+                    return (
+                      <div className="team-dept" key={manager.id}>
+                        <TeamMemberCard member={manager} size="md" />
+                        {staff.length > 0 ? (
+                          <div className="team-children">
+                            {staff.map((member) => (
+                              <TeamMemberCard key={member.id} member={member} size="sm" />
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
                 </div>
               ) : null}
             </div>

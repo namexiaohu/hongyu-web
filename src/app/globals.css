@@ -4287,15 +4287,46 @@
     .page-company .office-card-body .oc-row{ display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
     .page-company .office-card-body .oc-row svg{ width: 14px; height: 14px; stroke: var(--meta); flex-shrink: 0; }
 
-    /* Org chart */
-    .page-company .org-chart{ display: flex; flex-direction: column; align-items: center; gap: var(--space-8); }
-    .page-company .org-level{ display: flex; gap: var(--space-6); justify-content: center; flex-wrap: wrap; }
-    .page-company .org-node{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5) var(--space-6); text-align: center; min-width: 160px; transition: all var(--motion-base) var(--ease-standard); }
-    .page-company .org-node:hover{ border-color: var(--accent); box-shadow: 0 4px 16px rgba(30,58,95,0.06); }
-    .page-company .org-node.primary{ background: var(--accent); border-color: var(--accent); }
-    .page-company .org-node.primary .on-title, .page-company .org-node.primary .on-name{ color: #fff; }
-    .page-company .org-node .on-title{ font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--meta); margin-bottom: 4px; }
-    .page-company .org-node .on-name{ font-size: 15px; font-weight: 600; }
+    /* Team tree cards */
+    .page-company .team-tree{ display: flex; flex-direction: column; align-items: center; gap: var(--space-8); }
+    .page-company .team-depts{ display: flex; gap: var(--space-6); flex-wrap: wrap; justify-content: center; }
+    .page-company .team-dept{ display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+    .page-company .team-card{ border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); transition: all var(--motion-base) var(--ease-standard); width: 155px; display: flex; flex-direction: column; }
+    .page-company .team-card.card-lg{ width: 220px; }
+    .page-company .team-card.card-lg .tc-avatar{ height: 150px; }
+    .page-company .team-card.card-lg .tc-name{ font-size: 16px; }
+    .page-company .team-card.card-lg .tc-role{ font-size: 12px; }
+    .page-company .team-card.card-lg .tc-row{ font-size: 11px; }
+    .page-company .team-card.card-lg .tc-row svg{ width: 12px; height: 12px; }
+    .page-company .team-card.card-md{ width: 195px; }
+    .page-company .team-card.card-md .tc-avatar{ height: 135px; }
+    .page-company .team-card.card-md .tc-name{ font-size: 14px; }
+    .page-company .team-card.card-md .tc-role{ font-size: 11px; }
+    .page-company .team-card.card-md .tc-row{ font-size: 11px; }
+    .page-company .team-card.card-md .tc-row svg{ width: 12px; height: 12px; }
+    .page-company .team-card:hover{ border-color: var(--accent-12); box-shadow: 0 4px 16px rgba(30,58,95,0.06); }
+    .page-company .team-card .tc-avatar{ height: 115px; background: var(--border-soft); position: relative; overflow: hidden; flex-shrink: 0; }
+    .page-company .team-card .tc-avatar img{ width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+    .page-company .team-card .tc-avatar .tc-badge{ position: absolute; bottom: 6px; left: 6px; font-size: 9px; font-family: var(--font-mono); font-weight: 600; letter-spacing: 0.02em; padding: 2px 6px; border-radius: var(--radius-pill); background: var(--accent); color: #fff; white-space: nowrap; max-width: calc(100% - 12px); overflow: hidden; text-overflow: ellipsis; }
+    .page-company .team-card .tc-body{ padding: 8px 10px; display: flex; flex-direction: column; flex: 0 0 auto; }
+    .page-company .team-card .tc-name{ font-size: 13px; font-weight: 700; color: var(--fg); margin-bottom: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+    .page-company .team-card .tc-role{ font-size: 10px; color: var(--muted); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+    .page-company .team-card .tc-info{ display: flex; flex-direction: column; gap: 3px; min-height: 0; }
+    .page-company .team-card .tc-row{ display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex-shrink: 0; }
+    .page-company .team-card .tc-row svg{ width: 11px; height: 11px; stroke: var(--meta); flex-shrink: 0; }
+    .page-company .team-card .tc-row a{ color: var(--accent); text-decoration: none; overflow: hidden; text-overflow: ellipsis; }
+    .page-company .team-card .tc-row a:hover{ text-decoration: underline; }
+    .page-company .team-card.primary{ background: var(--accent); border-color: var(--accent); }
+    .page-company .team-card.primary .tc-name, .page-company .team-card.primary .tc-role{ color: #fff; }
+    .page-company .team-card.primary .tc-row{ color: rgba(255,255,255,0.75); }
+    .page-company .team-card.primary .tc-row svg{ stroke: rgba(255,255,255,0.5); }
+    .page-company .team-card.primary .tc-row a{ color: #fff; }
+    .page-company .team-card.primary .tc-avatar{ background: color-mix(in oklch, var(--accent) 70%, #000); }
+    .page-company .team-children{ display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+    @media (max-width: 960px) {
+      .page-company .team-depts{ flex-direction: column; align-items: center; }
+      .page-company .team-children{ flex-wrap: wrap; }
+    }
 
     /* Document list */
     .page-company .doc-list{ border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
