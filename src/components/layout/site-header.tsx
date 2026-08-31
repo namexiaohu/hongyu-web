@@ -108,7 +108,9 @@ export function SiteHeader({
 
             const triggerInner = (
               <>
-                <span className="nav-dropdown-label">{column.name}</span>
+                <span className="nav-dropdown-label" data-nav-label={column.name}>
+                  <span className="nav-dropdown-label__text">{column.name}</span>
+                </span>
                 {hasItems ? (
                   <svg className="nav-dropdown-caret" viewBox="0 0 12 12" aria-hidden="true">
                     <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />

@@ -31,7 +31,7 @@ const montserrat = Montserrat({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-montserrat',
-  weight: ['700', '900'],
+  weight: ['600', '700', '800', '900'],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
