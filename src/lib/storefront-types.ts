@@ -28,7 +28,7 @@ export type SplitHero = {
   backgroundSolidCss?: string;
   showCoverOnBackground?: boolean;
   coverDisplay?: import('@/lib/hero-cover-display').HeroCoverDisplay;
-  heroCopyStyle?: 'light' | 'dark';
+  heroCopyStyle: 'light' | 'dark';
   videoUrl?: string;
   gallery?: Array<{ url: string; alt?: string }>;
 };
@@ -52,6 +52,8 @@ export type SplitContentSection = {
   background?: 'default' | 'soft';
   layout: 'team-split' | 'rd-split';
   imagePosition: 'left' | 'right';
+  heroCopyStyle: 'light' | 'dark';
+  carouselFitMode: import('@/lib/hero-background-fit').HeroBackgroundFitMode;
   eyebrow: string;
   title: string;
   body: string;

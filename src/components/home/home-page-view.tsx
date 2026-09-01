@@ -159,7 +159,12 @@ export function HomePageView({
   partnershipCta,
   homeCopy,
 }: HomePageViewProps) {
-  const solutionItems = config.solutionItems ?? [];
+  const solutionItems = config.solutionItems;
+  const aboutHeroClassName = [
+    'home-about-hero',
+    'split-bg-hero',
+    config.aboutHeroCopyStyle === 'dark' ? 'split-bg-hero--copy-dark' : '',
+  ].filter(Boolean).join(' ');
 
   return (
     <>
@@ -169,6 +174,8 @@ export function HomePageView({
         subtitle={config.bannerSubtitle}
         description={config.bannerDescription}
         brandEyebrow={brandEyebrow}
+        heroCopyStyle={config.bannerHeroCopyStyle}
+        carouselFitMode={config.bannerCarouselFitMode}
       />
 
       <section className="section" id="products" data-od-id="products">
@@ -218,9 +225,18 @@ export function HomePageView({
         </div>
       </section>
 
-      <section className="section" id="about" data-od-id="about" style={{ background: 'var(--bg-soft)' }}>
-        <div className="container about-grid">
-          <div className="about-text">
+      <section
+        className={aboutHeroClassName}
+        id="about"
+        data-od-id="about"
+        data-hero-copy={config.aboutHeroCopyStyle}
+      >
+        <div className="split-bg-hero-bg home-about-hero-bg">
+          <HomeAboutCarousel slides={config.aboutSlides} fillBackground fitMode={config.aboutCarouselFitMode} />
+        </div>
+        <div className="split-bg-hero-overlay" aria-hidden="true" />
+        <div className="container split-bg-hero-content">
+          <div className="split-bg-hero-main home-about-hero-main">
             <p className="eyebrow">{homeCopy.aboutEyebrow}</p>
             {config.aboutTitle ? <MultilineTitle text={config.aboutTitle} /> : null}
             <ParagraphBlocks text={config.aboutDescription} />
@@ -228,7 +244,6 @@ export function HomePageView({
               {homeCopy.aboutLearnMore}
             </Link>
           </div>
-          <HomeAboutCarousel slides={config.aboutSlides} />
         </div>
       </section>
 

@@ -6,7 +6,6 @@ import { StatsBar } from '@/components/shared/stats-bar';
 import { SummitSpeakersSection } from '@/components/summit/summit-speakers-section';
 import { SummitSponsorsSection } from '@/components/summit/summit-sponsors-section';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
-import { resolveStorefrontHeroCopyStyle } from '@/lib/hero-copy-style';
 import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import type { TranslateFn } from '@/lib/i18n-server';
 import { buildContactHref, CONTACT_TOPIC_SUMMIT_QUERY } from '@/lib/storefront-inquiry';
@@ -89,7 +88,7 @@ export default async function SummitDetailPage({ params }: { params: Promise<{ s
     'event-hero',
     hasImageBackground ? 'has-bg' : '',
     showHeroMedia ? 'has-cover' : '',
-    resolveStorefrontHeroCopyStyle(summit.heroCopyStyle) === 'dark' ? 'event-hero--copy-dark' : '',
+    summit.heroCopyStyle === 'dark' ? 'event-hero--copy-dark' : '',
   ].filter(Boolean).join(' ');
   const statusLabel = t(`summit.status.${summit.status}`);
 

@@ -50,7 +50,7 @@ export type StorefrontProductDetail = {
   backgroundSolidCss?: string;
   showCoverOnBackground?: boolean;
   coverDisplay?: import('@/lib/hero-cover-display').HeroCoverDisplay;
-  heroCopyStyle?: 'light' | 'dark';
+  heroCopyStyle: 'light' | 'dark';
   stats?: StorefrontProductStat[];
   attachments: StorefrontProductAttachment[];
   seriesProducts?: StorefrontSeriesProduct[];

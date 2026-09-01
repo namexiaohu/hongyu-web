@@ -3,7 +3,11 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
+import { CarouselControls } from '@/components/shared/carousel-controls';
 import { useTranslation } from '@/lib/i18n-context';
+import type { HeroBackgroundFitMode } from '@/lib/hero-background-fit';
+import { heroBackgroundFitModeClass } from '@/lib/hero-background-fit';
+import type { HeroCopyStyle } from '@/lib/hero-copy-style';
 import type { HomepageMediaSlide } from '@/lib/storefront-homepage-api';
 
 type HomeBannerCarouselProps = {
@@ -12,6 +16,8 @@ type HomeBannerCarouselProps = {
   subtitle: string;
   description: string;
   brandEyebrow: string;
+  heroCopyStyle: HeroCopyStyle;
+  carouselFitMode: HeroBackgroundFitMode;
 };
 
 function MultilineHeading({ text }: { text: string }) {
@@ -29,24 +35,37 @@ function MultilineHeading({ text }: { text: string }) {
   );
 }
 
-export function HomeBannerCarousel({ slides, title, subtitle, description, brandEyebrow }: HomeBannerCarouselProps) {
+export function HomeBannerCarousel({
+  slides,
+  title,
+  subtitle,
+  description,
+  brandEyebrow,
+  heroCopyStyle,
+  carouselFitMode,
+}: HomeBannerCarouselProps) {
   const { t } = useTranslation();
+  const bannerClassName = [
+    'hero-banner',
+    heroBackgroundFitModeClass('hero-banner', carouselFitMode),
+    heroCopyStyle === 'dark' ? 'hero-banner--copy-dark' : '',
+  ].filter(Boolean).join(' ');
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchStartX = useRef(0);
-  const safeSlides = slides.length ? slides : [{ id: 'empty', url: '', mediaType: 'image' as const }];
+  const carouselSlides = slides.filter((slide) => slide.url.trim());
 
   useEffect(() => {
-    if (safeSlides.length <= 1 || paused) return;
+    if (carouselSlides.length <= 1 || paused) return;
     const timer = window.setInterval(() => {
-      setCurrent((prev) => (prev + 1) % safeSlides.length);
+      setCurrent((prev) => (prev + 1) % carouselSlides.length);
     }, 6000);
     return () => window.clearInterval(timer);
-  }, [safeSlides.length, paused]);
+  }, [carouselSlides.length, paused]);
 
   useEffect(() => {
-    safeSlides.forEach((slide, index) => {
-      if (slide.mediaType !== 'video' || !slide.url) return;
+    carouselSlides.forEach((slide, index) => {
+      if (slide.mediaType !== 'video') return;
       const el = document.querySelector<HTMLVideoElement>(`video[data-home-banner="${slide.id}"]`);
       if (!el) return;
       if (index === current) {
@@ -55,16 +74,17 @@ export function HomeBannerCarousel({ slides, title, subtitle, description, brand
         el.pause();
       }
     });
-  }, [current, safeSlides]);
+  }, [current, carouselSlides]);
 
   function goTo(index: number) {
-    setCurrent((index + safeSlides.length) % safeSlides.length);
+    setCurrent((index + carouselSlides.length) % carouselSlides.length);
   }
 
   return (
     <section
-      className="hero-banner"
+      className={bannerClassName}
       data-od-id="hero"
+      data-hero-copy={heroCopyStyle}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={(event) => {
@@ -77,11 +97,11 @@ export function HomeBannerCarousel({ slides, title, subtitle, description, brand
         }
       }}
     >
-      <div className="carousel">
-        {safeSlides.map((slide, index) => (
-          <div key={slide.id || `${slide.url}-${index}`} className={`carousel-slide${index === current ? ' active' : ''}`}>
-            {slide.url ? (
-              slide.mediaType === 'video' ? (
+      {carouselSlides.length ? (
+        <div className="carousel">
+          {carouselSlides.map((slide, index) => (
+            <div key={slide.id || `${slide.url}-${index}`} className={`carousel-slide${index === current ? ' active' : ''}`}>
+              {slide.mediaType === 'video' ? (
                 <video
                   data-home-banner={slide.id}
                   autoPlay={index === 0}
@@ -94,19 +114,16 @@ export function HomeBannerCarousel({ slides, title, subtitle, description, brand
                 </video>
               ) : (
                 <img src={slide.url} alt="" className="carousel-media" />
-              )
-            ) : (
-              <div className="carousel-media" style={{ background: 'var(--accent)' }} />
-            )}
-            {/* 左侧遮罩仅挂在第一屏，随该 slide 显隐 */}
-            {index === 0 ? <div className="carousel-overlay" /> : null}
-          </div>
-        ))}
-      </div>
+              )}
+              {index === 0 ? <div className="carousel-overlay" /> : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <div
         className={`container hero-content${current === 0 ? '' : ' hero-content--hidden'}`}
-        aria-hidden={current !== 0}
+        aria-hidden={carouselSlides.length > 0 && current !== 0}
       >
         <div className="hero-text">
           <div className="hero-eyebrow">{brandEyebrow}</div>
@@ -127,30 +144,15 @@ export function HomeBannerCarousel({ slides, title, subtitle, description, brand
         </div>
       </div>
 
-      {safeSlides.length > 1 ? (
-        <div className="carousel-controls">
-          <button type="button" className="carousel-arrow carousel-prev" aria-label={t('home.banner.prevSlide')} onClick={() => goTo(current - 1)}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <div className="carousel-dots">
-            {safeSlides.map((slide, index) => (
-              <button
-                key={`dot-${slide.id || index}`}
-                type="button"
-                className={`carousel-dot${index === current ? ' active' : ''}`}
-                aria-label={t('home.banner.slideN', { index: index + 1 })}
-                onClick={() => goTo(index)}
-              />
-            ))}
-          </div>
-          <button type="button" className="carousel-arrow carousel-next" aria-label={t('home.banner.nextSlide')} onClick={() => goTo(current + 1)}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        </div>
+      {carouselSlides.length > 1 ? (
+        <CarouselControls
+          count={carouselSlides.length}
+          current={current}
+          onPrev={() => goTo(current - 1)}
+          onNext={() => goTo(current + 1)}
+          onSelect={goTo}
+          dotKeyPrefix="banner"
+        />
       ) : null}
     </section>
   );

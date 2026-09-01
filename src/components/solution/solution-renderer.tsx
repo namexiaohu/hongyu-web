@@ -1,9 +1,12 @@
 import Link from 'next/link';
 
 import { ValueCardIconSvg, isValueCardIcon } from '@/components/brand-narrative/section-icons';
-import { ProductGallery } from '@/components/product/product-gallery';
+import { SplitOverlaySection } from '@/components/shared/split-overlay-section';
+import type { OverlayMediaSlide } from '@/components/shared/overlay-media-carousel';
 import { formatMultilineTitle } from '@/lib/format-multiline-title';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
+import type { HeroBackgroundFitMode } from '@/lib/hero-background-fit';
+import type { HeroCopyStyle } from '@/lib/hero-copy-style';
 import type { StorefrontSolutionSection } from '@/lib/storefront-solutions-api';
 
 function asString(value: unknown, fallback = '') {
@@ -19,7 +22,7 @@ function productCoverFromCard(card: Record<string, unknown>) {
   return '';
 }
 
-function splitSectionSlides(section: StorefrontSolutionSection) {
+function splitSectionSlides(section: StorefrontSolutionSection): OverlayMediaSlide[] {
   const image = asString(section.image);
   const imageAlt = asString(section.imageAlt);
   const videoUrl = asString(section.videoUrl);
@@ -39,57 +42,41 @@ function splitSectionSlides(section: StorefrontSolutionSection) {
     name: imageAlt || asString(section.title),
     videoUrl,
     gallery: gallery.length ? gallery : image ? [{ url: image, alt: imageAlt }] : [],
-  });
+  }).map((slide) => ({
+    id: slide.id,
+    url: slide.url,
+    mediaType: slide.kind,
+  }));
 }
 
 function SplitSection({ section }: { section: StorefrontSolutionSection }) {
   const bullets = Array.isArray(section.bullets) ? section.bullets.filter((item): item is string => typeof item === 'string') : [];
-  const imageRight = section.imagePosition === 'right';
-  const isClinical = section.type === 'clinical-split';
+  const imagePosition = section.imagePosition === 'right' ? 'right' : 'left';
+  const heroCopyStyle = section.heroCopyStyle as HeroCopyStyle;
+  const carouselFitMode = section.carouselFitMode as HeroBackgroundFitMode;
   const slides = splitSectionSlides(section);
-  const media = slides.length ? (
-    <div className="clinical-img">
-      <ProductGallery slides={slides} alt={asString(section.imageAlt) || asString(section.title)} />
-    </div>
-  ) : null;
-
-  if (isClinical) {
-    return (
-      <section className="section" data-od-id={asString(section.id, 'clinical')}>
-        <div className="container">
-          <div className={`clinical-split${imageRight ? ' is-image-right' : ''}`}>
-            {media}
-            <div className="clinical-text">
-              <p className="eyebrow">{asString(section.eyebrow)}</p>
-              <h2 dangerouslySetInnerHTML={{ __html: formatMultilineTitle(asString(section.title)) }} />
-              <p>{asString(section.body)}</p>
-              {bullets.length ? (
-                <ul className="clinical-list">
-                  {bullets.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const titleHtml = section.type === 'clinical-split'
+    ? formatMultilineTitle(asString(section.title))
+    : asString(section.title).replace(/\n/g, '<br/>');
 
   return (
-    <section className="section" data-od-id={asString(section.id, 'overview')}>
-      <div className="container">
-        <div className={`clinical-split${imageRight ? ' is-image-right' : ''}`}>
-          {media}
-          <div className="clinical-text">
-            <p className="eyebrow">{asString(section.eyebrow)}</p>
-            <h2 dangerouslySetInnerHTML={{ __html: asString(section.title).replace(/\n/g, '<br/>') }} />
-            <p>{asString(section.body)}</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <SplitOverlaySection
+      id={asString(section.id, section.type === 'clinical-split' ? 'clinical' : 'overview')}
+      heroCopyStyle={heroCopyStyle}
+      carouselFitMode={carouselFitMode}
+      imagePosition={imagePosition}
+      slides={slides}
+      eyebrow={asString(section.eyebrow)}
+      title={(
+        <h2
+          style={{ marginTop: 'var(--space-3)', marginBottom: 'var(--space-5)' }}
+          dangerouslySetInnerHTML={{ __html: titleHtml }}
+        />
+      )}
+      body={<p>{asString(section.body)}</p>}
+      bullets={bullets.length ? bullets : undefined}
+      listClassName="split-overlay-list clinical-list"
+    />
   );
 }
 

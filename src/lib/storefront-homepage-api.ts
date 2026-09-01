@@ -1,4 +1,6 @@
 import { serverFetch } from '@/lib/api-client';
+import type { HeroBackgroundFitMode } from '@/lib/hero-background-fit';
+import type { HeroCopyStyle } from '@/lib/hero-copy-style';
 
 export type HomepageMediaSlide = {
   id: string;
@@ -33,6 +35,10 @@ export type StorefrontHomepageConfig = {
   locale: string;
   bannerSlides: HomepageMediaSlide[];
   aboutSlides: HomepageMediaSlide[];
+  bannerHeroCopyStyle: HeroCopyStyle;
+  aboutHeroCopyStyle: HeroCopyStyle;
+  bannerCarouselFitMode: HeroBackgroundFitMode;
+  aboutCarouselFitMode: HeroBackgroundFitMode;
   bannerTitle: string;
   bannerSubtitle: string;
   bannerDescription: string;
@@ -49,30 +55,6 @@ export type StorefrontHomepageConfig = {
   solutionItems: HomepageSolutionItem[];
 };
 
-export const EMPTY_STOREFRONT_HOMEPAGE: StorefrontHomepageConfig = {
-  locale: '',
-  bannerSlides: [],
-  aboutSlides: [],
-  bannerTitle: '',
-  bannerSubtitle: '',
-  bannerDescription: '',
-  solutionsTitle: '',
-  solutionsDescription: '',
-  aboutTitle: '',
-  aboutDescription: '',
-  stats: [],
-  globalTitle: '',
-  globalDescription: '',
-  educationTitle: '',
-  educationDescription: '',
-  educationItems: [],
-  solutionItems: [],
-};
-
 export async function getStorefrontHomepageConfig(locale?: string): Promise<StorefrontHomepageConfig> {
-  try {
-    return await serverFetch<StorefrontHomepageConfig>('/api/front/homepage', { locale });
-  } catch {
-    return { ...EMPTY_STOREFRONT_HOMEPAGE, locale: locale ?? '' };
-  }
+  return serverFetch<StorefrontHomepageConfig>('/api/front/homepage', { locale });
 }

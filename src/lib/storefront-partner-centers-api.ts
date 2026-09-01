@@ -18,7 +18,7 @@ export type StorefrontCenterItem = {
   backgroundSolidCss: string;
   showCoverOnBackground: boolean;
   coverDisplay?: import('@/lib/hero-cover-display').HeroCoverDisplay;
-  heroCopyStyle?: 'light' | 'dark';
+  heroCopyStyle: 'light' | 'dark';
   region: CenterRegion;
   email: string;
   website: string;

@@ -5,26 +5,46 @@ import { useEffect, useState } from 'react';
 import { CarouselControls } from '@/components/shared/carousel-controls';
 import type { HeroBackgroundFitMode } from '@/lib/hero-background-fit';
 import { heroBackgroundFitModeClass } from '@/lib/hero-background-fit';
-import type { HomepageMediaSlide } from '@/lib/storefront-homepage-api';
 
-type HomeAboutCarouselProps = {
-  slides: HomepageMediaSlide[];
-  /** Full-bleed background behind copy (homepage about hero). */
-  fillBackground?: boolean;
-  fitMode: HeroBackgroundFitMode;
+export type OverlayMediaSlide = {
+  id: string;
+  url: string;
+  mediaType: 'image' | 'video';
 };
 
-export function HomeAboutCarousel({ slides, fillBackground = false, fitMode }: HomeAboutCarouselProps) {
+type OverlayMediaCarouselProps = {
+  slides: OverlayMediaSlide[];
+  fitMode: HeroBackgroundFitMode;
+  className?: string;
+  autoplayMs?: number;
+  dotKeyPrefix?: string;
+};
+
+export function OverlayMediaCarousel({
+  slides,
+  fitMode,
+  className = 'overlay-media-carousel',
+  autoplayMs = 4000,
+  dotKeyPrefix = 'overlay',
+}: OverlayMediaCarouselProps) {
   const [current, setCurrent] = useState(0);
   const carouselSlides = slides.filter((slide) => slide.url.trim());
+  const rootClass = [
+    className,
+    heroBackgroundFitModeClass('overlay-media-carousel', fitMode),
+  ].join(' ');
+
+  useEffect(() => {
+    setCurrent(0);
+  }, [carouselSlides.map((slide) => slide.url).join('|')]);
 
   useEffect(() => {
     if (carouselSlides.length <= 1) return;
     const timer = window.setInterval(() => {
       setCurrent((prev) => (prev + 1) % carouselSlides.length);
-    }, 4000);
+    }, autoplayMs);
     return () => window.clearInterval(timer);
-  }, [carouselSlides.length]);
+  }, [carouselSlides.length, autoplayMs]);
 
   function goTo(index: number) {
     setCurrent((index + carouselSlides.length) % carouselSlides.length);
@@ -34,29 +54,25 @@ export function HomeAboutCarousel({ slides, fillBackground = false, fitMode }: H
     return null;
   }
 
-  const rootClass = fillBackground
-    ? ['about-carousel-fill', heroBackgroundFitModeClass('about-carousel-fill', fitMode)].join(' ')
-    : 'about-visual';
-
   return (
     <div className={rootClass}>
-      <div className="about-carousel">
+      <div className="overlay-media-carousel-track">
         {carouselSlides.map((slide, index) => (
           <div
             key={slide.id || `${slide.url}-${index}`}
-            className={`about-carousel-slide${index === current ? ' active' : ''}`}
+            className={`overlay-media-carousel-slide${index === current ? ' active' : ''}`}
           >
             {slide.mediaType === 'video' ? (
               <video
                 src={slide.url}
-                className="about-carousel-img"
+                className="overlay-media-carousel-media"
                 autoPlay={index === current}
                 muted
                 loop
                 playsInline
               />
             ) : (
-              <img src={slide.url} alt="" className="about-carousel-img" />
+              <img src={slide.url} alt="" className="overlay-media-carousel-media" />
             )}
           </div>
         ))}
@@ -67,7 +83,7 @@ export function HomeAboutCarousel({ slides, fillBackground = false, fitMode }: H
         onPrev={() => goTo(current - 1)}
         onNext={() => goTo(current + 1)}
         onSelect={goTo}
-        dotKeyPrefix="about"
+        dotKeyPrefix={dotKeyPrefix}
       />
     </div>
   );

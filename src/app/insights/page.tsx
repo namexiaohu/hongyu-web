@@ -8,12 +8,9 @@ import {
   getStorefrontInsightsBoardCounts,
   getStorefrontInsightsList,
   getStorefrontRandomInsights,
-  type StorefrontInsightRelatedItem,
-  type StorefrontInsightsBoardCountsResponse,
-  type StorefrontInsightsListResponse,
 } from '@/lib/storefront-insights-api';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
-import { getStorefrontWebsiteConfig, EMPTY_STOREFRONT_WEBSITE_CONFIG } from '@/lib/storefront-website-config-api';
+import { getStorefrontWebsiteConfig } from '@/lib/storefront-website-config-api';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -40,47 +37,15 @@ export default async function Page({ searchParams }: PageProps) {
   const { locale } = await getStorefrontLocaleContext();
   const { t } = await getPageTranslations(locale, ['insights', 'home', 'breadcrumb', 'common', 'cta']);
 
-  const emptyList: StorefrontInsightsListResponse = {
-    locale,
-    boardKey: category,
-    items: [],
-    total: 0,
-    page,
-    pageSize: 6,
-  };
-  const emptyCounts: StorefrontInsightsBoardCountsResponse = {
-    locale,
-    total: 0,
-    boards: [
-      { boardKey: 'case', name: 'Case Review', count: 0 },
-      { boardKey: 'paper', name: 'Industry Papers', count: 0 },
-      { boardKey: 'experience', name: 'Surgeon Experience', count: 0 },
-    ],
-  };
+  const [company, list, boardCounts, randomItems, websiteConfig] = await Promise.all([
+    getStorefrontCompanyProfile(locale),
+    getStorefrontInsightsList({ category, page, pageSize: 6, locale }),
+    getStorefrontInsightsBoardCounts(locale),
+    getStorefrontRandomInsights({ limit: 6, locale }).then((payload) => payload.items),
+    getStorefrontWebsiteConfig(locale),
+  ]);
 
-  let list: StorefrontInsightsListResponse = emptyList;
-  let boardCounts: StorefrontInsightsBoardCountsResponse = emptyCounts;
-  let randomItems: StorefrontInsightRelatedItem[] = [];
-  let companyName = resolveCompanyName({ companyName: '' }, locale);
-
-  let heroBoard = EMPTY_STOREFRONT_WEBSITE_CONFIG.listHeroBoards.insights;
-
-  try {
-    const [company, listRes, countsRes, randomRes, websiteConfig] = await Promise.all([
-      getStorefrontCompanyProfile(locale),
-      getStorefrontInsightsList({ category, page, pageSize: 6, locale }),
-      getStorefrontInsightsBoardCounts(locale),
-      getStorefrontRandomInsights({ limit: 6, locale }).then((payload) => payload.items),
-      getStorefrontWebsiteConfig(locale),
-    ]);
-    companyName = resolveCompanyName(company, locale);
-    list = listRes;
-    boardCounts = countsRes;
-    randomItems = randomRes;
-    heroBoard = websiteConfig.listHeroBoards.insights;
-  } catch {
-    // CMS unavailable — render empty shell.
-  }
+  const companyName = resolveCompanyName(company, locale);
 
   return (
     <InsightsListPage
@@ -90,7 +55,7 @@ export default async function Page({ searchParams }: PageProps) {
       category={category}
       page={page}
       insightsHero={buildInsightsHero(t, companyName)}
-      heroBoard={heroBoard}
+      heroBoard={websiteConfig.listHeroBoards.insights}
       listCopy={{
         breadcrumbHome: t('breadcrumb.home'),
         breadcrumbCurrent: t('insights.metaTitle'),

@@ -39,13 +39,14 @@ function SolutionCard({
   const detailHref = `/solutions/${item.slug}`;
   return (
     <Link href={detailHref} className="sol-card">
-      <div className="sol-card-img">
+      <div className="sol-card-media" aria-hidden="true">
         {item.coverImage
           ? <img src={item.coverImage} alt={title} />
-          : <div className="sol-card-img-placeholder" />}
-        {item.badgeText ? <span className="sol-badge">{item.badgeText}</span> : null}
+          : <div className="sol-card-media-placeholder" />}
+        <div className="sol-card-overlay" />
       </div>
-      <div className="sol-card-body">
+      {item.badgeText ? <span className="sol-badge">{item.badgeText}</span> : null}
+      <div className="sol-card-content">
         {item.categoryLabel ? <div className="sc-category">{item.categoryLabel}</div> : null}
         <h3>{title}</h3>
         {item.description ? <p>{item.description}</p> : null}
@@ -57,8 +58,8 @@ function SolutionCard({
           </div>
         ) : null}
         <span className="sc-link">
+          <span className="sc-link-icon" aria-hidden="true">{arrowSvg}</span>
           {viewDetailsLabel}
-          {arrowSvg}
         </span>
       </div>
     </Link>
