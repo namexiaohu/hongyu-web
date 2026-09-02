@@ -467,8 +467,8 @@
     /* 鈹€鈹€鈹€ HERO BANNER CAROUSEL 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
     .hero-banner {
       position: relative;
-      height: 100vh;
-      min-height: 700px;
+      height: clamp(520px, 100svh, 920px);
+      min-height: clamp(520px, 100svh, 920px);
       overflow: hidden;
     }
     .carousel {
@@ -492,6 +492,23 @@
       height: 100%;
       object-fit: cover;
     }
+
+    /* contain：媒体区固定比例，高度随视口缩放，避免整屏黑边 */
+    .hero-banner--fit-contain,
+    .hero-banner--fit-contain-center {
+      height: auto;
+      min-height: 0;
+      padding-bottom: 88px;
+    }
+    .hero-banner--fit-contain .carousel,
+    .hero-banner--fit-contain-center .carousel {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: min(62svh, 780px);
+      min-height: clamp(220px, 42vw, 480px);
+    }
     .hero-banner--fit-contain .carousel {
       background: #000;
     }
@@ -499,36 +516,64 @@
     .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain-center .carousel {
       background: #fff;
     }
-    .hero-banner--fit-contain .carousel-slide.active {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-    .hero-banner--fit-contain .carousel-media {
-      position: relative;
-      inset: auto;
-      width: 100%;
-      height: auto;
-      object-fit: initial;
-      flex: 0 0 auto;
-    }
-    .hero-banner--fit-contain-center .carousel {
-      background: #000;
-    }
+    .hero-banner--fit-contain .carousel-slide.active,
     .hero-banner--fit-contain-center .carousel-slide.active {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: block;
+    }
+    .hero-banner--fit-contain .carousel-media,
+    .hero-banner--fit-contain-center .carousel-media {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
     .hero-banner--fit-contain-center .carousel-media {
-      position: relative;
-      inset: auto;
-      width: 100%;
-      height: auto;
-      object-fit: initial;
-      flex: 0 0 auto;
+      object-position: center;
     }
+    .hero-banner--fit-contain .carousel-media {
+      object-position: top center;
+    }
+
+    /* contain + 首屏文案：文案叠在媒体区，不撑满整屏 */
+    .hero-banner--fit-contain .hero-content,
+    .hero-banner--fit-contain-center .hero-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: min(62svh, 56.25vw, 780px);
+      min-height: clamp(220px, 42vw, 480px);
+      align-items: flex-end;
+      padding: clamp(64px, 10vh, 96px) 0 clamp(20px, 4vh, 32px);
+    }
+    .hero-banner--fit-contain .hero-content.hero-content--hidden,
+    .hero-banner--fit-contain-center .hero-content.hero-content--hidden {
+      display: none;
+    }
+
+    /* contain + 暗色文案：媒体与文案上下分区，文案不再与图片争高 */
+    .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain,
+    .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain-center {
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 88px;
+    }
+    .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain .hero-content,
+    .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain-center .hero-content {
+      position: relative;
+      top: auto;
+      height: auto;
+      min-height: 0;
+      flex: 0 0 auto;
+      align-items: flex-start;
+      padding: var(--space-8) 0 var(--space-4);
+    }
+    .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain .hero-content.hero-content--hidden,
+    .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain-center .hero-content.hero-content--hidden {
+      display: none;
+    }
+
     .hero-banner--fit-fill .carousel-media {
       object-fit: fill;
     }
@@ -537,25 +582,30 @@
       inset: 0;
       z-index: 2;
       pointer-events: none;
-      /* 娴呰壊瀛楁殫鑹插簳锛氬乏渚ф繁鑹?scrim锛屽悜鍙虫笎闅?*/
+      /* 浅色字深色底：左侧深色 scrim，向右渐隐 */
       background: var(--hero-scrim-light);
     }
     .hero-content {
-      position: relative;
+      position: absolute;
+      inset: 0;
       z-index: 3;
-      height: 100%;
+      height: auto;
       display: flex;
       align-items: center;
-      padding-top: 80px;
+      padding: clamp(72px, 12vh, 112px) 0 clamp(112px, 14vh, 136px);
       opacity: 1;
       transition: opacity 0.6s var(--ease-out);
       pointer-events: auto;
+      box-sizing: border-box;
     }
     .hero-content.hero-content--hidden {
       opacity: 0;
       pointer-events: none;
     }
-    .hero-text { max-width: 560px; text-align: left; }
+    .hero-text {
+      max-width: min(560px, 100%);
+      text-align: left;
+    }
     .hero-text .hero-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -580,35 +630,35 @@
     }
     .hero-text h1 {
       font-family: var(--font-display);
-      font-size: clamp(36px, 4.5vw, 52px);
+      font-size: clamp(28px, 4.5vw, 52px);
       font-weight: 700;
-      line-height: 1.12;
+      line-height: 1.15;
       letter-spacing: -0.02em;
       color: #fff;
-      margin-bottom: var(--space-5);
+      margin-bottom: var(--space-4);
       text-align: left;
       text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45), 0 0 1px rgba(0, 0, 0, 0.4);
     }
     .hero-text .hero-sub {
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: clamp(11px, 1.6vw, 12px);
       letter-spacing: 0.08em;
       color: #fff;
       font-weight: 600;
       text-transform: uppercase;
-      margin-bottom: var(--space-6);
+      margin-bottom: var(--space-4);
       text-align: left;
       text-shadow:
         0 1px 2px rgba(0, 0, 0, 0.55),
         0 4px 14px rgba(0, 0, 0, 0.42);
     }
     .hero-text .hero-desc {
-      font-size: 16px;
-      line-height: 1.7;
+      font-size: clamp(14px, 2vw, 16px);
+      line-height: 1.65;
       color: #fff;
       font-weight: 500;
       max-width: 44ch;
-      margin-bottom: var(--space-8);
+      margin-bottom: var(--space-6);
       text-align: left;
       text-shadow:
         0 1px 2px rgba(0, 0, 0, 0.55),
@@ -756,8 +806,54 @@
       50% { transform: translateX(-50%) translateY(8px); }
     }
     @media (max-width: 960px) {
-      .hero-banner { height: 85vh; min-height: 600px; }
-      .carousel-controls { bottom: 32px; gap: var(--space-4); }
+      .hero-banner:not(.hero-banner--fit-contain):not(.hero-banner--fit-contain-center) {
+        height: clamp(480px, 85svh, 720px);
+        min-height: clamp(480px, 85svh, 720px);
+      }
+      .hero-banner--fit-contain,
+      .hero-banner--fit-contain-center {
+        padding-bottom: 72px;
+      }
+      .hero-banner--fit-contain .carousel,
+      .hero-banner--fit-contain-center .carousel {
+        aspect-ratio: 4 / 3;
+        max-height: min(52svh, 560px);
+        min-height: clamp(200px, 56vw, 360px);
+      }
+      .hero-banner--fit-contain .hero-content,
+      .hero-banner--fit-contain-center .hero-content {
+        height: min(52svh, 75vw, 560px);
+        min-height: clamp(200px, 56vw, 360px);
+        padding: clamp(56px, 12vw, 72px) 0 16px;
+        align-items: flex-end;
+      }
+      .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain .hero-content,
+      .hero-banner.hero-banner--copy-dark.hero-banner--fit-contain-center .hero-content {
+        height: auto;
+        min-height: 0;
+        align-items: flex-start;
+        padding: var(--space-6) 0 var(--space-3);
+      }
+      .hero-content {
+        padding: clamp(56px, 14vw, 80px) 0 104px;
+        align-items: flex-end;
+      }
+      .hero-text { max-width: 100%; }
+      .hero-text .hero-eyebrow { margin-bottom: var(--space-3); }
+      .hero-text h1 { margin-bottom: var(--space-3); }
+      .hero-text .hero-desc { max-width: none; margin-bottom: var(--space-5); }
+      .hero-cta-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+      }
+      .hero-cta-row .btn-hero-primary,
+      .hero-cta-row .btn-hero-secondary,
+      .hero-cta-row .btn-hero-ghost {
+        justify-content: center;
+        width: 100%;
+      }
+      .carousel-controls { bottom: 24px; gap: var(--space-4); }
       .carousel-arrow { width: 38px; height: 38px; }
       .scroll-hint { display: none; }
     }
@@ -1006,13 +1102,88 @@
       color: #fff;
     }
     @media (max-width: 960px) {
-      .home-about-hero.split-bg-hero,
-      .home-about-hero .split-bg-hero-content {
+      .home-about-hero.split-bg-hero:not(:has(.about-carousel-fill--fit-contain)):not(:has(.about-carousel-fill--fit-contain-center)),
+      .home-about-hero:not(:has(.about-carousel-fill--fit-contain)):not(:has(.about-carousel-fill--fit-contain-center)) .split-bg-hero-content {
         min-height: 420px;
       }
       .home-about-hero-main {
         max-width: none;
       }
+    }
+
+    /* contain：媒体区固定比例，区块高度随媒体收缩，避免整段黑底 */
+    .home-about-hero.split-bg-hero:has(.about-carousel-fill--fit-contain),
+    .home-about-hero.split-bg-hero:has(.about-carousel-fill--fit-contain-center),
+    .split-overlay-hero.split-bg-hero:has(.overlay-media-carousel--fit-contain),
+    .split-overlay-hero.split-bg-hero:has(.overlay-media-carousel--fit-contain-center) {
+      position: relative;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .home-about-hero.split-bg-hero:has(.about-carousel-fill--fit-contain) .home-about-hero-bg,
+    .home-about-hero.split-bg-hero:has(.about-carousel-fill--fit-contain-center) .home-about-hero-bg,
+    .split-overlay-hero.split-bg-hero:has(.overlay-media-carousel--fit-contain) .split-overlay-hero-bg,
+    .split-overlay-hero.split-bg-hero:has(.overlay-media-carousel--fit-contain-center) .split-overlay-hero-bg {
+      position: relative;
+      inset: auto;
+      flex: 0 0 auto;
+      width: 100%;
+    }
+    .home-about-hero.split-bg-hero:has(.about-carousel-fill--fit-contain) .about-carousel-fill,
+    .home-about-hero.split-bg-hero:has(.about-carousel-fill--fit-contain-center) .about-carousel-fill,
+    .split-overlay-hero.split-bg-hero:has(.overlay-media-carousel--fit-contain) .overlay-media-carousel,
+    .split-overlay-hero.split-bg-hero:has(.overlay-media-carousel--fit-contain-center) .overlay-media-carousel {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: min(52svh, 640px);
+      min-height: clamp(220px, 42vw, 480px);
+    }
+    .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain) .split-bg-hero-overlay,
+    .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain-center) .split-bg-hero-overlay,
+    .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain) .split-bg-hero-overlay,
+    .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain-center) .split-bg-hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: auto;
+      height: min(52svh, 56.25vw, 640px);
+      min-height: clamp(220px, 42vw, 480px);
+    }
+    .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain) .split-bg-hero-content,
+    .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain-center) .split-bg-hero-content,
+    .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain) .split-bg-hero-content,
+    .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain-center) .split-bg-hero-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: auto;
+      min-height: 0;
+      height: min(52svh, 56.25vw, 640px);
+      min-height: clamp(220px, 42vw, 480px);
+      align-items: flex-end;
+      padding-block: clamp(48px, 8vh, 72px) clamp(16px, 3vh, 28px);
+    }
+    .home-about-hero.split-bg-hero--copy-dark:has(.about-carousel-fill--fit-contain) .split-bg-hero-overlay,
+    .home-about-hero.split-bg-hero--copy-dark:has(.about-carousel-fill--fit-contain-center) .split-bg-hero-overlay,
+    .split-overlay-hero.split-bg-hero--copy-dark:has(.overlay-media-carousel--fit-contain) .split-bg-hero-overlay,
+    .split-overlay-hero.split-bg-hero--copy-dark:has(.overlay-media-carousel--fit-contain-center) .split-bg-hero-overlay {
+      display: none;
+    }
+    .home-about-hero.split-bg-hero--copy-dark:has(.about-carousel-fill--fit-contain) .split-bg-hero-content,
+    .home-about-hero.split-bg-hero--copy-dark:has(.about-carousel-fill--fit-contain-center) .split-bg-hero-content,
+    .split-overlay-hero.split-bg-hero--copy-dark:has(.overlay-media-carousel--fit-contain) .split-bg-hero-content,
+    .split-overlay-hero.split-bg-hero--copy-dark:has(.overlay-media-carousel--fit-contain-center) .split-bg-hero-content {
+      position: relative;
+      min-height: 0;
+      height: auto;
+      flex: 0 0 auto;
+      align-items: flex-start;
+      padding: var(--space-8) 0 var(--space-6);
     }
 
     /* ─── CMS split overlay (brand narrative / solution content blocks) ─── */
@@ -1132,38 +1303,31 @@
       height: 100%;
       object-fit: cover;
     }
-    .overlay-media-carousel--fit-contain {
-      background: #000;
+    .overlay-media-carousel--fit-contain,
+    .overlay-media-carousel--fit-contain-center {
+      background: #0f172a;
     }
     .split-overlay-hero.split-bg-hero--copy-dark .overlay-media-carousel--fit-contain,
     .split-overlay-hero.split-bg-hero--copy-dark .overlay-media-carousel--fit-contain-center {
-      background: #fff;
+      background: var(--bg);
     }
-    .overlay-media-carousel--fit-contain .overlay-media-carousel-slide.active {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
+    .overlay-media-carousel--fit-contain .overlay-media-carousel-slide.active,
+    .overlay-media-carousel--fit-contain-center .overlay-media-carousel-slide.active {
+      display: block;
+    }
+    .overlay-media-carousel--fit-contain .overlay-media-carousel-media,
+    .overlay-media-carousel--fit-contain-center .overlay-media-carousel-media {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
     .overlay-media-carousel--fit-contain .overlay-media-carousel-media {
-      width: 100%;
-      height: auto;
-      object-fit: initial;
-      flex: 0 0 auto;
-    }
-    .overlay-media-carousel--fit-contain-center {
-      background: #000;
-    }
-    .overlay-media-carousel--fit-contain-center .overlay-media-carousel-slide.active {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      object-position: top center;
     }
     .overlay-media-carousel--fit-contain-center .overlay-media-carousel-media {
-      width: 100%;
-      height: auto;
-      object-fit: initial;
-      flex: 0 0 auto;
+      object-position: center;
     }
     .overlay-media-carousel--fit-fill .overlay-media-carousel-media {
       width: 100%;
@@ -1171,9 +1335,63 @@
       object-fit: fill;
     }
     @media (max-width: 960px) {
-      .split-overlay-hero.split-bg-hero,
-      .split-overlay-hero .split-bg-hero-content {
+      .split-overlay-hero.split-bg-hero:not(:has(.overlay-media-carousel--fit-contain)):not(:has(.overlay-media-carousel--fit-contain-center)),
+      .split-overlay-hero:not(:has(.overlay-media-carousel--fit-contain)):not(:has(.overlay-media-carousel--fit-contain-center)) .split-bg-hero-content {
         min-height: 420px;
+      }
+      .home-about-hero.split-bg-hero:has(.about-carousel-fill--fit-contain) .about-carousel-fill,
+      .home-about-hero.split-bg-hero:has(.about-carousel-fill--fit-contain-center) .about-carousel-fill,
+      .split-overlay-hero.split-bg-hero:has(.overlay-media-carousel--fit-contain) .overlay-media-carousel,
+      .split-overlay-hero.split-bg-hero:has(.overlay-media-carousel--fit-contain-center) .overlay-media-carousel {
+        aspect-ratio: 4 / 3;
+        max-height: min(48svh, 520px);
+        min-height: clamp(200px, 56vw, 360px);
+      }
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain) .split-bg-hero-overlay,
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain-center) .split-bg-hero-overlay,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain) .split-bg-hero-overlay,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain-center) .split-bg-hero-overlay {
+        display: none;
+      }
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain) .split-bg-hero-content,
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain-center) .split-bg-hero-content,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain) .split-bg-hero-content,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain-center) .split-bg-hero-content {
+        position: relative;
+        height: auto;
+        min-height: 0;
+        align-items: flex-start;
+        padding: var(--space-6) 0 var(--space-4);
+      }
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain) .home-about-hero-main h2,
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain-center) .home-about-hero-main h2,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain) .split-overlay-hero-main h2,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain-center) .split-overlay-hero-main h2 {
+        color: #0f172a;
+        text-shadow: none;
+      }
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain) .home-about-hero-main .eyebrow,
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain-center) .home-about-hero-main .eyebrow,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain) .split-overlay-hero-main .eyebrow,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain-center) .split-overlay-hero-main .eyebrow {
+        color: #475569;
+        text-shadow: none;
+      }
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain) .home-about-hero-main p,
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain-center) .home-about-hero-main p,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain) .split-overlay-hero-main p,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain-center) .split-overlay-hero-main p {
+        color: #334155;
+        text-shadow: none;
+      }
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain) .home-about-hero-main .btn-text,
+      .home-about-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.about-carousel-fill--fit-contain-center) .home-about-hero-main .btn-text {
+        color: var(--accent);
+      }
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain) .split-overlay-list li,
+      .split-overlay-hero.split-bg-hero:not(.split-bg-hero--copy-dark):has(.overlay-media-carousel--fit-contain-center) .split-overlay-list li {
+        color: #334155;
+        text-shadow: none;
       }
       .split-overlay-hero-main {
         max-width: none;
@@ -1220,38 +1438,31 @@
       height: 100%;
       object-fit: cover;
     }
-    .about-carousel-fill--fit-contain {
-      background: #000;
+    .about-carousel-fill--fit-contain,
+    .about-carousel-fill--fit-contain-center {
+      background: #0f172a;
     }
     .home-about-hero.split-bg-hero--copy-dark .about-carousel-fill--fit-contain,
     .home-about-hero.split-bg-hero--copy-dark .about-carousel-fill--fit-contain-center {
-      background: #fff;
+      background: var(--bg);
     }
-    .about-carousel-fill--fit-contain .about-carousel-slide.active {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
+    .about-carousel-fill--fit-contain .about-carousel-slide.active,
+    .about-carousel-fill--fit-contain-center .about-carousel-slide.active {
+      display: block;
+    }
+    .about-carousel-fill--fit-contain .about-carousel-img,
+    .about-carousel-fill--fit-contain-center .about-carousel-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
     .about-carousel-fill--fit-contain .about-carousel-img {
-      width: 100%;
-      height: auto;
-      object-fit: initial;
-      flex: 0 0 auto;
-    }
-    .about-carousel-fill--fit-contain-center {
-      background: #000;
-    }
-    .about-carousel-fill--fit-contain-center .about-carousel-slide.active {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      object-position: top center;
     }
     .about-carousel-fill--fit-contain-center .about-carousel-img {
-      width: 100%;
-      height: auto;
-      object-fit: initial;
-      flex: 0 0 auto;
+      object-position: center;
     }
     .about-carousel-fill--fit-fill .about-carousel-img {
       width: 100%;
@@ -2033,35 +2244,108 @@
 .split-bg-hero-bg{ position: absolute; inset: 0; }
 /* Detail pages (no backgroundFitMode): crop to fill board */
 .split-bg-hero-bg img{ width: 100%; height: 100%; object-fit: cover; }
-.split-bg-hero-bg--fit-contain{
+.split-bg-hero:has(.split-bg-hero-bg--fit-contain),
+.split-bg-hero:has(.split-bg-hero-bg--fit-contain-center){
+  position: relative;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  overflow: hidden;
-  background: #000;
 }
-.split-bg-hero-bg--fit-contain img{
-  width: 100%;
-  height: auto;
-  object-fit: initial;
+.split-bg-hero:has(.split-bg-hero-bg--fit-contain) .split-bg-hero-bg--fit-contain,
+.split-bg-hero:has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-bg--fit-contain-center{
+  position: relative;
+  inset: auto;
   flex: 0 0 auto;
-}
-.split-bg-hero--copy-dark .split-bg-hero-bg--fit-contain{ background: #fff; }
-.split-bg-hero-bg--fit-contain-center{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: min(52svh, 640px);
+  min-height: clamp(220px, 42vw, 480px);
   overflow: hidden;
-  background: #000;
+  background: #0f172a;
 }
+.split-bg-hero-bg--fit-contain img,
 .split-bg-hero-bg--fit-contain-center img{
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  object-fit: initial;
-  flex: 0 0 auto;
+  height: 100%;
+  object-fit: contain;
 }
-.split-bg-hero--copy-dark .split-bg-hero-bg--fit-contain-center{ background: #fff; }
+.split-bg-hero-bg--fit-contain img{ object-position: top center; }
+.split-bg-hero-bg--fit-contain-center img{ object-position: center; }
+.split-bg-hero--copy-dark .split-bg-hero-bg--fit-contain,
+.split-bg-hero--copy-dark .split-bg-hero-bg--fit-contain-center{ background: var(--bg); }
+.split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain) .split-bg-hero-overlay,
+.split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  height: min(52svh, 56.25vw, 640px);
+  min-height: clamp(220px, 42vw, 480px);
+}
+.split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain) .split-bg-hero-content,
+.split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-content{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  min-height: 0;
+  height: min(52svh, 56.25vw, 640px);
+  min-height: clamp(220px, 42vw, 480px);
+  align-items: flex-end;
+  padding-block: clamp(48px, 8vh, 72px) clamp(16px, 3vh, 28px);
+}
+.split-bg-hero--copy-dark:has(.split-bg-hero-bg--fit-contain) .split-bg-hero-overlay,
+.split-bg-hero--copy-dark:has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-overlay{
+  display: none;
+}
+.split-bg-hero--copy-dark:has(.split-bg-hero-bg--fit-contain) .split-bg-hero-content,
+.split-bg-hero--copy-dark:has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-content{
+  position: relative;
+  min-height: 0;
+  height: auto;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  padding: var(--space-8) 0 var(--space-6);
+}
+@media (max-width: 960px) {
+  .split-bg-hero:has(.split-bg-hero-bg--fit-contain) .split-bg-hero-bg--fit-contain,
+  .split-bg-hero:has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-bg--fit-contain-center{
+    aspect-ratio: 4 / 3;
+    max-height: min(48svh, 520px);
+    min-height: clamp(200px, 56vw, 360px);
+  }
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain) .split-bg-hero-overlay,
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-overlay{
+    display: none;
+  }
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain) .split-bg-hero-content,
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-content{
+    position: relative;
+    height: auto;
+    min-height: 0;
+    align-items: flex-start;
+    padding: var(--space-6) 0 var(--space-4);
+  }
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain) .split-bg-hero-main h2,
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-main h2{
+    color: #0f172a;
+    text-shadow: none;
+  }
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain) .split-bg-hero-main .eyebrow,
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-main .eyebrow{
+    color: #475569;
+    text-shadow: none;
+  }
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain) .split-bg-hero-main p,
+  .split-bg-hero:not(.split-bg-hero--copy-dark):has(.split-bg-hero-bg--fit-contain-center) .split-bg-hero-main p{
+    color: #334155;
+    text-shadow: none;
+  }
+}
 /* List pages 拉伸铺满: show full image, stretch width+height to board (no crop) */
 .split-bg-hero-bg--fit-fill img{
   width: 100%;
