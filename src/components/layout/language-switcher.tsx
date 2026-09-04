@@ -38,6 +38,15 @@ export function LanguageSwitcher({
 
   useEffect(() => {
     const nextLocale = readStoredLocale(languages, initialLocale);
+    if (nextLocale !== initialLocale) {
+      // localStorage 与 SSR cookie/locale 不一致时必须整页刷新，
+      // 否则 I18nProvider 仍是旧 locale 的 uiStrings（Privacy Settings 等会停在英文）。
+      window.localStorage.setItem(localeStorageKey, nextLocale);
+      document.cookie = `${LOCALE_COOKIE_NAME}=${encodeURIComponent(nextLocale)}; path=/; max-age=31536000; SameSite=Lax`;
+      window.location.reload();
+      return;
+    }
+
     const language = getStorefrontLanguage(nextLocale, languages);
     setLocale(nextLocale);
     document.documentElement.lang = languageHtmlLang(language);

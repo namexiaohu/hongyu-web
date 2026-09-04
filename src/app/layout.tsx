@@ -54,7 +54,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     getStorefrontCompanyProfile(locale),
     getStorefrontSocialMedia(locale),
     getStorefrontWebsiteConfig(locale),
-    fetchUiStringGroups(locale, [...UI_STRING_PREFETCH_GROUPS]).catch(() => ({})),
+    fetchUiStringGroups(locale, [...UI_STRING_PREFETCH_GROUPS]).catch((error) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[layout] failed to load ui strings for', locale, error);
+      }
+      return {} as Record<string, string>;
+    }),
   ]);
 
   return (
@@ -73,6 +78,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             socialChannels={socialMedia.socialChannels}
             headerNavColumns={websiteConfig.headerNavColumns}
             footerNavColumns={websiteConfig.footerNavColumns}
+            privacyPreference={websiteConfig.privacyPreference ?? null}
           >
             {children}
           </SiteFrame>

@@ -4,10 +4,13 @@ import { useEffect, useId, useState } from 'react';
 
 import { writeCookieConsent } from '@/lib/cookie-consent';
 import { useTranslation } from '@/lib/i18n-context';
+import type { StorefrontPrivacyPreference } from '@/lib/storefront-website-config-api';
 
 type PrivacySettingsModalProps = {
   open: boolean;
   onClose: () => void;
+  /** Current locale’s privacy preference only — no cross-locale fallback. */
+  privacyPreference: StorefrontPrivacyPreference | null;
   initialStatistics: boolean;
   onSaved: (statistics: boolean) => void;
 };
@@ -37,6 +40,7 @@ function withExternalSummaryLinks(html: string) {
 export function PrivacySettingsModal({
   open,
   onClose,
+  privacyPreference,
   initialStatistics,
   onSaved,
 }: PrivacySettingsModalProps) {
@@ -46,8 +50,8 @@ export function PrivacySettingsModal({
   const [necessaryOpen, setNecessaryOpen] = useState(false);
   const [statisticsOpen, setStatisticsOpen] = useState(false);
 
-  const summary = t('common.privacySummaryHtml').trim();
-  const showSummary = hasVisibleHtml(summary) && summary !== 'common.privacySummaryHtml';
+  const summary = privacyPreference?.summary?.trim() || '';
+  const showSummary = hasVisibleHtml(summary);
   const summaryHtml = showSummary ? withExternalSummaryLinks(summary) : '';
 
   useEffect(() => {
