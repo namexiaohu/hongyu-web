@@ -21,7 +21,17 @@
     "submitting": "Submitting...",
     "requiredMark": "*",
     "requiredHint": "Fields marked with * are required.",
-    "privacyNotice": "By submitting, you agree to our privacy policy. Your information will be kept strictly confidential."
+    "privacyNotice": "By submitting, you agree to our privacy policy. Your information will be kept strictly confidential.",
+    "privacySettingsTitle": "Privacy Settings",
+    "privacySettingsLink": "Privacy Settings",
+    "privacyNecessary": "Necessary Cookies",
+    "privacyAlwaysActive": "Always Active",
+    "privacyNecessaryDesc": "These cookies are required for core site functions such as language preference and signed-in sessions. They cannot be turned off.",
+    "privacyStatistics": "Statistics and Marketing Cookies",
+    "privacyStatisticsDesc": "These cookies help us understand how the site is used and improve content. They are only enabled with your consent.",
+    "privacyAcceptAll": "Accept All Cookies",
+    "privacyRejectAll": "Reject All Cookies",
+    "privacySaveSettings": "Save Settings"
   },
   "breadcrumb": {
     "home": "Home",

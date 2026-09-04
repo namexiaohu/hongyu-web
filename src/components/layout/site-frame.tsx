@@ -1,17 +1,22 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Suspense, type ReactNode } from 'react';
+import { Suspense, useEffect, useState, type ReactNode } from 'react';
 
+import { PrivacySettingsModal } from '@/components/layout/privacy-settings-modal';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { StaticInteractions } from '@/components/layout/static-interactions';
 import { findNavItemLabel } from '@/lib/company-display';
+import { readCookieConsent } from '@/lib/cookie-consent';
 import type { StorefrontCompanyBranding } from '@/lib/storefront-company';
 import { PARTNERSHIP_HREF } from '@/lib/partnership-cta';
 import type { StorefrontLanguage } from '@/lib/storefront-languages';
 import type { StorefrontSocialChannel } from '@/lib/storefront-social-media';
-import type { StorefrontNavColumn } from '@/lib/storefront-website-config-api';
+import type {
+  StorefrontNavColumn,
+  StorefrontPrivacyPreference,
+} from '@/lib/storefront-website-config-api';
 
 type SiteFrameProps = {
   children: ReactNode;
@@ -21,6 +26,7 @@ type SiteFrameProps = {
   socialChannels?: StorefrontSocialChannel[];
   headerNavColumns: StorefrontNavColumn[];
   footerNavColumns: StorefrontNavColumn[];
+  privacyPreference: StorefrontPrivacyPreference | null;
 };
 
 const PAGE_CLASS: Record<string, string> = {
@@ -65,6 +71,7 @@ export function SiteFrame({
   socialChannels = [],
   headerNavColumns,
   footerNavColumns,
+  privacyPreference,
 }: SiteFrameProps) {
   const pathname = usePathname();
   const overlay = pathname === '/';
@@ -80,6 +87,20 @@ export function SiteFrame({
   ].filter(Boolean).join(' ');
 
   const partnershipCtaLabel = findNavItemLabel(headerNavColumns, PARTNERSHIP_HREF);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [statistics, setStatistics] = useState(false);
+  const [consentReady, setConsentReady] = useState(false);
+
+  useEffect(() => {
+    const existing = readCookieConsent();
+    if (existing) {
+      setStatistics(existing.statistics);
+      setConsentReady(true);
+      return;
+    }
+    setConsentReady(true);
+    setPrivacyOpen(true);
+  }, []);
 
   return (
     <div className={shellClass}>
@@ -96,8 +117,23 @@ export function SiteFrame({
       <main id="content" className={pageClass || undefined}>
         {children}
       </main>
-      <SiteFooter dark={dark} branding={branding} socialChannels={socialChannels} footerNavColumns={footerNavColumns} />
+      <SiteFooter
+        dark={dark}
+        branding={branding}
+        socialChannels={socialChannels}
+        footerNavColumns={footerNavColumns}
+        onOpenPrivacySettings={() => setPrivacyOpen(true)}
+      />
       <StaticInteractions />
+      {consentReady ? (
+        <PrivacySettingsModal
+          open={privacyOpen}
+          onClose={() => setPrivacyOpen(false)}
+          privacyPreference={privacyPreference}
+          initialStatistics={statistics}
+          onSaved={(next) => setStatistics(next)}
+        />
+      ) : null}
     </div>
   );
 }

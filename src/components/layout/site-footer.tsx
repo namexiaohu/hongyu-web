@@ -1,8 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 
 import { HongyuLogo } from '@/components/layout/hongyu-logo';
 import { FooterSocialLinks } from '@/components/shared/footer-social-links';
+import { useTranslation } from '@/lib/i18n-context';
 import type { StorefrontCompanyBranding } from '@/lib/storefront-company';
 import type { StorefrontSocialChannel } from '@/lib/storefront-social-media';
 import type { StorefrontNavColumn } from '@/lib/storefront-website-config-api';
@@ -12,9 +15,17 @@ type SiteFooterProps = {
   branding?: StorefrontCompanyBranding;
   socialChannels?: StorefrontSocialChannel[];
   footerNavColumns: StorefrontNavColumn[];
+  onOpenPrivacySettings?: () => void;
 };
 
-export function SiteFooter({ dark = false, branding, socialChannels = [], footerNavColumns }: SiteFooterProps) {
+export function SiteFooter({
+  dark = false,
+  branding,
+  socialChannels = [],
+  footerNavColumns,
+  onOpenPrivacySettings,
+}: SiteFooterProps) {
+  const { t } = useTranslation();
   const columnCount = Math.max(footerNavColumns.length, 1);
   const gridStyle = {
     '--footer-nav-count': String(columnCount),
@@ -53,8 +64,15 @@ export function SiteFooter({ dark = false, branding, socialChannels = [], footer
           ))}
         </div>
         <div className="footer-bottom">
-          {branding?.copyright ? <span>{branding.copyright}</span> : <span />}
-          {branding?.icpNumber ? <span>{branding.icpNumber}</span> : null}
+          <div className="footer-bottom__meta">
+            {branding?.copyright ? <span>{branding.copyright}</span> : <span />}
+            {branding?.icpNumber ? <span>{branding.icpNumber}</span> : null}
+          </div>
+          {onOpenPrivacySettings ? (
+            <button type="button" className="footer-privacy-link" onClick={onOpenPrivacySettings}>
+              {t('common.privacySettingsLink')}
+            </button>
+          ) : null}
         </div>
       </div>
     </footer>

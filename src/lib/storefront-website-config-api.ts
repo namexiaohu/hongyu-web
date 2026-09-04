@@ -35,11 +35,18 @@ export type StorefrontListHeroBoardsRecord = {
   centers: StorefrontListHeroBoard;
 };
 
+export type StorefrontPrivacyPreference = {
+  title: string;
+  summary: string;
+  detailHtml: string;
+};
+
 export type StorefrontWebsiteConfig = {
   locale: string;
   headerNavColumns: StorefrontNavColumn[];
   footerNavColumns: StorefrontNavColumn[];
   listHeroBoards: StorefrontListHeroBoardsRecord;
+  privacyPreference: StorefrontPrivacyPreference | null;
 };
 
 export async function getStorefrontWebsiteConfig(locale?: string): Promise<StorefrontWebsiteConfig> {
