@@ -24,6 +24,7 @@
     "privacyNotice": "By submitting, you agree to our privacy policy. Your information will be kept strictly confidential.",
     "privacySettingsTitle": "Privacy Settings",
     "privacySettingsLink": "Privacy Settings",
+    "privacySummaryHtml": "<p>This website uses cookies to keep the site working properly (for example language preference and signed-in sessions) and, with your consent, to understand how visitors use the site and improve the experience. You can accept all cookies, reject non-essential cookies, or save settings by category.</p><p>You may change your choice at any time via “Privacy Settings” in the footer. For full details, see our <a href=\"/pages/privacy-policy\">Privacy Policy</a> and <a href=\"/pages/terms-of-service\">Terms of Service</a>.</p>",
     "privacyNecessary": "Necessary Cookies",
     "privacyAlwaysActive": "Always Active",
     "privacyNecessaryDesc": "These cookies are required for core site functions such as language preference and signed-in sessions. They cannot be turned off.",

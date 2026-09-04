@@ -73,7 +73,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             socialChannels={socialMedia.socialChannels}
             headerNavColumns={websiteConfig.headerNavColumns}
             footerNavColumns={websiteConfig.footerNavColumns}
-            privacyPreference={websiteConfig.privacyPreference ?? null}
           >
             {children}
           </SiteFrame>

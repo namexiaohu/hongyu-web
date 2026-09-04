@@ -15,7 +15,6 @@ import type { StorefrontLanguage } from '@/lib/storefront-languages';
 import type { StorefrontSocialChannel } from '@/lib/storefront-social-media';
 import type {
   StorefrontNavColumn,
-  StorefrontPrivacyPreference,
 } from '@/lib/storefront-website-config-api';
 
 type SiteFrameProps = {
@@ -26,7 +25,6 @@ type SiteFrameProps = {
   socialChannels?: StorefrontSocialChannel[];
   headerNavColumns: StorefrontNavColumn[];
   footerNavColumns: StorefrontNavColumn[];
-  privacyPreference: StorefrontPrivacyPreference | null;
 };
 
 const PAGE_CLASS: Record<string, string> = {
@@ -71,7 +69,6 @@ export function SiteFrame({
   socialChannels = [],
   headerNavColumns,
   footerNavColumns,
-  privacyPreference,
 }: SiteFrameProps) {
   const pathname = usePathname();
   const overlay = pathname === '/';
@@ -129,7 +126,6 @@ export function SiteFrame({
         <PrivacySettingsModal
           open={privacyOpen}
           onClose={() => setPrivacyOpen(false)}
-          privacyPreference={privacyPreference}
           initialStatistics={statistics}
           onSaved={(next) => setStatistics(next)}
         />
