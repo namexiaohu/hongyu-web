@@ -6390,7 +6390,8 @@ body:has(#content.page-media) {
   overflow: visible;
 }
 
-/* Privacy consent banner (bottom dock + full-screen mask) */
+/* Privacy consent banner (bottom dock + full-screen mask)
+   遮罩仅视觉压暗，不拦截滚动/点击；交互集中在底部面板 */
 .privacy-banner {
   position: fixed;
   inset: 0;
@@ -6398,12 +6399,13 @@ body:has(#content.page-media) {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  pointer-events: none;
 }
 .privacy-banner__mask {
   position: absolute;
   inset: 0;
   background: rgba(2, 6, 23, 0.55);
-  pointer-events: auto;
+  pointer-events: none;
 }
 .privacy-banner__panel {
   position: relative;
@@ -6413,6 +6415,7 @@ body:has(#content.page-media) {
   border-top: 1px solid rgba(15, 23, 42, 0.12);
   box-shadow: 0 -12px 40px rgba(2, 6, 23, 0.18);
   overflow: hidden;
+  pointer-events: auto;
 }
 .privacy-banner__inner {
   /* 与站点 .container / topnav-inner 同宽同边距，左右与页面主内容对齐 */

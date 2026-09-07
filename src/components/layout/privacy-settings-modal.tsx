@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId } from 'react';
+import { useId } from 'react';
 
 import { writeCookieConsent } from '@/lib/cookie-consent';
 import { useTranslation } from '@/lib/i18n-context';
@@ -51,15 +51,6 @@ export function PrivacySettingsModal({
   const showSummary = hasVisibleHtml(summary);
   const summaryHtml = showSummary ? withExternalSummaryLinks(summary) : '';
 
-  useEffect(() => {
-    if (!open) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [open]);
-
   if (!open) return null;
 
   function persist(nextStatistics: boolean) {
@@ -74,7 +65,7 @@ export function PrivacySettingsModal({
       <div
         className="privacy-banner__panel"
         role="dialog"
-        aria-modal="true"
+        aria-modal="false"
         aria-labelledby={titleId}
       >
         <div className="privacy-banner__inner">
