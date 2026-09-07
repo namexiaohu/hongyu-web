@@ -5,7 +5,7 @@ import { getApiBaseUrl } from '@/lib/api-client';
 const UI_STRINGS_CACHE_TAG = 'ui-strings';
 
 const UI_STRINGS_REVALIDATE_SECONDS =
-  process.env.NODE_ENV === 'development' ? 30 : 60 * 60;
+  process.env.NODE_ENV === 'development' ? 0 : 60;
 
 type FetchUiStringsOptions = {
   locale: string;

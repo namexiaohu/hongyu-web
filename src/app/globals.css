@@ -6415,9 +6415,11 @@ body:has(#content.page-media) {
   overflow: hidden;
 }
 .privacy-banner__inner {
-  width: min(1120px, calc(100% - 48px));
+  /* 与站点 .container / topnav-inner 同宽同边距，左右与页面主内容对齐 */
+  width: 100%;
+  max-width: var(--container-max);
   margin: 0 auto;
-  padding: 28px 0;
+  padding: 28px var(--container-gutter);
   min-height: 20svh;
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) auto;
@@ -6494,8 +6496,7 @@ body:has(#content.page-media) {
 }
 @media (max-width: 900px) {
   .privacy-banner__inner {
-    width: min(100% - 32px, 1120px);
-    padding: 20px 0;
+    padding-block: 20px;
     min-height: 0;
     grid-template-columns: 1fr;
     gap: 16px;
@@ -6516,8 +6517,7 @@ body:has(#content.page-media) {
 }
 @media (max-width: 560px) {
   .privacy-banner__inner {
-    width: calc(100% - 24px);
-    padding: 16px 0;
+    padding-block: 16px;
   }
   .privacy-banner__actions {
     flex-direction: column;
