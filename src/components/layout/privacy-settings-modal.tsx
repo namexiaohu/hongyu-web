@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId } from 'react';
 
 import { writeCookieConsent } from '@/lib/cookie-consent';
 import { useTranslation } from '@/lib/i18n-context';
@@ -41,14 +41,11 @@ export function PrivacySettingsModal({
   open,
   onClose,
   privacyPreference,
-  initialStatistics,
+  initialStatistics: _initialStatistics,
   onSaved,
 }: PrivacySettingsModalProps) {
   const { t } = useTranslation();
   const titleId = useId();
-  const [statistics, setStatistics] = useState(initialStatistics);
-  const [necessaryOpen, setNecessaryOpen] = useState(false);
-  const [statisticsOpen, setStatisticsOpen] = useState(false);
 
   const summary = privacyPreference?.summary?.trim() || '';
   const showSummary = hasVisibleHtml(summary);
@@ -56,19 +53,12 @@ export function PrivacySettingsModal({
 
   useEffect(() => {
     if (!open) return;
-    setStatistics(initialStatistics);
-  }, [open, initialStatistics]);
-
-  useEffect(() => {
-    if (!open) return;
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose();
-    }
-    window.addEventListener('keydown', onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     return () => {
-      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -79,93 +69,50 @@ export function PrivacySettingsModal({
   }
 
   return (
-    <div
-      className="privacy-modal-overlay"
-      role="presentation"
-    >
+    <div className="privacy-banner" role="presentation">
+      <div className="privacy-banner__mask" aria-hidden="true" />
       <div
-        className="privacy-modal"
+        className="privacy-banner__panel"
         role="dialog"
-        aria-modal="false"
+        aria-modal="true"
         aria-labelledby={titleId}
       >
-        <div className="privacy-modal__header">
-          <h2 id={titleId} className="privacy-modal__heading">
-            {t('common.privacySettingsTitle')}
-          </h2>
-          <button
-            type="button"
-            className="privacy-modal__close"
-            onClick={onClose}
-            aria-label={t('common.close')}
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="privacy-modal__body">
-          {showSummary ? (
-            <section className="privacy-modal__section">
+        <div className="privacy-banner__inner">
+          <div className="privacy-banner__copy">
+            <h2 id={titleId} className="privacy-banner__title">
+              {t('common.privacySettingsTitle')}
+            </h2>
+            {showSummary ? (
               <div
-                className="privacy-modal__summary"
+                className="privacy-banner__summary"
                 dangerouslySetInnerHTML={{ __html: summaryHtml }}
               />
-            </section>
-          ) : null}
-
-          <div className="privacy-modal__categories">
-            <div className="privacy-modal__category">
-              <button
-                type="button"
-                className="privacy-modal__category-toggle"
-                onClick={() => setNecessaryOpen((prev) => !prev)}
-                aria-expanded={necessaryOpen}
-              >
-                <span className="privacy-modal__plus" aria-hidden="true">{necessaryOpen ? '−' : '+'}</span>
-                <span className="privacy-modal__category-label">{t('common.privacyNecessary')}</span>
-              </button>
-              <span className="privacy-modal__always">{t('common.privacyAlwaysActive')}</span>
-              {necessaryOpen ? (
-                <p className="privacy-modal__category-desc">{t('common.privacyNecessaryDesc')}</p>
-              ) : null}
-            </div>
-
-            <div className="privacy-modal__category">
-              <button
-                type="button"
-                className="privacy-modal__category-toggle"
-                onClick={() => setStatisticsOpen((prev) => !prev)}
-                aria-expanded={statisticsOpen}
-              >
-                <span className="privacy-modal__plus" aria-hidden="true">{statisticsOpen ? '−' : '+'}</span>
-                <span className="privacy-modal__category-label">{t('common.privacyStatistics')}</span>
-              </button>
-              <label className="privacy-modal__switch">
-                <input
-                  type="checkbox"
-                  checked={statistics}
-                  onChange={(event) => setStatistics(event.target.checked)}
-                  aria-label={t('common.privacyStatistics')}
-                />
-                <span className="privacy-modal__switch-ui" aria-hidden="true" />
-              </label>
-              {statisticsOpen ? (
-                <p className="privacy-modal__category-desc">{t('common.privacyStatisticsDesc')}</p>
-              ) : null}
-            </div>
+            ) : null}
           </div>
-        </div>
 
-        <div className="privacy-modal__actions">
-          <button type="button" className="privacy-modal__btn privacy-modal__btn--primary" onClick={() => persist(true)}>
-            {t('common.privacyAcceptAll')}
-          </button>
-          <button type="button" className="privacy-modal__btn privacy-modal__btn--primary" onClick={() => persist(false)}>
-            {t('common.privacyRejectAll')}
-          </button>
-          <button type="button" className="privacy-modal__btn privacy-modal__btn--secondary" onClick={() => persist(statistics)}>
-            {t('common.privacySaveSettings')}
-          </button>
+          <div className="privacy-banner__actions">
+            <button
+              type="button"
+              className="privacy-banner__btn privacy-banner__btn--primary"
+              onClick={() => persist(true)}
+            >
+              {t('common.privacyAcceptAll')}
+            </button>
+            <button
+              type="button"
+              className="privacy-banner__btn privacy-banner__btn--ghost"
+              onClick={() => persist(false)}
+            >
+              {t('common.privacyAcceptNecessary')}
+            </button>
+            <button
+              type="button"
+              className="privacy-banner__btn privacy-banner__btn--ghost"
+              onClick={() => persist(false)}
+            >
+              {t('common.privacyRejectAll')}
+            </button>
+          </div>
         </div>
       </div>
     </div>
