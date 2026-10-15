@@ -5,6 +5,7 @@ export const CONTACT_INQUIRY_TYPE_KEY = 'contact';
 export const PARTNERSHIP_INQUIRY_TYPE_KEY = 'partnership';
 
 export const CONTACT_TOPIC_SUMMIT_QUERY = 'summit';
+export const CONTACT_TOPIC_MARKET_EVENT_QUERY = 'market-event';
 
 export const CONTACT_TOPIC_KEYS = [
   'product',
@@ -12,6 +13,7 @@ export const CONTACT_TOPIC_KEYS = [
   'training',
   'afterSales',
   'summit',
+  'marketEvent',
   'other',
 ] as const;
 
@@ -28,13 +30,19 @@ export function resolveContactTopicFromQuery(t: TranslateFn, raw: string | null 
   const value = raw?.trim() ?? '';
   if (!value) return '';
   if (value === CONTACT_TOPIC_SUMMIT_QUERY) return 'summit';
+  if (value === CONTACT_TOPIC_MARKET_EVENT_QUERY) return 'marketEvent';
   return CONTACT_TOPIC_KEYS.includes(value as ContactTopicKey) ? value : '';
 }
 
-export function buildContactHref(options?: { topic?: typeof CONTACT_TOPIC_SUMMIT_QUERY | string; summit?: string }) {
+export function buildContactHref(options?: {
+  topic?: typeof CONTACT_TOPIC_SUMMIT_QUERY | typeof CONTACT_TOPIC_MARKET_EVENT_QUERY | string;
+  summit?: string;
+  marketEvent?: string;
+}) {
   const params = new URLSearchParams();
   if (options?.topic) params.set('topic', options.topic);
   if (options?.summit?.trim()) params.set('summit', options.summit.trim());
+  if (options?.marketEvent?.trim()) params.set('marketEvent', options.marketEvent.trim());
   const query = params.toString();
   return query ? `/contact?${query}` : '/contact';
 }

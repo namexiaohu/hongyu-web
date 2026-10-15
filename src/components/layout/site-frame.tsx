@@ -36,6 +36,7 @@ const PAGE_CLASS: Record<string, string> = {
   '/solutions': 'page-solutions-list',
   '/insights': 'page-article-list',
   '/summit': 'page-summit',
+  '/market-events': 'page-summit',
   '/course': 'page-recordings',
   '/contact': 'page-contact',
   '/partnership': 'page-partnership',
@@ -60,6 +61,7 @@ function pageClassFromPath(pathname: string) {
     return 'page-centers';
   }
   if (pathname === '/summit' || pathname.startsWith('/summit/')) return 'page-summit';
+  if (pathname === '/market-events' || pathname.startsWith('/market-events/')) return 'page-summit';
   return PAGE_CLASS[pathname] ?? '';
 }
 
@@ -78,6 +80,8 @@ export function SiteFrame({
   const dark =
     pathname === '/summit' ||
     pathname.startsWith('/summit/') ||
+    pathname === '/market-events' ||
+    pathname.startsWith('/market-events/') ||
     pathname === '/media';
   const pageClass = pageClassFromPath(pathname);
   const shellClass = [

@@ -3,7 +3,7 @@ import type { TranslateFn } from '@/lib/i18n-server';
 
 export const PARTNERSHIP_HREF = '/partnership';
 
-export type PartnershipCtaVariant = 'default' | 'home' | 'centers' | 'surgeons' | 'summit' | 'insights' | 'solutions';
+export type PartnershipCtaVariant = 'default' | 'home' | 'centers' | 'surgeons' | 'summit' | 'marketEvents' | 'insights' | 'solutions';
 
 export function buildPartnershipCta(
   t: TranslateFn,
@@ -43,6 +43,12 @@ export function buildPartnershipCta(
         ...shell,
         title: t('cta.summit.title'),
         lead: t('cta.summit.lead'),
+      };
+    case 'marketEvents':
+      return {
+        ...shell,
+        title: t('cta.marketEvents.title'),
+        lead: t('cta.marketEvents.lead'),
       };
     case 'insights':
       return {

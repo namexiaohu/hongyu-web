@@ -22,8 +22,10 @@ export function ContactInquiryForm() {
   );
   const initialBody = useMemo(() => {
     const summit = searchParams.get('summit')?.trim();
-    if (!summit) return '';
-    return t('forms.contact.summitPrefill', { summit });
+    if (summit) return t('forms.contact.summitPrefill', { summit });
+    const marketEvent = searchParams.get('marketEvent')?.trim();
+    if (marketEvent) return t('forms.contact.marketEventPrefill', { marketEvent });
+    return '';
   }, [searchParams, t]);
 
   const [topic, setTopic] = useState(initialTopic);

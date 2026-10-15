@@ -39,6 +39,7 @@
     "globalLayout": "Global Presence",
     "certifiedSurgeons": "Certified Surgeons",
     "industrySummits": "Industry Summits",
+    "marketEvents": "Market Events",
     "companyInfo": "Company Information",
     "solutions": "Solutions"
   },
@@ -97,6 +98,10 @@
     },
     "summit": {
       "title": "Conference partnership inquiries welcome",
+      "lead": "For co-hosted events, sponsorship, or brand collaboration, contact us to foster industry communication and exchange."
+    },
+    "marketEvents": {
+      "title": "Market event partnership inquiries welcome",
       "lead": "For co-hosted events, sponsorship, or brand collaboration, contact us to foster industry communication and exchange."
     },
     "insights": {
@@ -267,6 +272,40 @@
       "6": "Saturday"
     }
   },
+  "marketEvents": {
+    "metaTitle": "Market Events",
+    "eyebrow": "Market Event",
+    "title": "Global veterinary market events",
+    "heroLeadWithCompany": "{companyName} participates in major global veterinary market events to share clinical innovations and industry insights.",
+    "heroLeadFallback": "Participating in major global veterinary market events to share clinical innovations and industry insights.",
+    "upcoming": {
+      "eyebrow": "Upcoming",
+      "title": "Upcoming market events",
+      "leadWithNames": "Upcoming events include {names} and more.",
+      "leadWithCompany": "Explore market events {companyName} will attend.",
+      "leadFallback": "Explore upcoming market events."
+    },
+    "past": {
+      "eyebrow": "Past Events",
+      "title": "Past event highlights"
+    },
+    "empty": "No market event data available",
+    "status": {
+      "upcoming": "Upcoming",
+      "registering": "Registration open",
+      "completed": "Completed"
+    },
+    "cardLink": "Learn more →",
+    "weekdays": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
+  },
   "insights": {
     "metaTitle": "Insights",
     "pastHighlights": "Past highlights",
@@ -280,6 +319,7 @@
   "forms": {
     "contact": {
       "summitPrefill": "Summit registration interest: {summit}\n\n",
+      "marketEventPrefill": "Market event registration interest: {marketEvent}\n\n",
       "fullName": "Full name",
       "fullNamePlaceholder": "Your name",
       "country": "Country",
@@ -359,6 +399,7 @@
       "training": "Training & certification",
       "afterSales": "After-sales service",
       "summit": "Industry summit registration",
+      "marketEvent": "Market event registration",
       "other": "Other"
     },
     "messages": {
@@ -421,6 +462,37 @@
       "speakerBioLabel": "Speaker bio",
       "sponsorsEyebrow": "Sponsors",
       "sponsorsTitle": "Conference sponsors",
+      "sponsorTiers": {
+        "diamond": "Diamond sponsors",
+        "gold": "Gold sponsors",
+        "silver": "Silver sponsors"
+      },
+      "sponsorTierBadges": {
+        "diamond": "Diamond Sponsor",
+        "gold": "Gold Sponsor",
+        "silver": "Silver Sponsor"
+      },
+      "sponsorCount": "{count} sponsors"
+    },
+    "marketEvents": {
+      "agendaEyebrow": "Agenda",
+      "agendaTitle": "Core agenda",
+      "registerNow": "Register now",
+      "viewAgenda": "View agenda",
+      "venueEyebrow": "Venue",
+      "venueFallback": "Venue",
+      "addressLabel": "Address",
+      "timeLabel": "Event time",
+      "scaleLabel": "Event scale",
+      "transportLabel": "Transportation",
+      "registerSectionEyebrow": "Register",
+      "registerSectionTitle": "Register for the event",
+      "registerSectionLead": "Seats are limited. Submit your registration interest via the contact page; our events team will confirm within 3 business days.",
+      "speakersEyebrow": "Speakers",
+      "speakersTitle": "Featured speakers",
+      "speakerBioLabel": "Speaker bio",
+      "sponsorsEyebrow": "Sponsors",
+      "sponsorsTitle": "Event sponsors",
       "sponsorTiers": {
         "diamond": "Diamond sponsors",
         "gold": "Gold sponsors",

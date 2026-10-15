@@ -49,6 +49,7 @@ export const UI_STRING_PREFETCH_GROUPS = [
   'solutionsList',
   'surgeons',
   'summit',
+  'marketEvents',
   'insights',
   'forms',
   'inquiry',
