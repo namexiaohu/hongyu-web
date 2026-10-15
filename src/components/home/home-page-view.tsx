@@ -7,8 +7,11 @@ import { HomeBannerCarousel } from '@/components/home/home-banner-carousel';
 import { CtaStrip } from '@/components/shared/cta-strip';
 import { StatsBar } from '@/components/shared/stats-bar';
 import { formatInsightDate, insightHref, type InsightsHero } from '@/lib/insights';
-import { buildPartnershipCta } from '@/lib/partnership-cta';
-import type { StorefrontHomepageConfig } from '@/lib/storefront-homepage-api';
+import {
+  resolveHomepageSections,
+  type HomepageSectionKey,
+  type StorefrontHomepageConfig,
+} from '@/lib/storefront-homepage-api';
 import type { StorefrontInsightListItem } from '@/lib/storefront-insights-api';
 import type { CtaBlock } from '@/lib/storefront-types';
 
@@ -150,6 +153,59 @@ type HomePageViewProps = {
   homeCopy: HomeCopy;
 };
 
+function InsightsSection({
+  insights,
+  insightsHero,
+  homeCopy,
+}: {
+  insights: StorefrontInsightListItem[];
+  insightsHero: InsightsHero;
+  homeCopy: HomeCopy;
+}) {
+  return (
+    <section className="section" id="insights" data-od-id="insights" style={{ background: 'var(--bg-soft)' }}>
+      <div className="container">
+        <div className="row-between" style={{ marginBottom: 'var(--space-8)' }}>
+          <div>
+            <p className="eyebrow">{insightsHero.eyebrow}</p>
+            <h2 style={{ marginTop: 'var(--space-3)' }}>
+              {insightsHero.titleLine1} {insightsHero.titleLine2}
+            </h2>
+          </div>
+          <Link href="/insights" className="btn" style={{ fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
+            {homeCopy.insightsViewAll}
+          </Link>
+        </div>
+        <div className="log-list">
+          {insights.map((item) => {
+            const dateLabel = formatInsightDate(item.publishedAt || item.createdAt);
+            return (
+              <Link
+                key={item.id}
+                href={insightHref(item.slug)}
+                className="log-row"
+              >
+                <span className="meta num">{dateLabel || homeCopy.emptyDash}</span>
+                <div className="log-main">
+                  <div className="log-thumb">
+                    {item.coverImage ? <img src={item.coverImage} alt="" /> : null}
+                  </div>
+                  <div className="log-body">
+                    <h3>{item.title}</h3>
+                    {item.summary ? <p className="log-desc">{item.summary}</p> : null}
+                    <InsightAuthorMeta author={item.author} />
+                  </div>
+                </div>
+                <span className="log-tag">{item.boardName || item.boardKey}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function HomePageView({
   config,
   insights,
@@ -166,9 +222,12 @@ export function HomePageView({
     config.aboutHeroCopyStyle === 'dark' ? 'split-bg-hero--copy-dark' : '',
   ].filter(Boolean).join(' ');
 
-  return (
-    <>
+  const enabledSections = resolveHomepageSections(config.sections).filter((row) => row.enabled !== false);
+
+  const sectionRenderers: Record<HomepageSectionKey, () => ReactNode> = {
+    banner: () => (
       <HomeBannerCarousel
+        key="banner"
         slides={config.bannerSlides}
         title={config.bannerTitle}
         subtitle={config.bannerSubtitle}
@@ -177,8 +236,9 @@ export function HomePageView({
         heroCopyStyle={config.bannerHeroCopyStyle}
         carouselFitMode={config.bannerCarouselFitMode}
       />
-
-      <section className="section" id="products" data-od-id="products">
+    ),
+    solutions: () => (
+      <section key="solutions" className="section" id="products" data-od-id="products">
         <div className="container">
           <div className="section-header">
             <p className="eyebrow">{homeCopy.solutionsEyebrow}</p>
@@ -224,8 +284,10 @@ export function HomePageView({
           ) : null}
         </div>
       </section>
-
+    ),
+    about: () => (
       <section
+        key="about"
         className={aboutHeroClassName}
         id="about"
         data-od-id="about"
@@ -246,9 +308,10 @@ export function HomePageView({
           </div>
         </div>
       </section>
-
-      {config.stats.length > 0 ? (
-        <section className="section" data-od-id="stats">
+    ),
+    stats: () => (
+      config.stats.length > 0 ? (
+        <section key="stats" className="section" data-od-id="stats">
           <div className="container">
             <p className="eyebrow" style={{ marginBottom: 'var(--space-8)' }}>{homeCopy.statsEyebrow}</p>
             <StatsBar
@@ -260,9 +323,10 @@ export function HomePageView({
             />
           </div>
         </section>
-      ) : null}
-
-      <section className="section" id="global" data-od-id="global">
+      ) : null
+    ),
+    global: () => (
+      <section key="global" className="section" id="global" data-od-id="global">
         <div className="container">
           <div className="section-header">
             <p className="eyebrow">{homeCopy.globalEyebrow}</p>
@@ -272,49 +336,9 @@ export function HomePageView({
           <GlobalPartnerMap centers={partnerCenters} />
         </div>
       </section>
-
-      <section className="section" id="insights" data-od-id="insights" style={{ background: 'var(--bg-soft)' }}>
-        <div className="container">
-          <div className="row-between" style={{ marginBottom: 'var(--space-8)' }}>
-            <div>
-              <p className="eyebrow">{insightsHero.eyebrow}</p>
-              <h2 style={{ marginTop: 'var(--space-3)' }}>
-                {insightsHero.titleLine1} {insightsHero.titleLine2}
-              </h2>
-            </div>
-            <Link href="/insights" className="btn" style={{ fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
-              {homeCopy.insightsViewAll}
-            </Link>
-          </div>
-          <div className="log-list">
-            {insights.map((item) => {
-              const dateLabel = formatInsightDate(item.publishedAt || item.createdAt);
-              return (
-                <Link
-                  key={item.id}
-                  href={insightHref(item.slug)}
-                  className="log-row"
-                >
-                  <span className="meta num">{dateLabel || homeCopy.emptyDash}</span>
-                  <div className="log-main">
-                    <div className="log-thumb">
-                      {item.coverImage ? <img src={item.coverImage} alt="" /> : null}
-                    </div>
-                    <div className="log-body">
-                      <h3>{item.title}</h3>
-                      {item.summary ? <p className="log-desc">{item.summary}</p> : null}
-                      <InsightAuthorMeta author={item.author} />
-                    </div>
-                  </div>
-                  <span className="log-tag">{item.boardName || item.boardKey}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="section" id="education" data-od-id="education">
+    ),
+    education: () => (
+      <section key="education" className="section" id="education" data-od-id="education">
         <div className="container">
           <div className="section-header">
             <p className="eyebrow">{homeCopy.educationEyebrow}</p>
@@ -354,8 +378,39 @@ export function HomePageView({
           </div>
         </div>
       </section>
+    ),
+  };
 
-      <CtaStrip {...partnershipCta} id="contact" />
-    </>
-  );
+  const nodes: ReactNode[] = [];
+  let insightsRendered = false;
+
+  for (const section of enabledSections) {
+    if (section.key === 'education' && !insightsRendered) {
+      nodes.push(
+        <InsightsSection
+          key="insights"
+          insights={insights}
+          insightsHero={insightsHero}
+          homeCopy={homeCopy}
+        />,
+      );
+      insightsRendered = true;
+    }
+    nodes.push(sectionRenderers[section.key]());
+  }
+
+  if (!insightsRendered) {
+    nodes.push(
+      <InsightsSection
+        key="insights"
+        insights={insights}
+        insightsHero={insightsHero}
+        homeCopy={homeCopy}
+      />,
+    );
+  }
+
+  nodes.push(<CtaStrip key="cta" {...partnershipCta} id="contact" />);
+
+  return <>{nodes}</>;
 }
