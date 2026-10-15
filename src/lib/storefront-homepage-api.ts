@@ -38,7 +38,8 @@ export type HomepageSectionKey =
   | 'stats'
   | 'global'
   | 'insights'
-  | 'education';
+  | 'education'
+  | 'partnership';
 
 export type HomepageSectionConfig = {
   key: HomepageSectionKey;
@@ -82,6 +83,7 @@ const HOMEPAGE_SECTION_KEYS: HomepageSectionKey[] = [
   'global',
   'insights',
   'education',
+  'partnership',
 ];
 
 const DEFAULT_HOMEPAGE_SECTIONS: HomepageSectionConfig[] = HOMEPAGE_SECTION_KEYS.map((key) => ({

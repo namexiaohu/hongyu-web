@@ -3781,7 +3781,7 @@
     .page-article-list .insights-list-split-hero .split-bg-hero-main{
       max-width: 640px;
     }
-    .page-article-list .insights-list-hero-title{
+    .page-article-list .page-title.insights-list-hero-title{
       padding-block: var(--space-16);
       border-bottom: none;
       max-width: none;

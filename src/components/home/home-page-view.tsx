@@ -391,10 +391,10 @@ export function HomePageView({
         </div>
       </section>
     ),
+    partnership: () => (
+      <CtaStrip key="partnership" {...partnershipCta} id="contact" />
+    ),
   };
 
-  const nodes: ReactNode[] = enabledSections.map((section) => sectionRenderers[section.key]());
-  nodes.push(<CtaStrip key="cta" {...partnershipCta} id="contact" />);
-
-  return <>{nodes}</>;
+  return <>{enabledSections.map((section) => sectionRenderers[section.key]())}</>;
 }
