@@ -37,12 +37,15 @@ export type HomepageSectionKey =
   | 'about'
   | 'stats'
   | 'global'
+  | 'insights'
   | 'education';
 
 export type HomepageSectionConfig = {
   key: HomepageSectionKey;
   enabled?: boolean;
 };
+
+export const DEFAULT_HOMEPAGE_INSIGHTS_ARTICLE_COUNT = 5;
 
 export type StorefrontHomepageConfig = {
   locale: string;
@@ -53,6 +56,7 @@ export type StorefrontHomepageConfig = {
   bannerCarouselFitMode: HeroBackgroundFitMode;
   aboutCarouselFitMode: HeroBackgroundFitMode;
   sections: HomepageSectionConfig[];
+  insightsArticleCount?: number;
   bannerTitle: string;
   bannerSubtitle: string;
   bannerDescription: string;
@@ -67,29 +71,49 @@ export type StorefrontHomepageConfig = {
   educationDescription: string;
   educationItems: HomepageEducationItem[];
   solutionItems: HomepageSolutionItem[];
+  insightsTitle?: string;
 };
 
-const DEFAULT_HOMEPAGE_SECTIONS: HomepageSectionConfig[] = [
-  { key: 'banner', enabled: true },
-  { key: 'solutions', enabled: true },
-  { key: 'about', enabled: true },
-  { key: 'stats', enabled: true },
-  { key: 'global', enabled: true },
-  { key: 'education', enabled: true },
+const HOMEPAGE_SECTION_KEYS: HomepageSectionKey[] = [
+  'banner',
+  'solutions',
+  'about',
+  'stats',
+  'global',
+  'insights',
+  'education',
 ];
+
+const DEFAULT_HOMEPAGE_SECTIONS: HomepageSectionConfig[] = HOMEPAGE_SECTION_KEYS.map((key) => ({
+  key,
+  enabled: true,
+}));
+
+export function normalizeInsightsArticleCount(value: number | null | undefined): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return DEFAULT_HOMEPAGE_INSIGHTS_ARTICLE_COUNT;
+  }
+  return Math.min(50, Math.max(1, Math.round(value)));
+}
 
 export function resolveHomepageSections(sections: HomepageSectionConfig[] | undefined): HomepageSectionConfig[] {
   const seen = new Set<HomepageSectionKey>();
   const ordered: HomepageSectionConfig[] = [];
   for (const row of sections ?? []) {
     if (!row?.key || seen.has(row.key)) continue;
-    if (!DEFAULT_HOMEPAGE_SECTIONS.some((item) => item.key === row.key)) continue;
+    if (!HOMEPAGE_SECTION_KEYS.includes(row.key)) continue;
     seen.add(row.key);
     ordered.push({ key: row.key, enabled: row.enabled !== false });
   }
-  for (const item of DEFAULT_HOMEPAGE_SECTIONS) {
-    if (seen.has(item.key)) continue;
-    ordered.push({ ...item });
+  for (const key of HOMEPAGE_SECTION_KEYS) {
+    if (seen.has(key)) continue;
+    const educationIndex = ordered.findIndex((row) => row.key === 'education');
+    if (key === 'insights' && educationIndex >= 0) {
+      ordered.splice(educationIndex, 0, { key, enabled: true });
+    } else {
+      ordered.push({ key, enabled: true });
+    }
+    seen.add(key);
   }
   return ordered;
 }

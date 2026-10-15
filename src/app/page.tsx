@@ -7,7 +7,10 @@ import { buildInsightsHero } from '@/lib/insights';
 import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_DESCRIPTION } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
-import { getStorefrontHomepageConfig } from '@/lib/storefront-homepage-api';
+import {
+  getStorefrontHomepageConfig,
+  normalizeInsightsArticleCount,
+} from '@/lib/storefront-homepage-api';
 import { getStorefrontInsightsList } from '@/lib/storefront-insights-api';
 import { getStorefrontPartnerCentersList } from '@/lib/storefront-partner-centers-api';
 
@@ -19,12 +22,17 @@ export default async function HomePage() {
   const { locale } = await getStorefrontLocaleContext();
   const { t } = await getPageTranslations(locale, ['home', 'common', 'cta']);
 
-  const [company, config, insightsRes, centersRes] = await Promise.all([
+  const [company, config, centersRes] = await Promise.all([
     getStorefrontCompanyProfile(locale),
     getStorefrontHomepageConfig(locale),
-    getStorefrontInsightsList({ page: 1, pageSize: 4, locale }),
     getStorefrontPartnerCentersList(locale),
   ]);
+
+  const insightsRes = await getStorefrontInsightsList({
+    page: 1,
+    pageSize: normalizeInsightsArticleCount(config.insightsArticleCount),
+    locale,
+  });
 
   const companyName = resolveCompanyName(company, locale);
 

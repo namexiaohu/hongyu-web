@@ -72,8 +72,7 @@
     },
     "insights": {
       "eyebrow": "Insights & News",
-      "titleLine1": "Technology frontiers &",
-      "titleLine2": "clinical practice",
+      "titleLine1": "Technology frontiers & clinical practice",
       "leadWithCompany": "Latest updates from {companyName}'s R&D center, partner hospitals, and industry conferences.",
       "leadFallback": "Latest technology trends, clinical research, and surgeon experience from our network."
     }

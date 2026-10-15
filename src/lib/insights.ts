@@ -5,7 +5,6 @@ import type { CtaBlock } from '@/lib/storefront-types';
 export type InsightsHero = {
   eyebrow: string;
   titleLine1: string;
-  titleLine2: string;
   lead: string;
 };
 
@@ -14,7 +13,6 @@ export function buildInsightsHero(t: TranslateFn, companyName = ''): InsightsHer
   return {
     eyebrow: t('home.insights.eyebrow'),
     titleLine1: t('home.insights.titleLine1'),
-    titleLine2: t('home.insights.titleLine2'),
     lead: org ? t('home.insights.leadWithCompany', { companyName: org }) : t('home.insights.leadFallback'),
   };
 }

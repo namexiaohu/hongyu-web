@@ -26,6 +26,7 @@ export type StorefrontInsightsListResponse = {
   total: number;
   page: number;
   pageSize: number;
+  totalPages?: number;
 };
 
 export type StorefrontInsightBoardCount = {
@@ -81,11 +82,14 @@ export async function getStorefrontInsightsList(input?: {
   page?: number;
   pageSize?: number;
   locale?: string;
+  /** /insights list: page 1 returns an extra item for the featured card. */
+  reserveFeatured?: boolean;
 }): Promise<StorefrontInsightsListResponse> {
   const params = new URLSearchParams();
   if (input?.category?.trim()) params.set('category', input.category.trim());
   if (input?.page) params.set('page', String(input.page));
   if (input?.pageSize) params.set('pageSize', String(input.pageSize));
+  if (input?.reserveFeatured) params.set('reserveFeatured', '1');
   const query = params.toString();
   return serverFetch<StorefrontInsightsListResponse>(
     `/api/front/insights${query ? `?${query}` : ''}`,

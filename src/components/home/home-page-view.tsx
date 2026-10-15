@@ -156,12 +156,15 @@ type HomePageViewProps = {
 function InsightsSection({
   insights,
   insightsHero,
+  insightsTitle,
   homeCopy,
 }: {
   insights: StorefrontInsightListItem[];
   insightsHero: InsightsHero;
+  insightsTitle: string;
   homeCopy: HomeCopy;
 }) {
+  const title = insightsTitle.trim() || insightsHero.titleLine1;
   return (
     <section className="section" id="insights" data-od-id="insights" style={{ background: 'var(--bg-soft)' }}>
       <div className="container">
@@ -169,7 +172,7 @@ function InsightsSection({
           <div>
             <p className="eyebrow">{insightsHero.eyebrow}</p>
             <h2 style={{ marginTop: 'var(--space-3)' }}>
-              {insightsHero.titleLine1} {insightsHero.titleLine2}
+              {title}
             </h2>
           </div>
           <Link href="/insights" className="btn" style={{ fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
@@ -337,6 +340,15 @@ export function HomePageView({
         </div>
       </section>
     ),
+    insights: () => (
+      <InsightsSection
+        key="insights"
+        insights={insights}
+        insightsHero={insightsHero}
+        insightsTitle={config.insightsTitle ?? ''}
+        homeCopy={homeCopy}
+      />
+    ),
     education: () => (
       <section key="education" className="section" id="education" data-od-id="education">
         <div className="container">
@@ -381,35 +393,7 @@ export function HomePageView({
     ),
   };
 
-  const nodes: ReactNode[] = [];
-  let insightsRendered = false;
-
-  for (const section of enabledSections) {
-    if (section.key === 'education' && !insightsRendered) {
-      nodes.push(
-        <InsightsSection
-          key="insights"
-          insights={insights}
-          insightsHero={insightsHero}
-          homeCopy={homeCopy}
-        />,
-      );
-      insightsRendered = true;
-    }
-    nodes.push(sectionRenderers[section.key]());
-  }
-
-  if (!insightsRendered) {
-    nodes.push(
-      <InsightsSection
-        key="insights"
-        insights={insights}
-        insightsHero={insightsHero}
-        homeCopy={homeCopy}
-      />,
-    );
-  }
-
+  const nodes: ReactNode[] = enabledSections.map((section) => sectionRenderers[section.key]());
   nodes.push(<CtaStrip key="cta" {...partnershipCta} id="contact" />);
 
   return <>{nodes}</>;

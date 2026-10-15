@@ -39,7 +39,7 @@ export default async function Page({ searchParams }: PageProps) {
 
   const [company, list, boardCounts, randomItems, websiteConfig] = await Promise.all([
     getStorefrontCompanyProfile(locale),
-    getStorefrontInsightsList({ category, page, pageSize: 6, locale }),
+    getStorefrontInsightsList({ category, page, pageSize: 6, locale, reserveFeatured: true }),
     getStorefrontInsightsBoardCounts(locale),
     getStorefrontRandomInsights({ limit: 6, locale }).then((payload) => payload.items),
     getStorefrontWebsiteConfig(locale),

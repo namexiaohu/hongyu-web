@@ -45,8 +45,6 @@ function InsightsHeroText({ insightsHero }: { insightsHero: InsightsHero }) {
       <div className="pt-eyebrow eyebrow">{insightsHero.eyebrow}</div>
       <h1>
         {insightsHero.titleLine1}
-        <br />
-        {insightsHero.titleLine2}
       </h1>
       <p>{insightsHero.lead}</p>
     </div>
@@ -95,10 +93,17 @@ function ArticleCard({ item }: { item: StorefrontInsightListItem }) {
   );
 }
 
+function insightsListTotalPages(total: number, pageSize: number) {
+  if (total <= 0) return 1;
+  if (total <= pageSize + 1) return 1;
+  return 1 + Math.ceil((total - pageSize - 1) / pageSize);
+}
+
 function Pagination({
   page,
   pageSize,
   total,
+  totalPages: totalPagesFromApi,
   category,
   previousPage,
   nextPage,
@@ -106,11 +111,15 @@ function Pagination({
   page: number;
   pageSize: number;
   total: number;
+  totalPages?: number;
   category?: string | null;
   previousPage: string;
   nextPage: string;
 }) {
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const totalPages = Math.max(
+    1,
+    totalPagesFromApi ?? insightsListTotalPages(total, pageSize),
+  );
   if (totalPages <= 1) return null;
 
   const pages: Array<number | 'dots'> = [];
@@ -236,6 +245,7 @@ export function InsightsListPage({
           page={page}
           pageSize={list.pageSize}
           total={list.total}
+          totalPages={list.totalPages}
           category={category}
           previousPage={listCopy.previousPage}
           nextPage={listCopy.nextPage}
