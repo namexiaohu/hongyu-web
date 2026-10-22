@@ -2,12 +2,13 @@ import type { ReactNode } from 'react';
 
 import { SplitHeroPageTemplate } from '@/components/templates/split-hero-page-template';
 import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
-import type { BreadcrumbItem, SplitHero, StatItem } from '@/lib/storefront-types';
+import type { BreadcrumbItem, PageEntryLink, SplitHero, StatItem } from '@/lib/storefront-types';
 
 type SolutionPageProps = {
   breadcrumbs: BreadcrumbItem[];
   hero: SplitHero;
   stats?: StatItem[];
+  entries?: PageEntryLink[];
   materialsHref?: string | null;
   children: ReactNode;
 };
@@ -16,6 +17,7 @@ export async function SolutionPage({
   breadcrumbs,
   hero,
   stats,
+  entries,
   materialsHref,
   children,
 }: SolutionPageProps) {
@@ -27,6 +29,7 @@ export async function SolutionPage({
       breadcrumbs={breadcrumbs}
       hero={hero}
       stats={stats}
+      entries={entries}
       heroTextClassName="sol-hero-text"
       eyebrowClassName="sol-eyebrow"
       heroMediaId="solution"

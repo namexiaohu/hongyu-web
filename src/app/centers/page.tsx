@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
+import { CentersHashScroll } from '@/components/centers/centers-hash-scroll';
+import { GlobalPartnerMap } from '@/components/home/global-partner-map';
 import { DirectoryPage } from '@/components/templates/directory-page';
 import { CtaStrip } from '@/components/shared/cta-strip';
+import { centersCenterHash, centersRegionHash } from '@/lib/centers-anchors';
 import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { buildPartnershipCta } from '@/lib/partnership-cta';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
@@ -26,7 +28,7 @@ const locationSvg = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path
 
 function CenterCard({ center }: { center: StorefrontCenterItem }) {
   return (
-    <Link href={`/centers/${center.slug}`} className="center-card">
+    <article id={centersCenterHash(center.slug)} className="center-card">
       <div className="cc-img">
         {center.coverImage
           ? <img src={center.coverImage} alt={center.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -78,7 +80,7 @@ function CenterCard({ center }: { center: StorefrontCenterItem }) {
           </div>
         ) : null}
       </div>
-    </Link>
+    </article>
   );
 }
 
@@ -90,7 +92,7 @@ function RegionSection({
   regionCountLabel: string;
 }) {
   return (
-    <section className="region-section">
+    <section id={centersRegionHash(group.region)} className="region-section">
       <div className="container">
         <div className="region-header">
           <h2>{group.regionLabel}</h2>
@@ -114,6 +116,16 @@ export default async function Page() {
     getStorefrontWebsiteConfig(locale),
   ]);
 
+  const partnerCenters = groups.flatMap((group) =>
+    group.items.map((item) => ({
+      slug: item.slug,
+      name: item.name,
+      location: item.location,
+      region: item.region,
+      badgeText: item.badgeText,
+    })),
+  );
+
   return (
     <DirectoryPage
       breadcrumbs={[
@@ -128,7 +140,14 @@ export default async function Page() {
       }}
       heroBoard={websiteConfig.listHeroBoards.centers}
     >
+      <CentersHashScroll />
       <div className="page-centers" style={{ paddingTop: 'var(--space-10)' }}>
+        {partnerCenters.length > 0 ? (
+          <div className="container centers-map-wrap">
+            <GlobalPartnerMap centers={partnerCenters} />
+          </div>
+        ) : null}
+
         {groups.map((group) => (
           <RegionSection
             key={group.region}

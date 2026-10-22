@@ -41,12 +41,17 @@ export type StorefrontPrivacyPreference = {
   detailHtml: string;
 };
 
+export type StorefrontPartnershipConfig = {
+  showSummaryPoints: boolean;
+};
+
 export type StorefrontWebsiteConfig = {
   locale: string;
   headerNavColumns: StorefrontNavColumn[];
   footerNavColumns: StorefrontNavColumn[];
   listHeroBoards: StorefrontListHeroBoardsRecord;
   privacyPreference: StorefrontPrivacyPreference | null;
+  partnership: StorefrontPartnershipConfig;
 };
 
 export async function getStorefrontWebsiteConfig(locale?: string): Promise<StorefrontWebsiteConfig> {

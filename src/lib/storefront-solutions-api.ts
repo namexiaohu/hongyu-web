@@ -45,6 +45,7 @@ export type StorefrontSolutionDetail = {
     gallery?: Array<{ url: string; alt?: string }>;
   };
   stats: Array<{ value: string; label: string; suffix?: string }> | null;
+  entries?: Array<{ id: string; title: string; href: string }>;
   materials: StorefrontSolutionMaterial[];
   productParams: Array<{ label: string; value: string }>;
   sections: StorefrontSolutionSection[];

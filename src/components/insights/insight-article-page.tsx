@@ -101,7 +101,9 @@ export async function InsightArticlePage({ article }: InsightArticlePageProps) {
         <span>/</span>
         <Link href="/insights">{t('breadcrumb.insights')}</Link>
         <span>/</span>
-        <Link href={`/insights?category=${article.boardKey}`}>{article.boardName}</Link>
+        <Link href={article.boardKey === 'pinned' ? '/insights' : `/insights?category=${article.boardKey}`}>
+          {article.boardName}
+        </Link>
         <span>/</span>
         <span style={{ color: 'var(--fg)' }}>{article.title}</span>
       </div>

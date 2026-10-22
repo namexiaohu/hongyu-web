@@ -32,6 +32,7 @@ export default async function HomePage() {
     page: 1,
     pageSize: normalizeInsightsArticleCount(config.insightsArticleCount),
     locale,
+    includePinned: true,
   });
 
   const companyName = resolveCompanyName(company, locale);

@@ -7,7 +7,8 @@ import type { Topology } from 'topojson-specification';
 import type { Feature, FeatureCollection, Geometry, MultiPolygon, Position } from 'geojson';
 
 import { useTranslation } from '@/lib/i18n-context';
-import { mapRegionLabelForLocale } from '@/lib/center-region-labels';
+import { mapRegionLabelForLocale, MAP_REGION_TO_API } from '@/lib/center-region-labels';
+import { centersCenterHref, centersRegionHref } from '@/lib/centers-anchors';
 import type { CenterRegion } from '@/lib/storefront-partner-centers-api';
 
 export type GlobalMapCenter = {
@@ -385,6 +386,11 @@ export function GlobalPartnerMap({ centers }: Props) {
         })
         .on('pointerleave', (event) => {
           onRegionPointerLeaveRef.current(event as PointerEvent);
+        })
+        .on('click', (_event, d) => {
+          const apiRegion = MAP_REGION_TO_API[d.properties.regionId];
+          if (!apiRegion) return;
+          window.location.assign(centersRegionHref(apiRegion));
         }) as d3.Selection<SVGPathElement, Feature<MultiPolygon, RegionFeatureProps>, SVGGElement, unknown>;
 
       setLoading(false);
@@ -505,9 +511,7 @@ export function GlobalPartnerMap({ centers }: Props) {
                   <a
                     key={center.slug}
                     className="center-link"
-                    href={`/centers/${center.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={centersCenterHref(center.slug)}
                   >
                     <div>
                       <strong>{center.name}</strong>

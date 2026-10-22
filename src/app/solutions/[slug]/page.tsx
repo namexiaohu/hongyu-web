@@ -36,6 +36,7 @@ export default async function SolutionDetailPage({ params }: PageProps) {
       breadcrumbs={data.breadcrumbs}
       hero={data.hero}
       stats={data.stats ?? undefined}
+      entries={data.entries}
       materialsHref={hasMaterials ? '#product-materials' : null}
     >
       <SolutionRenderer sections={data.sections} />

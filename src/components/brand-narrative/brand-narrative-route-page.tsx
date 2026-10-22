@@ -31,6 +31,7 @@ export async function BrandNarrativeRoutePage({ slug }: { slug: string }) {
         breadcrumbs={data.breadcrumbs}
         hero={data.hero}
         stats={data.stats ?? undefined}
+        entries={data.entries}
       >
         <BrandNarrativeRenderer sections={data.sections} />
       </BrandNarrativePage>

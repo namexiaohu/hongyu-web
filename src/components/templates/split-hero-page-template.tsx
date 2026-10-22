@@ -6,12 +6,13 @@ import { SplitBackgroundHero } from '@/components/shared/split-background-hero';
 import { StatsBar } from '@/components/shared/stats-bar';
 import { formatMultilineTitle } from '@/lib/format-multiline-title';
 import { buildHeroMediaSlides } from '@/lib/hero-media-slides';
-import type { BreadcrumbItem, SplitHero, StatItem } from '@/lib/storefront-types';
+import type { BreadcrumbItem, PageEntryLink, SplitHero, StatItem } from '@/lib/storefront-types';
 
 type SplitHeroPageTemplateProps = {
   breadcrumbs: BreadcrumbItem[];
   hero: SplitHero;
   stats?: StatItem[];
+  entries?: PageEntryLink[];
   heroTextClassName: string;
   eyebrowClassName: string;
   statsWrapClassName?: string;
@@ -24,6 +25,7 @@ export function SplitHeroPageTemplate({
   breadcrumbs,
   hero,
   stats,
+  entries,
   heroTextClassName,
   eyebrowClassName,
   statsWrapClassName,
@@ -41,6 +43,8 @@ export function SplitHeroPageTemplate({
     coverDisplay: hero.coverDisplay,
   });
   const showHeroMedia = Boolean(hero.showCoverOnBackground && slides.length);
+  const visibleEntries = (entries ?? []).filter((entry) => entry.title.trim() && entry.href.trim());
+  const showStatsBar = Boolean(stats && stats.length > 0) || visibleEntries.length > 0;
 
   return (
     <>
@@ -59,9 +63,9 @@ export function SplitHeroPageTemplate({
           {heroExtra}
         </div>
       </SplitBackgroundHero>
-      {stats && stats.length > 0 ? (
+      {showStatsBar ? (
         <div className={statsWrapClassName ?? 'container'} data-od-id="stats">
-          <StatsBar stats={stats} />
+          <StatsBar stats={stats ?? []} entries={visibleEntries} />
         </div>
       ) : null}
       {children}

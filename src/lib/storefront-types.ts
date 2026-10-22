@@ -9,6 +9,12 @@ export type StatItem = {
   label: string;
 };
 
+export type PageEntryLink = {
+  id: string;
+  title: string;
+  href: string;
+};
+
 export type CtaBlock = {
   eyebrow: string;
   title: string;
@@ -178,5 +184,6 @@ export type StorefrontBrandNarrativeDetail = {
   breadcrumbs: BrandNarrativeBreadcrumb[];
   hero: BrandNarrativeHero;
   stats?: BrandNarrativeStat[] | null;
+  entries?: PageEntryLink[];
   sections: BrandSection[];
 };

@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { PartnershipComplaintForm } from '@/components/partnership/partnership-complaint-form';
 import { PartnershipInquiryForm } from '@/components/partnership/partnership-inquiry-form';
 import { resolveCompanyName } from '@/lib/company-display';
 import { telHref } from '@/lib/contact-display';
 import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 import { getStorefrontCompanyProfile } from '@/lib/storefront-company-api';
+import { getStorefrontWebsiteConfig } from '@/lib/storefront-website-config-api';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale } = await getStorefrontLocaleContext();
@@ -65,7 +67,10 @@ function CoopTypesSection({ t }: { t: (key: string) => string }) {
 export default async function Page() {
   const { locale } = await getStorefrontLocaleContext();
   const { t } = await getPageTranslations(locale, ['partnership', 'breadcrumb']);
-  const company = await getStorefrontCompanyProfile(locale);
+  const [company, websiteConfig] = await Promise.all([
+    getStorefrontCompanyProfile(locale),
+    getStorefrontWebsiteConfig(locale),
+  ]);
   const companyName = resolveCompanyName(company, locale);
   const hotline = company.businessHotline.trim();
   const email = company.businessEmail.trim();
@@ -99,7 +104,7 @@ export default async function Page() {
         </div>
       </section>
 
-      <CoopTypesSection t={t} />
+      {websiteConfig.partnership?.showSummaryPoints !== false ? <CoopTypesSection t={t} /> : null}
 
       <section className="form-section" data-od-id="form">
         <div className="container">
@@ -129,6 +134,7 @@ export default async function Page() {
                   </div>
                 </div>
               ) : null}
+              <PartnershipComplaintForm />
             </div>
             <PartnershipInquiryForm />
           </div>

@@ -204,6 +204,18 @@
       "bullet3": "For urgent matters, please call our business hotline directly.",
       "hotlineLabel": "Business hotline",
       "emailLabel": "Business email"
+    },
+    "complaint": {
+      "title": "Complaints and suggestions",
+      "lead": "Share a complaint or suggestion. Only the message is required.",
+      "name": "Name",
+      "namePlaceholder": "Your name (optional)",
+      "contact": "Contact",
+      "contactPlaceholder": "Phone or email (optional)",
+      "message": "Message",
+      "messagePlaceholder": "Describe your complaint or suggestion",
+      "submit": "Submit",
+      "success": "Thank you. We have received your message."
     }
   },
   "course": {
@@ -558,7 +570,7 @@
     "partnerCenters": "Partner centers",
     "noCenters": "No partner centers",
     "detailsArrow": "Details →",
-    "tipFoot": "Click an entry to open the partner center detail page.",
+    "tipFoot": "Click an entry to jump to that partner center on the list.",
     "regions": {
       "na": "North America",
       "sa": "South America",
