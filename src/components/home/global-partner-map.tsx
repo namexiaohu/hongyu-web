@@ -7,7 +7,11 @@ import type { Topology } from 'topojson-specification';
 import type { Feature, FeatureCollection, Geometry, MultiPolygon, Position } from 'geojson';
 
 import { useTranslation } from '@/lib/i18n-context';
-import { mapRegionLabelForLocale, MAP_REGION_TO_API } from '@/lib/center-region-labels';
+import {
+  MAP_REGION_TO_API,
+  mapRegionLabelKey,
+  type MapRegionId,
+} from '@/lib/center-region-labels';
 import { centersCenterHref, centersRegionHref } from '@/lib/centers-anchors';
 import type { CenterRegion } from '@/lib/storefront-partner-centers-api';
 
@@ -19,21 +23,12 @@ export type GlobalMapCenter = {
   badgeText: string;
 };
 
-type MapRegionId = 'na' | 'sa' | 'europe' | 'china' | 'apac' | 'africa';
-
 type RegionMeta = {
   id: MapRegionId;
   apiRegion: CenterRegion;
   colorVar: string;
   softVar: string;
 };
-
-function noCentersLabel(locale: string, fallback: string): string {
-  const normalized = locale.trim().toLowerCase();
-  if (normalized.startsWith('zh')) return '无合作中心';
-  if (normalized.startsWith('es')) return 'Sin centros asociados';
-  return fallback;
-}
 
 const REGION_META: RegionMeta[] = [
   { id: 'na', apiRegion: 'north-america', colorVar: '--gm-r-na', softVar: '--gm-r-na-soft' },
@@ -222,7 +217,7 @@ function buildRegionFeatures(countries: FeatureCollection<Geometry>): FeatureCol
 }
 
 export function GlobalPartnerMap({ centers }: Props) {
-  const { t, locale } = useTranslation();
+  const { t } = useTranslation();
   const rootRef = useRef<HTMLElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -494,10 +489,10 @@ export function GlobalPartnerMap({ centers }: Props) {
             <div className="tip-head">
               <div>
                 <div className="tip-label">
-                  {activeMeta ? mapRegionLabelForLocale(activeMeta.id, locale) : ''}
+                  {activeMeta ? t(mapRegionLabelKey(activeMeta.id)) : ''}
                 </div>
                 <div className="tip-title" id="tip-title">
-                  {activeMeta ? mapRegionLabelForLocale(activeMeta.id, locale) : ''}
+                  {activeMeta ? t(mapRegionLabelKey(activeMeta.id)) : ''}
                 </div>
               </div>
               <div className="tip-count">
@@ -523,7 +518,7 @@ export function GlobalPartnerMap({ centers }: Props) {
                   </a>
                 ))
               ) : (
-                <p className="center-list-empty">{noCentersLabel(locale, t('map.noCenters'))}</p>
+                <p className="center-list-empty">{t('map.noCenters')}</p>
               )}
             </div>
             {activeCenters.length ? (
