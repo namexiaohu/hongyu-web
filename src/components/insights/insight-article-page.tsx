@@ -4,7 +4,7 @@ import { ArticleToc } from '@/components/insights/article-toc';
 import { InsightSmartLink } from '@/components/insights/insight-smart-link';
 import { prepareArticleBody } from '@/lib/article-toc';
 import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
-import { formatInsightDate } from '@/lib/insights';
+import { formatInsightDate, HOME_TOP_INSIGHT_BOARD_KEY } from '@/lib/insights';
 import type {
   StorefrontInsightDetail,
   StorefrontInsightRelatedItem,
@@ -99,7 +99,7 @@ export async function InsightArticlePage({ article }: InsightArticlePageProps) {
         <span>/</span>
         <Link href="/insights">{t('breadcrumb.insights')}</Link>
         <span>/</span>
-        <Link href={article.boardKey === 'pinned' ? '/insights' : `/insights?category=${article.boardKey}`}>
+        <Link href={article.boardKey === HOME_TOP_INSIGHT_BOARD_KEY ? '/insights' : `/insights?category=${article.boardKey}`}>
           {article.boardName}
         </Link>
         <span>/</span>

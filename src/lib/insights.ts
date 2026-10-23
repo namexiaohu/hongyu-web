@@ -45,6 +45,9 @@ export function formatInsightMeta(
   return parts.join(' · ');
 }
 
+/** Matches admin HOME_TOP_BOARD_KEY / PINNED_INSIGHT_BOARD_KEY. */
+export const HOME_TOP_INSIGHT_BOARD_KEY = 'home-top';
+
 export function insightHref(slug: string) {
   return `/insights/${slug.trim()}`;
 }
