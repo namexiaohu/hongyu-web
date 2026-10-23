@@ -6,7 +6,8 @@ import { HomeAboutCarousel } from '@/components/home/home-about-carousel';
 import { HomeBannerCarousel } from '@/components/home/home-banner-carousel';
 import { CtaStrip } from '@/components/shared/cta-strip';
 import { StatsBar } from '@/components/shared/stats-bar';
-import { formatInsightDate, insightHref, type InsightsHero } from '@/lib/insights';
+import { InsightSmartLink } from '@/components/insights/insight-smart-link';
+import { formatInsightDate, type InsightsHero } from '@/lib/insights';
 import {
   resolveHomepageSections,
   type HomepageSectionKey,
@@ -183,9 +184,9 @@ function InsightsSection({
           {insights.map((item) => {
             const dateLabel = formatInsightDate(item.publishedAt || item.createdAt);
             return (
-              <Link
+              <InsightSmartLink
                 key={item.id}
-                href={insightHref(item.slug)}
+                item={item}
                 className="log-row"
               >
                 <span className="meta num">{dateLabel || homeCopy.emptyDash}</span>
@@ -200,7 +201,7 @@ function InsightsSection({
                   </div>
                 </div>
                 <span className="log-tag">{item.boardName || item.boardKey}</span>
-              </Link>
+              </InsightSmartLink>
             );
           })}
         </div>

@@ -49,6 +49,24 @@ export function insightHref(slug: string) {
   return `/insights/${slug.trim()}`;
 }
 
+export type InsightLinkTarget = {
+  slug: string;
+  bodyLinkEnabled?: boolean;
+  bodyLinkUrl?: string;
+};
+
+/** List/home cards: body-link mode uses the shared URL; otherwise the detail page. */
+export function insightItemHref(item: InsightLinkTarget) {
+  if (item.bodyLinkEnabled && item.bodyLinkUrl?.trim()) {
+    return item.bodyLinkUrl.trim();
+  }
+  return insightHref(item.slug);
+}
+
+export function isExternalInsightHref(href: string) {
+  return /^https?:\/\//i.test(href);
+}
+
 export function insightsListHref(input?: { category?: string | null; page?: number }) {
   const params = new URLSearchParams();
   if (input?.category?.trim()) {

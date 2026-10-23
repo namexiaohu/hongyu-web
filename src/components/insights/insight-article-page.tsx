@@ -1,12 +1,10 @@
 import Link from 'next/link';
 
 import { ArticleToc } from '@/components/insights/article-toc';
+import { InsightSmartLink } from '@/components/insights/insight-smart-link';
 import { prepareArticleBody } from '@/lib/article-toc';
 import { getPageTranslations, getStorefrontLocaleContext } from '@/lib/i18n-server';
-import {
-  formatInsightDate,
-  insightHref,
-} from '@/lib/insights';
+import { formatInsightDate } from '@/lib/insights';
 import type {
   StorefrontInsightDetail,
   StorefrontInsightRelatedItem,
@@ -36,7 +34,7 @@ function UserIcon() {
 
 function RelatedSidebarItem({ item }: { item: StorefrontInsightRelatedItem }) {
   return (
-    <Link href={insightHref(item.slug)} className="sr-item">
+    <InsightSmartLink item={item} className="sr-item">
       <div className="sr-thumb">
         {item.coverImage ? (
           <img src={item.coverImage} alt="" />
@@ -61,13 +59,13 @@ function RelatedSidebarItem({ item }: { item: StorefrontInsightRelatedItem }) {
         <h5>{item.title}</h5>
         <span className="sr-date">{formatInsightDate(item.createdAt)}</span>
       </div>
-    </Link>
+    </InsightSmartLink>
   );
 }
 
 function RelatedCard({ item }: { item: StorefrontInsightRelatedItem }) {
   return (
-    <Link href={insightHref(item.slug)} className="related-card">
+    <InsightSmartLink item={item} className="related-card">
       <div className="related-card-img">
         {item.coverImage ? (
           <img src={item.coverImage} alt="" />
@@ -80,7 +78,7 @@ function RelatedCard({ item }: { item: StorefrontInsightRelatedItem }) {
         <h3>{item.title}</h3>
         <span className="rc-date">{formatInsightDate(item.createdAt)}</span>
       </div>
-    </Link>
+    </InsightSmartLink>
   );
 }
 

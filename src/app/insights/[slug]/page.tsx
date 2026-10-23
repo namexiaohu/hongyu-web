@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 import { InsightArticlePage } from '@/components/insights/insight-article-page';
 import { getStorefrontLocaleContext } from '@/lib/i18n-server';
+import { insightItemHref } from '@/lib/insights';
 import { getStorefrontInsightBySlug } from '@/lib/storefront-insights-api';
 import { DEFAULT_SEO_TITLE } from '@/lib/site-config';
 
@@ -32,6 +33,10 @@ export default async function Page({ params }: PageProps) {
 
   if (!article) {
     notFound();
+  }
+
+  if (article.bodyLinkEnabled && article.bodyLinkUrl?.trim()) {
+    redirect(insightItemHref(article));
   }
 
   return <InsightArticlePage article={article} />;

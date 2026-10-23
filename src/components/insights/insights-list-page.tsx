@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
+import { InsightSmartLink } from '@/components/insights/insight-smart-link';
 import { CtaStrip } from '@/components/shared/cta-strip';
 import { ListPageHero } from '@/components/shared/list-page-hero';
 import {
   formatInsightMeta,
-  insightHref,
   insightsListHref,
   type InsightsHero,
 } from '@/lib/insights';
@@ -66,7 +66,7 @@ function FeaturedCard({ item, featuredLabel }: { item: StorefrontInsightListItem
           {item.boardName} · {featuredLabel}
         </div>
         <h2>
-          <Link href={insightHref(item.slug)}>{item.title}</Link>
+          <InsightSmartLink item={item}>{item.title}</InsightSmartLink>
         </h2>
         {item.summary ? <p className="f-desc">{item.summary}</p> : null}
         <div className="f-meta">{formatInsightMeta(item.createdAt ?? item.publishedAt, item.author)}</div>
@@ -77,7 +77,7 @@ function FeaturedCard({ item, featuredLabel }: { item: StorefrontInsightListItem
 
 function ArticleCard({ item }: { item: StorefrontInsightListItem }) {
   return (
-    <Link href={insightHref(item.slug)} className="art-card">
+    <InsightSmartLink item={item} className="art-card">
       <div className="ac-img">
         {item.coverImage ? (
           <img src={item.coverImage} alt={item.title} />
@@ -89,7 +89,7 @@ function ArticleCard({ item }: { item: StorefrontInsightListItem }) {
       <h3>{item.title}</h3>
       {item.summary ? <p className="ac-desc">{item.summary}</p> : null}
       <div className="ac-date">{formatInsightMeta(item.createdAt ?? item.publishedAt, item.author)}</div>
-    </Link>
+    </InsightSmartLink>
   );
 }
 
@@ -258,7 +258,7 @@ export function InsightsListPage({
               <div key={item.id} className="compact-row">
                 <div className="cr-date">{formatInsightMeta(item.createdAt, null)}</div>
                 <h4>
-                  <Link href={insightHref(item.slug)}>{item.title}</Link>
+                  <InsightSmartLink item={item}>{item.title}</InsightSmartLink>
                 </h4>
                 <div className="cr-tag">{item.boardName}</div>
               </div>

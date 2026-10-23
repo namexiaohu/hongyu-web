@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { ProductGallery } from '@/components/product/product-gallery';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
+import { PageEntriesBar } from '@/components/shared/page-entries-bar';
 import { SplitBackgroundHero } from '@/components/shared/split-background-hero';
 import { StatsBar } from '@/components/shared/stats-bar';
 import { formatMultilineTitle } from '@/lib/format-multiline-title';
@@ -43,8 +44,10 @@ export function SplitHeroPageTemplate({
     coverDisplay: hero.coverDisplay,
   });
   const showHeroMedia = Boolean(hero.showCoverOnBackground && slides.length);
+  const visibleStats = stats ?? [];
   const visibleEntries = (entries ?? []).filter((entry) => entry.title.trim() && entry.href.trim());
-  const showStatsBar = Boolean(stats && stats.length > 0) || visibleEntries.length > 0;
+  const showStats = visibleStats.length > 0;
+  const showEntries = visibleEntries.length > 0;
 
   return (
     <>
@@ -63,9 +66,14 @@ export function SplitHeroPageTemplate({
           {heroExtra}
         </div>
       </SplitBackgroundHero>
-      {showStatsBar ? (
+      {showStats ? (
         <div className={statsWrapClassName ?? 'container'} data-od-id="stats">
-          <StatsBar stats={stats ?? []} entries={visibleEntries} />
+          <StatsBar stats={visibleStats} />
+        </div>
+      ) : null}
+      {showEntries ? (
+        <div className="container page-entries-wrap">
+          <PageEntriesBar entries={visibleEntries} />
         </div>
       ) : null}
       {children}

@@ -14,6 +14,8 @@ export type StorefrontInsightListItem = {
   boardKey: string;
   boardName: string;
   coverImage: string | null;
+  bodyLinkEnabled?: boolean;
+  bodyLinkUrl?: string;
   author: StorefrontInsightAuthor;
   createdAt: string | null;
   publishedAt: string | null;
@@ -48,6 +50,8 @@ export type StorefrontInsightRelatedItem = {
   boardKey: string;
   boardName: string;
   coverImage: string | null;
+  bodyLinkEnabled?: boolean;
+  bodyLinkUrl?: string;
   createdAt: string | null;
 };
 
@@ -63,6 +67,8 @@ export type StorefrontInsightDetail = {
   categorySlug: string | null;
   coverStyle: number | null;
   coverImage: string | null;
+  bodyLinkEnabled?: boolean;
+  bodyLinkUrl?: string;
   author: StorefrontInsightAuthor;
   seo: {
     title: string | null;
